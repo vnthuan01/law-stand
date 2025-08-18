@@ -1,17 +1,90 @@
-export default function AboutPage() {
+'use client';
+
+import {
+  AccordionMenu,
+  AccordionMenuGroup,
+  AccordionMenuIndicator,
+  AccordionMenuItem,
+  AccordionMenuLabel,
+  AccordionMenuSeparator,
+} from '@/components/ui/accordion-menu';
+import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { RiCheckboxCircleFill } from '@remixicon/react';
+import { HelpCircle, Info, Mail, Settings, User } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function AccordionMenuDemo() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-lg text-center">
-        <h1 className="text-3xl font-bold text-blue-600 mb-4">About Us</h1>
-        <p className="text-gray-700 mb-6">
-          Đây là trang <span className="font-semibold">About</span>. Bạn có thể
-          tùy chỉnh nội dung để giới thiệu về dự án, nhóm phát triển hoặc bất kỳ
-          thông tin nào bạn muốn.
-        </p>
-        <button className="px-6 py-2 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 transition">
-          Quay lại trang chủ
-        </button>
-      </div>
+    <div className="w-full md:w-[200px] overflow-hidden border border-border rounded-md p-2">
+      <AccordionMenu
+        type="single"
+        collapsible
+        classNames={{
+          separator: '-mx-2 mb-2.5',
+        }}
+      >
+        {/* Menu Label */}
+        <AccordionMenuLabel>My Account</AccordionMenuLabel>
+        <AccordionMenuSeparator />
+
+        {/* Menu Items */}
+        <AccordionMenuGroup>
+          <AccordionMenuItem value="profile">
+            <User />
+            <span>Profile</span>
+          </AccordionMenuItem>
+
+          <AccordionMenuItem
+            value="/inbox"
+            onClick={() => {
+              toast.custom((t) => (
+                <Alert variant="mono" icon="primary" onClose={() => toast.dismiss(t)}>
+                  <AlertIcon>
+                    <RiCheckboxCircleFill />
+                  </AlertIcon>
+                  <AlertTitle>Inbox clicked</AlertTitle>
+                </Alert>
+              ));
+            }}
+          >
+            <Mail />
+            <span>Inbox</span>
+            <AccordionMenuIndicator>
+              <Badge variant="primary" size="sm" shape="circle">
+                5
+              </Badge>
+            </AccordionMenuIndicator>
+          </AccordionMenuItem>
+
+          <AccordionMenuItem
+            value="settings"
+            onClick={() => {
+              toast.custom((t) => (
+                <Alert variant="mono" icon="primary" onClose={() => toast.dismiss(t)}>
+                  <AlertIcon>
+                    <RiCheckboxCircleFill />
+                  </AlertIcon>
+                  <AlertTitle>Settings clicked</AlertTitle>
+                </Alert>
+              ));
+            }}
+          >
+            <Settings />
+            <span>Settings</span>
+          </AccordionMenuItem>
+
+          <AccordionMenuItem value="about">
+            <Info />
+            <span>About</span>
+          </AccordionMenuItem>
+
+          <AccordionMenuItem value="help">
+            <HelpCircle />
+            <span>Help</span>
+          </AccordionMenuItem>
+        </AccordionMenuGroup>
+      </AccordionMenu>
     </div>
   );
 }
