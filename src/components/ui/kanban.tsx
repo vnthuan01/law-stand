@@ -255,7 +255,7 @@ function Kanban<T>({
     [columnIds, columns, findContainer, getItemValue, isColumn, setColumns, onMove],
   );
 
-  const contextValue = React.useMemo<KanbanContextProps<T>>(
+  const contextValue = React.useMemo(
     () => ({
       columns,
       setColumns,
