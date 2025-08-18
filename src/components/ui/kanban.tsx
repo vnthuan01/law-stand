@@ -41,7 +41,7 @@ interface KanbanContextProps<T> {
   isColumn: (id: UniqueIdentifier) => boolean;
 }
 
-const KanbanContext = React.createContext<KanbanContextProps<unknown>>({
+const KanbanContext = React.createContext<KanbanContextProps<any>>({
   columns: {},
   setColumns: () => {},
   getItemId: () => '',
@@ -255,7 +255,7 @@ function Kanban<T>({
     [columnIds, columns, findContainer, getItemValue, isColumn, setColumns, onMove],
   );
 
-  const contextValue = React.useMemo(
+  const contextValue = React.useMemo<KanbanContextProps<T>>(
     () => ({
       columns,
       setColumns,
