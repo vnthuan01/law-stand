@@ -25,12 +25,12 @@ export function useAuth() {
   // Login
   const loginMutation = useMutation({
     mutationFn: (data: LoginPayload) => authService.login(data),
-    onSuccess: async (res, variables) => {
-      const accessToken = res.data?.accessToken;
+    onSuccess: async (res) => {
+      //Base on field name in response
+      const accessToken = res.data?.token;
       if (accessToken) {
-        setAuthToken(accessToken, variables.rememberMe);
+        setAuthToken(accessToken);
 
-        // fetchQuery với object argument
         const userData = await queryClient.fetchQuery({
           queryKey: ['users', 'profile'],
           queryFn: () => authService.profile().then((res) => res.data),
@@ -61,12 +61,17 @@ export function useAuth() {
 
   // Logout
   const logoutMutation = useMutation({
-    mutationFn: () => authService.logout(),
-    onSuccess: () => {
+    // mutationFn: () => authService.logout(),
+    mutationFn: async () => {
       clearAuthToken();
       setUser(null);
       queryClient.removeQueries({ queryKey: ['users', 'profile'] });
     },
+    // onSuccess: () => {
+    //   clearAuthToken();
+    //   setUser(null);
+    //   queryClient.removeQueries({ queryKey: ['users', 'profile'] });
+    // },
   });
 
   return {
@@ -74,9 +79,10 @@ export function useAuth() {
     role: user?.role,
     isAuthenticated: !!user,
     isLoading,
-    login: loginMutation.mutate,
-    register: registerMutation.mutate,
-    logout: logoutMutation.mutate,
+    // expose mutateAsync so caller can await before navigation
+    login: loginMutation.mutateAsync,
+    register: registerMutation.mutateAsync,
+    logout: logoutMutation.mutateAsync,
     loginStatus: loginMutation.status,
     registerStatus: registerMutation.status,
   };

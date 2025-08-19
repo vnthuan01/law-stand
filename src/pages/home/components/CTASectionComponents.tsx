@@ -1,0 +1,50 @@
+// components/CTASection.tsx
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+
+export default function CTASection() {
+  return (
+    <section className="py-20 bg-orange-500">
+      <div className="max-w-7xl mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="bg-white rounded-lg overflow-hidden shadow-xl"
+        >
+          <div className="grid lg:grid-cols-2 gap-0">
+            <div className="p-12 lg:p-16 flex flex-col justify-center">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+                You don't have to
+                <br />
+                fight alone.
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Book a consultation with one of our lawyers today.
+              </p>
+              <Button
+                variant="orange"
+                size="lg"
+                className="px-8 py-4 font-semibold self-start rounded-lg"
+              >
+                Book a Consultation
+              </Button>
+            </div>
+            <div className="bg-gradient-to-br from-orange-100 to-orange-200 min-h-96 flex items-center justify-center">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="text-orange-600 text-8xl"
+              >
+                Image here
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
