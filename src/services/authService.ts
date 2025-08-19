@@ -1,10 +1,10 @@
-import type {UserRole} from "@/enums/UserRole";
-import {apiClient} from "@/lib/apiClients";
+import type { UserRole } from '@/enums/UserRole';
+import { apiClient } from '@/lib/apiClients';
 
 export interface LoginPayload {
   email: string;
   password: string;
-  rememberMe: boolean;
+  rememberMe?: boolean;
 }
 
 export interface RegisterPayload {
@@ -18,6 +18,7 @@ export interface RegisterPayload {
 
 export interface User {
   id: string;
+  avatar?: string | null;
   email: string;
   name: string;
   address: string;
@@ -26,8 +27,8 @@ export interface User {
 }
 
 export const authService = {
-  login: (data: LoginPayload) => apiClient.post("/auth/login", data),
-  register: (data: RegisterPayload) => apiClient.post("/auth/register", data),
-  profile: () => apiClient.get<User>("/auth/profile"),
-  logout: () => apiClient.post("/auth/logout"),
+  login: (data: LoginPayload) => apiClient.post('/auth/login', data),
+  register: (data: RegisterPayload) => apiClient.post('/auth/register', data),
+  profile: () => apiClient.get<User>('/auth/profile'),
+  logout: () => apiClient.post('/auth/logout'),
 };

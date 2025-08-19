@@ -1,7 +1,7 @@
 import { useState, useEffect, type ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import type { LoginPayload, User } from '@/services/authService';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from './AuthContextType';
 
 type AuthProviderProps = { children: ReactNode };
 
