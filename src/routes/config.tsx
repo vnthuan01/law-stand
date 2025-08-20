@@ -7,6 +7,8 @@ import { UserRole } from '@/enums/UserRole';
 // import StaffPage from "../pages/StaffPage";
 import CustomerPage from '@/pages/user/CustomerPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
+import ResourcesPage from '@/pages/resources/ResourcesPage';
+import ContactPage from '@/pages/contact/ContactPage';
 
 export const routes = [
   {
@@ -20,11 +22,24 @@ export const routes = [
     isProtected: false,
   },
   {
+    path: '/resources',
+    element: <ResourcesPage />,
+    isProtected: false,
+  },
+  {
+    path: '/contact',
+    element: <ContactPage />,
+    isProtected: false,
+  },
+  //Admin
+  {
     path: '/admin',
     element: <AdminPage />,
     isProtected: true,
     roles: [UserRole.Admin],
   },
+  //Staff
+  //Lawyer
   //   {
   //     path: "/lawyer",
   //     element: <LawyerPage />,
@@ -32,6 +47,7 @@ export const routes = [
   //     roles: ["lawyer"],
   //   },
   //   {path: "/staff", element: <StaffPage />, isProtected: true, roles: ["staff"]},
+  //Customer
   {
     path: '/customer',
     element: <CustomerPage />,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import AuthLayout from './layout';
 function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <AuthLayout imageSrc={background}>
       <Card className="w-full max-w-md rounded-2xl bg-transparent shadow-md border-none">
@@ -21,7 +21,8 @@ function RegisterPage() {
             <img
               src={logo}
               alt="Logo Lawstand"
-              className="h-14 w-14 cover-contain border rounded-full bg-white"
+              className="h-14 w-14 cover-contain border rounded-full bg-white cursor-pointer"
+              onClick={() => navigate('/')}
             />
             <h1 className="text-4xl font-bold text-center text-black">Register</h1>
             <h4 className="text-sm text-center text-gray-500">
