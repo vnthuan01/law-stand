@@ -44,12 +44,14 @@ const HeroSection: React.FC = () => {
             <p className="text-gray-600 text-base sm:text-lg font-jersey25">
               Lawstand is a digital platform
             </p>
+
           </motion.div>
 
           <motion.h1 className="space-y-2">
             <motion.div
               variants={fromBottom}
               className="text-3xl sm:text-4xl lg:text-5xl text-gray-900 font-bold"
+
             >
               WE COMMITTED TO
             </motion.div>
@@ -59,6 +61,7 @@ const HeroSection: React.FC = () => {
             >
               <span className="text-orange-500">ACCOUNTABILITY</span>{' '}
               <span className="text-orange-500">AND</span>{' '}
+
               <span className="text-orange-500">TRANSPARENCY</span>
             </motion.div>
           </motion.h1>

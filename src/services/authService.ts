@@ -5,6 +5,7 @@ export interface LoginPayload {
   us: string;
   pw: string;
   // rememberMe?: boolean;
+
 }
 
 export interface RegisterPayload {

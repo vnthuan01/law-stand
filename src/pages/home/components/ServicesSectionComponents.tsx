@@ -75,6 +75,7 @@ export default function ServicesSection() {
                   <p className="text-gray-600 text-sm">{service.desc}</p>
                 </div>
                 <div className="w-full h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg mt-4"></div>
+
               </div>
             </motion.div>
           ))}

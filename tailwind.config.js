@@ -13,6 +13,7 @@ export default {
         sans: ['Inter', 'sans-serif'],
         jersey25: ['"Jersey 25"', 'sans-serif'],
       },
+
     },
   },
   plugins: [],

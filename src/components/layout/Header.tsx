@@ -43,6 +43,8 @@ const Header: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+
+
   return (
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
@@ -55,6 +57,7 @@ const Header: React.FC = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-6">
+
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -83,6 +86,7 @@ const Header: React.FC = () => {
                   <AvatarImage src={user.avatar} alt={user.name || ''} />
                 ) : (
                   <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+
                 )}
                 <AvatarStatus variant="online" />
               </Avatar>
@@ -137,6 +141,7 @@ const Header: React.FC = () => {
               )}
 
               {/* Language toggle */}
+
               <div
                 className="flex items-center space-x-1 cursor-pointer border rounded-md px-2 py-1 bg-gray-100"
                 onClick={toggleLang}
@@ -160,6 +165,7 @@ const Header: React.FC = () => {
                 size="md"
                 className="px-6 py-2 rounded-lg"
                 onClick={() => navigate('/login')}
+
               >
                 Login
               </Button>
@@ -171,6 +177,7 @@ const Header: React.FC = () => {
         <div className="lg:hidden">
           <Button variant="ghost" size="icon" onClick={toggleSidebar}>
             {isSidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+
           </Button>
         </div>
       </div>
@@ -186,6 +193,7 @@ const Header: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b">
               <div className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+
                 <img src={logo} alt="Logo Law" className="max-w-full max-h-full object-contain" />
               </div>
               <Button variant="ghost" size="icon" onClick={toggleSidebar}>
@@ -207,6 +215,7 @@ const Header: React.FC = () => {
             </div>
 
             {/* Footer: Avatar / Login */}
+
             <div className="px-6 py-4 border-t">
               {isAuthenticated ? (
                 <div className="flex items-center justify-between">
@@ -234,6 +243,7 @@ const Header: React.FC = () => {
                     className="w-full rounded-lg"
                     onClick={() => navigate('/register')}
                   >
+
                     Register
                   </Button>
                   <Button
@@ -241,6 +251,7 @@ const Header: React.FC = () => {
                     size="md"
                     className="w-full rounded-lg"
                     onClick={() => navigate('/login')}
+
                   >
                     Login
                   </Button>
