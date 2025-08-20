@@ -2,9 +2,10 @@ import type { UserRole } from '@/enums/UserRole';
 import { apiClient } from '@/lib/apiClients';
 
 export interface LoginPayload {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
+  us: string;
+  pw: string;
+  // rememberMe?: boolean;
+
 }
 
 export interface RegisterPayload {

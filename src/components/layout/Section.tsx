@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,13 +41,17 @@ const HeroSection: React.FC = () => {
           className="space-y-6 sm:space-y-8 text-center md:text-left"
         >
           <motion.div variants={fromTop}>
-            <p className="text-gray-600 text-base sm:text-lg">Lawstand is a digital platform</p>
+            <p className="text-gray-600 text-base sm:text-lg font-jersey25">
+              Lawstand is a digital platform
+            </p>
+
           </motion.div>
 
           <motion.h1 className="space-y-2">
             <motion.div
               variants={fromBottom}
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900"
+              className="text-3xl sm:text-4xl lg:text-5xl text-gray-900 font-bold"
+
             >
               WE COMMITTED TO
             </motion.div>
@@ -58,7 +60,8 @@ const HeroSection: React.FC = () => {
               className="text-3xl sm:text-4xl lg:text-5xl font-bold"
             >
               <span className="text-orange-500">ACCOUNTABILITY</span>{' '}
-              <span className="text-orange-500">&</span>{' '}
+              <span className="text-orange-500">AND</span>{' '}
+
               <span className="text-orange-500">TRANSPARENCY</span>
             </motion.div>
           </motion.h1>

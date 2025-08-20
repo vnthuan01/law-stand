@@ -9,6 +9,11 @@ export default {
         title: '#000000',
         'light-text': '#8D8D8D',
       },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        jersey25: ['"Jersey 25"', 'sans-serif'],
+      },
+
     },
   },
   plugins: [],

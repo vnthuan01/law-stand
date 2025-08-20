@@ -60,19 +60,22 @@ export default function ServicesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-all duration-300 group"
+              className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-all duration-300 group flex flex-col h-full"
             >
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <span className="text-orange-500 font-bold text-lg">{service.number}</span>
+              <div className="flex-1 flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <span className="text-orange-500 font-bold text-lg">{service.number}</span>
+                    </div>
                   </div>
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-orange-500 transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">{service.desc}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 group-hover:text-orange-500 transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600 text-sm">{service.desc}</p>
-                <div className="w-full h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg"></div>
+                <div className="w-full h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg mt-4"></div>
+
               </div>
             </motion.div>
           ))}

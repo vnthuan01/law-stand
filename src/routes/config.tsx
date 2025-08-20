@@ -1,25 +1,26 @@
-import HomePage from "@/pages/home/HomePage";
-import AboutPage from "@/pages/about/AboutPage";
-import LoginPage from "@/pages/auth/LoginPage";
-import AdminPage from "@/pages/admin/AdminPage";
-import {UserRole} from "@/enums/UserRole";
+import HomePage from '@/pages/home/HomePage';
+import AboutPage from '@/pages/about/AboutPage';
+import LoginPage from '@/pages/auth/LoginPage';
+import AdminPage from '@/pages/admin/AdminPage';
+import { UserRole } from '@/enums/UserRole';
 // import LawyerPage from "../pages/LawyerPage";
 // import StaffPage from "../pages/StaffPage";
-import CustomerPage from "@/pages/user/CustomerPage";
+import CustomerPage from '@/pages/user/CustomerPage';
+import RegisterPage from '@/pages/auth/RegisterPage';
 
 export const routes = [
   {
-    path: "/",
+    path: '/',
     element: <HomePage />,
     isProtected: false,
   },
   {
-    path: "/about",
+    path: '/about',
     element: <AboutPage />,
     isProtected: false,
   },
   {
-    path: "/admin",
+    path: '/admin',
     element: <AdminPage />,
     isProtected: true,
     roles: [UserRole.Admin],
@@ -32,10 +33,11 @@ export const routes = [
   //   },
   //   {path: "/staff", element: <StaffPage />, isProtected: true, roles: ["staff"]},
   {
-    path: "/customer",
+    path: '/customer',
     element: <CustomerPage />,
     isProtected: true,
     roles: [UserRole.Customer],
   },
-  {path: "/login", element: <LoginPage />, isProtected: false},
+  { path: '/login', element: <LoginPage />, isProtected: false },
+  { path: '/register', element: <RegisterPage />, isProtected: false },
 ];
