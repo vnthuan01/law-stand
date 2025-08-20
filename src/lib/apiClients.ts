@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosRequestHeaders, type InternalAxiosRequestConfig } from 'axios';
 import { getAuthToken } from './cookies';
 
 export const apiClient = axios.create({
@@ -9,15 +9,13 @@ export const apiClient = axios.create({
 });
 
 // interceptor để tự động gắn token
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAuthToken();
   if (token) {
-    if (config.headers && typeof (config.headers as any).set === 'function') {
-      (config.headers as any).set('Authorization', `Bearer ${token}`);
-    } else {
-      config.headers = config.headers || {};
-      (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
-    }
+    // ép headers về đúng type AxiosRequestHeaders
+    const headers = (config.headers || {}) as AxiosRequestHeaders;
+    headers['Authorization'] = `Bearer ${token}`;
+    config.headers = headers;
   }
   return config;
 });
