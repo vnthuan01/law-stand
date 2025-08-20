@@ -6,6 +6,8 @@ import Footer from '@/components/layout/Footer';
 import ServicesSection from './components/ServicesSectionComponents';
 import TestimonialsSection from './components/TestimonialsSectionComponents';
 import CTASection from './components/CTASectionComponents';
+import TeamSectionComponents from './components/TeamSectionComponents';
+import FAQSection from './components/QASectionComponents';
 
 const HomePage: React.FC = () => {
   return (
@@ -21,6 +23,8 @@ const HomePage: React.FC = () => {
       <main>
         <ServicesSection />
         <TestimonialsSection />
+        <TeamSectionComponents />
+        <FAQSection />
         <CTASection />
       </main>
       {/* Footer */}

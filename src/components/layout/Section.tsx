@@ -44,14 +44,12 @@ const HeroSection: React.FC = () => {
             <p className="text-gray-600 text-base sm:text-lg font-jersey25">
               Lawstand is a digital platform
             </p>
-
           </motion.div>
 
           <motion.h1 className="space-y-2">
             <motion.div
               variants={fromBottom}
               className="text-3xl sm:text-4xl lg:text-5xl text-gray-900 font-bold"
-
             >
               WE COMMITTED TO
             </motion.div>
@@ -61,7 +59,6 @@ const HeroSection: React.FC = () => {
             >
               <span className="text-orange-500">ACCOUNTABILITY</span>{' '}
               <span className="text-orange-500">AND</span>{' '}
-
               <span className="text-orange-500">TRANSPARENCY</span>
             </motion.div>
           </motion.h1>
@@ -81,12 +78,12 @@ const HeroSection: React.FC = () => {
             <Input
               type="text"
               placeholder="Searching law needed"
-              className="w-full text-base px-4 py-3 md:py-6 border border-gray-300 rounded-lg sm:rounded-r-none sm:border-r-0 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full text-base px-4 py-5 md:py-6 border border-gray-300 rounded-lg sm:rounded-r-none sm:border-r-0 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
             <Button
               variant="orange"
               size="lg"
-              className="rounded-lg sm:rounded-l-none text-sm font-medium px-5 py-3 md:py-6 flex items-center justify-center gap-2 border border-orange-500 sm:border-l-0"
+              className="rounded-lg sm:rounded-l-none text-sm font-medium px-5 py-5 md:py-6 flex items-center justify-center gap-2 border border-orange-500 sm:border-l-0"
             >
               Search <Search className="w-5 h-5" />
             </Button>

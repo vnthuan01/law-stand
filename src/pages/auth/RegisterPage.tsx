@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import logo from '@/assets/law-firm-logo.png';
+import background from '@/assets/background-auth-layout.png';
 import AuthLayout from './layout';
 
 function RegisterPage() {
@@ -12,11 +14,19 @@ function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <AuthLayout>
+    <AuthLayout imageSrc={background}>
       <Card className="w-full max-w-md rounded-2xl bg-transparent shadow-md border-none">
         <CardContent className="px-10 py-12">
           <div className="flex flex-col items-center gap-6 w-full">
+            <img
+              src={logo}
+              alt="Logo Lawstand"
+              className="h-14 w-14 cover-contain border rounded-full bg-white"
+            />
             <h1 className="text-4xl font-bold text-center text-black">Register</h1>
+            <h4 className="text-sm text-center text-gray-500">
+              Welcome to Lawstand! Please enter your details.
+            </h4>
             <Button
               variant="outline"
               className="w-full h-[50px] rounded-lg border border-[#dadce0] bg-white hover:bg-gray-50 flex items-center justify-center gap-3 shadow-sm"

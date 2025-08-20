@@ -1,6 +1,5 @@
 // components/ServicesSection.tsx
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 
 const services = [
   {
@@ -75,16 +74,25 @@ export default function ServicesSection() {
                   <p className="text-gray-600 text-sm">{service.desc}</p>
                 </div>
                 <div className="w-full h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg mt-4"></div>
-
               </div>
             </motion.div>
           ))}
         </div>
 
-        <div className="text-center">
-          <Button variant="orange" size="lg" className="px-8 py-3 font-medium rounded-lg">
+        {/* View More Button */}
+        <div className="text-center mt-10">
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center px-8 py-3 bg-white border border-gray-200 
+               text-gray-700 font-medium rounded-full hover:bg-gray-50 
+               hover:border-gray-300 transition-all duration-200 shadow-sm"
+          >
             View More
-          </Button>
+          </motion.button>
         </div>
       </div>
     </section>

@@ -7,7 +7,11 @@ const Footer: React.FC = () => {
         {/* Cột 1 - Logo + About */}
         <div>
           <div className="flex items-center mb-4">
-            <img src={logo} alt="Lawstand Logo" className="h-10 w-auto mr-2" />
+            <img
+              src={logo}
+              alt="Lawstand Logo"
+              className="h-14 w-auto mr-2 cover-contain bg-white rounded-full"
+            />
             <span className="text-xl font-bold text-white">Lawstand</span>
           </div>
           <p className="text-sm">
