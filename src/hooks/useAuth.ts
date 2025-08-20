@@ -22,7 +22,10 @@ export function useAuth() {
   // Fetch profile nếu có token
   const { data: profile, isLoading } = useQuery<User>({
     queryKey: ['users', 'profile'],
-    queryFn: async () => authService.profile().then((res) => res.data as User),
+    queryFn: async () => {
+      const res: AxiosResponse<User> = await authService.profile();
+      return res.data;
+    },
     enabled: !!token,
     retry: false,
   });
@@ -39,9 +42,12 @@ export function useAuth() {
       if (accessToken) {
         setAuthToken(accessToken);
 
-        const userData = await queryClient.fetchQuery<User>({
+        const userData: User = await queryClient.fetchQuery<User>({
           queryKey: ['users', 'profile'],
-          queryFn: async () => authService.profile().then((res) => res.data as User),
+          queryFn: async () => {
+            const profileRes: AxiosResponse<User> = await authService.profile();
+            return profileRes.data;
+          },
         });
 
         setUser(userData);
@@ -57,9 +63,12 @@ export function useAuth() {
       if (accessToken) {
         setAuthToken(accessToken);
 
-        const userData = await queryClient.fetchQuery<User>({
+        const userData: User = await queryClient.fetchQuery<User>({
           queryKey: ['users', 'profile'],
-          queryFn: async () => authService.profile().then((res) => res.data as User),
+          queryFn: async () => {
+            const profileRes: AxiosResponse<User> = await authService.profile();
+            return profileRes.data;
+          },
         });
 
         setUser(userData);
@@ -69,17 +78,11 @@ export function useAuth() {
 
   // Logout
   const logoutMutation = useMutation({
-    // mutationFn: () => authService.logout(),
     mutationFn: async () => {
       clearAuthToken();
       setUser(null);
       queryClient.removeQueries({ queryKey: ['users', 'profile'] });
     },
-    // onSuccess: () => {
-    //   clearAuthToken();
-    //   setUser(null);
-    //   queryClient.removeQueries({ queryKey: ['users', 'profile'] });
-    // },
   });
 
   return {
@@ -87,7 +90,6 @@ export function useAuth() {
     role: user?.role,
     isAuthenticated: !!user,
     isLoading,
-    // expose mutateAsync so caller can await before navigation
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
