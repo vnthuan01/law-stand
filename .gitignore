@@ -33,3 +33,7 @@ dist-ssr/
 # Cache
 .cache/
 .vite/
+
+#Root
+../*
+../../../*

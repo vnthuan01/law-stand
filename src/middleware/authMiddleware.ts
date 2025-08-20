@@ -1,6 +1,6 @@
-import {useQuery} from "@tanstack/react-query";
-import {authService, type User} from "@/services/authService";
-import type {UserRole} from "@/enums/UserRole";
+import { useQuery } from '@tanstack/react-query';
+import { authService, type User } from '@/services/authService';
+import type { UserRole } from '@/enums/UserRole';
 
 export type AuthInfo = {
   isAuthenticated: boolean;
@@ -12,8 +12,8 @@ export type AuthInfo = {
  * Hook checkAuth: luôn đồng bộ với server qua react-query
  */
 export function useCheckAuth(): AuthInfo {
-  const {data: user, isLoading} = useQuery({
-    queryKey: ["users", "profile"],
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['users', 'profile'],
     queryFn: async () => {
       const res = await authService.profile();
       return res.data;
@@ -33,7 +33,6 @@ export function useCheckAuth(): AuthInfo {
     return {
       isAuthenticated: true,
       role: user.role,
-
       user,
     };
   }
