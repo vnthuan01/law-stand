@@ -1,8 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import type { AxiosResponse } from 'axios';
 import { authService } from '@/services/authService';
 import type { LoginPayload, RegisterPayload, User } from '@/services/authService';
 import { getAuthToken, setAuthToken, clearAuthToken } from '@/lib/cookies';
+
+interface LoginResponse {
+  token: string;
+}
+
+interface RegisterResponse {
+  accessToken: string;
+}
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -11,9 +20,9 @@ export function useAuth() {
   const token = getAuthToken();
 
   // Fetch profile nếu có token
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading } = useQuery<User>({
     queryKey: ['users', 'profile'],
-    queryFn: () => authService.profile().then((res) => res.data),
+    queryFn: async () => authService.profile().then((res) => res.data as User),
     enabled: !!token,
     retry: false,
   });
@@ -23,17 +32,16 @@ export function useAuth() {
   }, [profile]);
 
   // Login
-  const loginMutation = useMutation({
+  const loginMutation = useMutation<AxiosResponse<LoginResponse>, unknown, LoginPayload>({
     mutationFn: (data: LoginPayload) => authService.login(data),
-    onSuccess: async (res) => {
-      //Base on field name in response
+    onSuccess: async (res: AxiosResponse<LoginResponse>) => {
       const accessToken = res.data?.token;
       if (accessToken) {
         setAuthToken(accessToken);
 
-        const userData = await queryClient.fetchQuery({
+        const userData = await queryClient.fetchQuery<User>({
           queryKey: ['users', 'profile'],
-          queryFn: () => authService.profile().then((res) => res.data),
+          queryFn: async () => authService.profile().then((res) => res.data as User),
         });
 
         setUser(userData);
@@ -42,16 +50,16 @@ export function useAuth() {
   });
 
   // Register
-  const registerMutation = useMutation({
+  const registerMutation = useMutation<AxiosResponse<RegisterResponse>, unknown, RegisterPayload>({
     mutationFn: (data: RegisterPayload) => authService.register(data),
-    onSuccess: async (res) => {
+    onSuccess: async (res: AxiosResponse<RegisterResponse>) => {
       const accessToken = res.data?.accessToken;
       if (accessToken) {
         setAuthToken(accessToken);
 
-        const userData = await queryClient.fetchQuery({
+        const userData = await queryClient.fetchQuery<User>({
           queryKey: ['users', 'profile'],
-          queryFn: () => authService.profile().then((res) => res.data),
+          queryFn: async () => authService.profile().then((res) => res.data as User),
         });
 
         setUser(userData);
