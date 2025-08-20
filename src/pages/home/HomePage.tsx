@@ -1,8 +1,6 @@
 import React from 'react';
-import TopBar from '@/components/layout/TopBar';
-import Header from '@/components/layout/Header';
+import MainLayout from '@/components/layout/MainLayout';
 import HeroSection from '@/components/layout/Section';
-import Footer from '@/components/layout/Footer';
 import ServicesSection from './components/ServicesSectionComponents';
 import TestimonialsSection from './components/TestimonialsSectionComponents';
 import CTASection from './components/CTASectionComponents';
@@ -11,13 +9,7 @@ import FAQSection from './components/QASectionComponents';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="w-full min-h-screen bg-gray-50">
-      <TopBar />
-      {/* Header Section */}
-      <div className="sticky top-0 z-50 bg-white border-b">
-        {' '}
-        <Header />
-      </div>
+    <MainLayout>
       {/* Hero Section */}
       <HeroSection />
       <main>
@@ -28,8 +20,7 @@ const HomePage: React.FC = () => {
         <CTASection />
       </main>
       {/* Footer */}
-      <Footer />
-    </div>
+    </MainLayout>
   );
 };
 

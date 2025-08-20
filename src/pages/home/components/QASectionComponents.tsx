@@ -115,7 +115,7 @@ const FAQSection = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="flex justify-center gap-4 mt-8">
+          <div className="hidden sm:flex justify-center gap-4 mt-8">
             <CarouselPrevious />
             <CarouselNext />
           </div>
