@@ -49,7 +49,12 @@ const Header: React.FC = () => {
         {/* Logo */}
         <div className="flex items-center">
           <div className="w-14 h-14 border border-gray-200 bg-white rounded-full flex items-center justify-center mr-3 overflow-hidden">
-            <img src={logo} alt="Logo Law" className="max-w-full max-h-full object-contain" />
+            <img
+              src={logo}
+              alt="Logo Law"
+              className="max-w-full max-h-full object-contain cursor-pointer"
+              onClick={() => navigate('/')}
+            />
           </div>
         </div>
 
@@ -187,7 +192,12 @@ const Header: React.FC = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b">
               <div className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                <img src={logo} alt="Logo Law" className="max-w-full max-h-full object-contain" />
+                <img
+                  src={logo}
+                  alt="Logo Law"
+                  className="max-w-full max-h-full object-contain"
+                  onClick={() => navigate('/')}
+                />
               </div>
               <Button variant="ghost" size="icon" onClick={toggleSidebar}>
                 <X className="h-6 w-6" />
