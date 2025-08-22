@@ -34,13 +34,14 @@ export function AppSidebar({ items }: AppSidebarProps) {
             <img
               src={logo}
               alt="Logo Law"
-              className="max-w-32 max-h-32 object-contain cursor-pointer"
+              className="max-w-32 max-h-28 object-contain cursor-pointer rounded-full border border-black"
               onClick={() => navigate('/')}
-            />{' '}
+            />
             <p className="font-medium text-center">Lawstand Inc</p>
             <p className="text-xs text-muted-foreground text-center">A legal digital platform</p>
           </div>
         </div>
+        <hr />
       </SidebarHeader>
 
       {/* Content */}

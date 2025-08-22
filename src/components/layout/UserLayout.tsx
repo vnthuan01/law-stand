@@ -15,9 +15,24 @@ import type { UserRole } from '@/enums/UserRole';
 
 const userRole: UserRole = 'admin';
 
+// Role prefix mapping (có thể mở rộng thêm nếu sau này có role khác)
+const rolePrefixMap: Record<UserRole, string> = {
+  staff: 'profile',
+  admin: 'dashboard',
+  customer: 'profile',
+  lawyer: 'profile',
+};
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+
+  // Tách pathname
   const pathnames = location.pathname.split('/').filter(Boolean);
+
+  // Nếu có role trong path (vd: /staff/...) thì thay bằng route thực tế
+  if (pathnames[0] && rolePrefixMap[pathnames[0] as UserRole]) {
+    pathnames[0] = rolePrefixMap[pathnames[0] as UserRole];
+  }
 
   const menuItems = menuConfig[userRole];
 
