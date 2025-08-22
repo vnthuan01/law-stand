@@ -4,7 +4,8 @@ import LoginPage from '@/pages/auth/LoginPage';
 import AdminPage from '@/pages/user/admin/Dashboard';
 import { UserRole } from '@/enums/UserRole';
 // import LawyerPage from "../pages/LawyerPage";
-// import StaffPage from "../pages/StaffPage";
+import AddServicePage from '../pages/user/staff/AddServicePage';
+import EditServicePage from '@/pages/user/staff/EditService';
 import CustomerPage from '@/pages/user/ProfilePage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import ResourcesPage from '@/pages/resources/ResourcesPage';
@@ -12,6 +13,7 @@ import ContactPage from '@/pages/contact/ContactPage';
 import ProfilePage from '@/pages/user/ProfilePage';
 
 export const routes = [
+  //Public routes
   {
     path: '/',
     element: <HomePage />,
@@ -32,7 +34,7 @@ export const routes = [
     element: <ContactPage />,
     isProtected: false,
   },
-  //For all users
+  //For all users is authenticated
   // {
   //   path: '/profile',
   //   element: <ProfilePage />,
@@ -58,14 +60,20 @@ export const routes = [
     roles: [UserRole.Admin],
   },
   //Staff
+  {
+    path: '/staff/add-service',
+    element: <AddServicePage />,
+    isProtected: false,
+    // roles: [UserRole.Staff],
+  },
+  {
+    path: '/staff/edit-service/:id',
+    element: <EditServicePage />,
+    isProtected: false,
+    // roles: [UserRole.Staff],
+  },
   //Lawyer
-  //   {
-  //     path: "/lawyer",
-  //     element: <LawyerPage />,
-  //     isProtected: true,
-  //     roles: ["lawyer"],
-  //   },
-  //   {path: "/staff", element: <StaffPage />, isProtected: true, roles: ["staff"]},
+
   //Customer
   {
     path: '/customer',
