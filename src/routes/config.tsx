@@ -53,11 +53,17 @@ export const routes = [
     isProtected: false,
   },
   //Admin
+  // {
+  //   path: '/admin',
+  //   element: <AdminPage />,
+  //   isProtected: true,
+  //   roles: [UserRole.Admin],
+  // },
   {
-    path: '/admin',
+    path: '/dashboard',
     element: <AdminPage />,
-    isProtected: true,
-    roles: [UserRole.Admin],
+    isProtected: false,
+    // roles: [UserRole.Admin],
   },
   //Staff
   {
