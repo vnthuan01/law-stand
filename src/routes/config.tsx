@@ -11,6 +11,7 @@ import RegisterPage from '@/pages/auth/RegisterPage';
 import ResourcesPage from '@/pages/resources/ResourcesPage';
 import ContactPage from '@/pages/contact/ContactPage';
 import ProfilePage from '@/pages/user/ProfilePage';
+import BookingPage from '@/pages/booking/BookingPage';
 
 export const routes = [
   //Public routes
@@ -32,6 +33,11 @@ export const routes = [
   {
     path: '/contact',
     element: <ContactPage />,
+    isProtected: false,
+  },
+  {
+    path: '/booking',
+    element: <BookingPage />,
     isProtected: false,
   },
   //For all users is authenticated

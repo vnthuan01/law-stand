@@ -10,6 +10,7 @@ import ActiveUsers from './components/ActiveUsers';
 import PlanStats from './components/PlanStats';
 import VisitorsRevenueStats from './components/VisitorsRevenueStats';
 import { formatCurrencyVND } from '@/lib/utils';
+import Layout from '@/components/layout/UserLayout';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
+    <Layout>
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <span className="text-3xl font-bold flex items-center gap-2">
@@ -60,7 +61,7 @@ export default function Dashboard() {
 
       {/* Profile of users */}
       <div className="mt-6">{loading ? <SkeletonList /> : <ProfileCards />}</div>
-    </div>
+    </Layout>
   );
 }
 
