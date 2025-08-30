@@ -64,6 +64,11 @@ const Header: React.FC = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                  <Link to="/">Home</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
                   <Link to="/about">About Us</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

@@ -13,10 +13,42 @@ function ScrollToTop() {
   return null;
 }
 
+function TitleUpdater() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const segments = pathname.split('/').filter(Boolean);
+
+    if (segments.length === 0) {
+      document.title = 'Law Stand';
+      return;
+    }
+
+    // Nếu segment cuối là số (ID) thì bỏ đi
+    if (!isNaN(Number(segments[segments.length - 1]))) {
+      segments.pop();
+    }
+
+    // Take last segment of pathname
+    const lastSegment = segments[segments.length - 1];
+
+    // Split theo dấu "-" và viết hoa chữ cái đầu mỗi từ
+    const formatted = lastSegment
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
+    document.title = `Law Stand - ${formatted}`;
+  }, [pathname]);
+
+  return null;
+}
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <TitleUpdater />
       <AuthProvider>
         <Routes>
           {routes.map((r, idx) =>

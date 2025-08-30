@@ -154,6 +154,15 @@ alwaysApply: true
 
 - Call api
 
+### /src/lib/i18next
+
+- Use library i18n to useTranslate
+
+### /src/lib/locales
+
+- en.json handles English translations
+- vi.json handles Vietnamese translations
+
 ### Shared
 
 - Strict type checking, no any types, proper interface/type usage, documentation
