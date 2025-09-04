@@ -15,8 +15,8 @@ import {
   Eye,
   Bookmark,
   Package,
-  MessageSquare,
   Users,
+  Bot,
 } from 'lucide-react';
 
 export interface MenuItem {
@@ -58,24 +58,21 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
   customer: [
     {
       label: 'Appointments',
-      path: '/appointments',
+      path: '/customer/appointments',
       icon: Calendar,
-      children: [{ label: 'History', path: '/appointments/history', icon: History }],
+      children: [{ label: 'History', path: '/customer/appointments/', icon: History }],
     },
     { label: 'Saved Services', path: '/saved-services', icon: Bookmark },
     { label: 'Package Type', path: '/package-type', icon: Package },
-    { label: 'Chat History', path: '/chat-history', icon: MessageSquare },
+    { label: 'Chat With AI', path: '/chat-with-ai-supported', icon: Bot },
   ],
 
   lawyer: [
     {
       label: 'Appointments',
-      path: '/appointments',
+      path: '/lawyer/appointments',
       icon: Calendar,
-      children: [
-        { label: 'History', path: '/appointments/history', icon: History },
-        { label: 'Edit', path: '/appointments/edit', icon: Edit },
-      ],
+      children: [{ label: 'History', path: '/lawyer/appointments/', icon: History }],
     },
     {
       label: 'Consultant Management',

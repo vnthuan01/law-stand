@@ -26,3 +26,11 @@ export const formatCurrencyVNDSHORT = (value: number): string => {
   if (value >= 1_000) return (value / 1_000).toFixed(0) + 'K'; // Ngàn
   return value.toString();
 };
+
+//Local time
+export function getDateKey(d: Date): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
