@@ -13,7 +13,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { menuConfig } from './sidebar/MenuItemConfig';
 import type { UserRole } from '@/enums/UserRole';
 
-const userRole: UserRole = 'admin';
+const userRole: UserRole = 'customer';
 
 // Role prefix mapping (có thể mở rộng thêm nếu sau này có role khác)
 const rolePrefixMap: Record<UserRole, string> = {

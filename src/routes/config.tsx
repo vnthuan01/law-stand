@@ -12,6 +12,9 @@ import ResourcesPage from '@/pages/resources/ResourcesPage';
 import ContactPage from '@/pages/contact/ContactPage';
 import ProfilePage from '@/pages/user/ProfilePage';
 import BookingPage from '@/pages/booking/BookingPage';
+import UserAppointmentsPage from '@/pages/appointments/UserAppointmentsPage';
+import LawyerAppointmentsPage from '@/pages/appointments/LawyerAppointmentsPage';
+import ChatGPTLikePage from '@/pages/chatbot/ChatBotPage';
 
 export const routes = [
   //Public routes
@@ -52,10 +55,26 @@ export const routes = [
     element: <ProfilePage />,
     isProtected: false,
   },
+  {
+    path: '/chat-with-ai-supported',
+    element: <ChatGPTLikePage />,
+    isProtected: false,
+  },
+
   //Appointments Routes
   {
     path: '/appointments/history',
     element: <ProfilePage />,
+    isProtected: false,
+  },
+  {
+    path: '/customer/appointments',
+    element: <UserAppointmentsPage />,
+    isProtected: false,
+  },
+  {
+    path: '/lawyer/appointments',
+    element: <LawyerAppointmentsPage />,
     isProtected: false,
   },
   //Admin

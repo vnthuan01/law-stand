@@ -46,7 +46,7 @@ export default function SidebarFooterMenu() {
           </button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent side="right" align="start" sideOffset={8} className="w-48 mb-2">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
