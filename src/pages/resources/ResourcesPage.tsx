@@ -1,10 +1,10 @@
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import ResourceHeroSection from './components/ResourceHeroSection';
-import ResouceHeroSection from './components/ResourceHeroSection';
 import CTASection from '../home/components/CTASectionComponents';
-// import ResourceUpdateSection from './components/ResourceUpdateSection';
-// import BlogSection from './components/BlogSection';
+import LatestUpdateLawSection from './components/LatestUpdateLawSection';
+import BlogSectionComponents from './components/BlogSectionComponents';
+import PopularLawSidebar from './components/PopularLawSidebar';
 
 const ResourcePage: React.FC = () => {
   return (
@@ -12,14 +12,19 @@ const ResourcePage: React.FC = () => {
       {/* Hero Section */}
       <ResourceHeroSection />
       <main>
-        {/* Search law & categories */}
-        <ResouceHeroSection />
+        {/* Content with sidebar */}
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+            <div>
+              <LatestUpdateLawSection />
+              <BlogSectionComponents />
+            </div>
+            <div className="lg:sticky lg:top-20 lg:self-start">
+              <PopularLawSidebar />
+            </div>
+          </div>
+        </div>
 
-        {/* Latest updates list */}
-        {/* <ResourceUpdateSection /> */}
-
-        {/* Blogs */}
-        {/* <BlogSection /> */}
         <CTASection />
       </main>
       {/* Footer  */}

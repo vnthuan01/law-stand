@@ -9,6 +9,8 @@ import EditServicePage from '@/pages/user/staff/EditService';
 import CustomerPage from '@/pages/user/ProfilePage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import ResourcesPage from '@/pages/resources/ResourcesPage';
+import AllLastestUpdateLaw from '@/pages/resources/all/AllLastestUpdateLaw';
+import ResourceDetail from '@/pages/resources/details/ResourceDetail';
 import ContactPage from '@/pages/contact/ContactPage';
 import ProfilePage from '@/pages/user/ProfilePage';
 import BookingPage from '@/pages/booking/BookingPage';
@@ -25,11 +27,31 @@ export const routes = [
     element: <AboutPage />,
     isProtected: false,
   },
+
+  //Resource Page
+  //======================================
   {
     path: '/resources',
     element: <ResourcesPage />,
     isProtected: false,
   },
+  {
+    path: '/resources/updates',
+    element: <AllLastestUpdateLaw />,
+    isProtected: false,
+  },
+  {
+    path: '/resources/law-detail/:id',
+    element: <ResourceDetail />,
+    isProtected: false,
+  },
+  {
+    path: 'resources/blog-detail/:id',
+    element: <ResourceDetail />,
+    isProtected: false,
+  },
+  //===================================
+
   {
     path: '/contact',
     element: <ContactPage />,
