@@ -328,6 +328,13 @@ export const appointmentService = {
     mockAppointments[index] = updated;
     return updated;
   },
+  async deleteAppointment(id: string): Promise<{ id: string }> {
+    await delay(200);
+    const index = mockAppointments.findIndex((a) => a.id === id);
+    if (index === -1) throw new Error('Appointment not found');
+    mockAppointments.splice(index, 1);
+    return { id };
+  },
 };
 
 export type { Appointment as TAppointment };

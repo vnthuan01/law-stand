@@ -1,20 +1,58 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Calendar from '@/pages/appointments/components/calendar';
 import { type TAppointment } from '@/services/appointmentService';
 import { getDateKey } from '@/lib/utils';
 import Layout from '@/components/layout/UserLayout';
+import AppointmentDetail from '@/pages/appointments/components/AppointmentShowCard';
 import {
   useAppointmentActions,
   useAppointmentsByDate,
   useAppointmentsByMonth,
 } from '@/hooks/useAppointment';
+import AppointmentDialog from './components/AppointmentShowDetail';
 
-export default function LawyerAppointmentsPage() {
+// Hook responsive: chỉ 1, 3, 5
+function useResponsiveDays() {
+  const [daysCount, setDaysCount] = useState<number>(5);
+
+  useEffect(() => {
+    function updateDays() {
+      const w = window.innerWidth;
+      if (w < 640)
+        setDaysCount(1); // mobile
+      else if (w < 1024)
+        setDaysCount(3); // tablet & laptop nhỏ
+      else setDaysCount(5); // desktop
+    }
+    updateDays();
+    window.addEventListener('resize', updateDays);
+    return () => window.removeEventListener('resize', updateDays);
+  }, []);
+
+  return daysCount;
+}
+
+// Helper map số cột → class Tailwind
+function getGridColsClass(daysCount: number) {
+  switch (daysCount) {
+    case 1:
+      return 'grid-cols-1';
+    case 3:
+      return 'grid-cols-3';
+    case 5:
+      return 'grid-cols-5';
+    default:
+      return 'grid-cols-1';
+  }
+}
+
+export default function UserAppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [appointments, setAppointments] = useState<TAppointment[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [monthAppointments, setMonthAppointments] = useState<TAppointment[]>([]);
+  const [selectedAppointment, setSelectedAppointment] = useState<TAppointment | null>(null);
+
   const lawyerId = 'lawyer-1';
 
   const {
@@ -27,49 +65,96 @@ export default function LawyerAppointmentsPage() {
     role: 'lawyer',
     actorId: lawyerId,
   });
-  const { data: monthData, refetch: refetchMonth } = useAppointmentsByMonth({
+
+  const {
+    data: monthData,
+    refetch: refetchMonth,
+    isFetching: isFetchingMonth,
+  } = useAppointmentsByMonth({
     monthISO: getDateKey(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)),
     role: 'lawyer',
     actorId: lawyerId,
   });
-  const { approve, cancel } = useAppointmentActions();
+
+  const { cancel, remove, approve } = useAppointmentActions();
 
   useEffect(() => {
-    setLoading(isLoadingDay);
+    setLoading(isLoadingDay || isFetchingMonth);
     setError(errorDay ? (errorDay as Error).message : null);
-    setAppointments(dayData ?? []);
     setMonthAppointments(monthData ?? []);
-  }, [dayData, isLoadingDay, errorDay, monthData]);
+  }, [dayData, isLoadingDay, errorDay, monthData, isFetchingMonth]);
 
   useEffect(() => {
     refetchDay();
     refetchMonth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedDate]);
 
-  const handleApprove = async (apt: TAppointment) => {
-    try {
-      await approve.mutateAsync(apt.id);
-      await refetchDay();
-      await refetchMonth();
-      alert('Appointment approved ✅');
-    } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Failed to approve');
-    }
-  };
-
+  // Actions
   const handleCancel = async (apt: TAppointment) => {
     const reason = prompt('Reason for cancel:') ?? '';
     if (!confirm('Confirm cancel?')) return;
     try {
       await cancel.mutateAsync({ id: apt.id, reason });
-      await refetchDay();
-      await refetchMonth();
-      alert('Appointment canceled ❌');
+      await Promise.all([refetchDay(), refetchMonth()]);
+      alert('Appointment canceled');
     } catch (e: unknown) {
       alert(e instanceof Error ? e.message : 'Failed to cancel');
     }
   };
+
+  const handleDelete = async (apt: TAppointment) => {
+    if (!confirm('Confirm delete this appointment?')) return;
+    try {
+      await remove.mutateAsync(apt.id);
+      await refetchMonth();
+      alert('Appointment deleted');
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Failed to delete');
+    }
+  };
+
+  const handleApprove = async (apt: TAppointment) => {
+    if (!confirm('Approve this appointment?')) return;
+    try {
+      await approve.mutateAsync(apt.id);
+      await Promise.all([refetchDay(), refetchMonth()]);
+      alert('Appointment approved');
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Failed to approve');
+    }
+  };
+
+  // Week & days view
+  const startOfWindow = useMemo(() => {
+    const d = new Date(selectedDate);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, [selectedDate]);
+
+  const weekDays = useMemo(() => {
+    return Array.from({ length: 7 }, (_, i) => {
+      const dd = new Date(startOfWindow);
+      dd.setDate(startOfWindow.getDate() + i);
+      return dd;
+    });
+  }, [startOfWindow]);
+
+  const daysCount = useResponsiveDays();
+  const visibleDays = useMemo(() => weekDays.slice(0, daysCount), [weekDays, daysCount]);
+
+  const appointmentsByDay = useMemo(() => {
+    const byKey: Record<string, TAppointment[]> = {};
+    for (const a of monthAppointments) {
+      const d = new Date(a.startsAt);
+      const key = d.toDateString();
+      if (!byKey[key]) byKey[key] = [];
+      byKey[key].push(a);
+    }
+    Object.values(byKey).forEach((list) =>
+      list.sort((x, y) => new Date(x.startsAt).getTime() - new Date(y.startsAt).getTime()),
+    );
+    return byKey;
+  }, [monthAppointments]);
 
   return (
     <Layout>
@@ -78,112 +163,55 @@ export default function LawyerAppointmentsPage() {
         {selectedDate.toLocaleDateString()} · {monthAppointments.length} appointments this month
       </p>
 
-      <div className="flex gap-6">
-        {/* Calendar - fixed width */}
-        <div className="flex-shrink-0 w-[420px]">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Calendar */}
+        <div className="flex-shrink-0 w-full lg:w-[380px]">
           <div className="sticky top-4">
             <Calendar
               value={selectedDate}
               onChange={async (d) => {
                 setSelectedDate(d);
-                await refetchDay();
-                await refetchMonth();
               }}
-              onMonthChange={async () => {
-                await refetchMonth();
+              onMonthChange={async (newMonth) => {
+                // refetch month khi đổi tháng
+                setSelectedDate(newMonth);
               }}
               markedDates={monthAppointments.map((a) => getDateKey(new Date(a.startsAt)))}
             />
           </div>
         </div>
 
-        {/* Appointment Details - flexible */}
+        {/* Appointments grid */}
         <div className="flex-1">
-          <h2 className="mb-2 text-lg font-medium">
-            Appointments on {selectedDate.toLocaleDateString()}
-          </h2>
+          <h2 className="mb-2 text-lg font-medium">Appointments ({daysCount} days view)</h2>
 
           {loading && <p className="text-sm">Loading...</p>}
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          {!loading && !error && appointments.length === 0 && (
-            <div className="rounded border p-6 text-center text-gray-500 bg-white shadow-sm">
-              No appointments today
-            </div>
-          )}
-
-          <div
-            className={`grid gap-4 ${
-              appointments.length === 1 ? 'grid-cols-1' : 'sm:grid-cols-2 xl:grid-cols-3'
-            }`}
-          >
-            {appointments.map((a) => (
-              <div
-                key={a.id}
-                className={`rounded border p-3 shadow-sm bg-white flex flex-col ${
-                  appointments.length === 1 ? 'col-span-full' : ''
-                }`}
-              >
-                {/* Status */}
-                <div className="mb-1 text-sm text-gray-700 flex items-center gap-2">
-                  <span className="font-medium">Status:</span>
-                  {a.status === 'pending' && (
-                    <span className="inline-flex items-center rounded bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
-                      Pending
-                    </span>
-                  )}
-                  {a.status === 'approved' && (
-                    <span className="inline-flex items-center rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                      Approved
-                    </span>
-                  )}
-                  {a.status === 'canceled' && (
-                    <span className="inline-flex items-center rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
-                      Canceled
-                    </span>
-                  )}
-                  {a.status === 'rescheduled' && (
-                    <span className="inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                      Rescheduled
-                    </span>
-                  )}
-                </div>
-
-                {/* Time */}
-                <div className="mb-2 text-sm text-gray-700">
-                  {new Date(a.startsAt).toLocaleString()} -{' '}
-                  {new Date(a.endsAt).toLocaleTimeString()}
-                </div>
-
-                {/* Notes */}
-                {a.notes && <div className="mb-2 text-xs text-gray-600 italic">“{a.notes}”</div>}
-
-                {/* Actions */}
-                <div className="mt-auto flex gap-2">
-                  {a.status !== 'canceled' && (
-                    <button
-                      type="button"
-                      className="rounded bg-red-600 px-3 py-1.5 text-white hover:bg-red-700"
-                      onClick={() => handleCancel(a)}
-                    >
-                      Cancel
-                    </button>
-                  )}
-                  {a.status === 'pending' && (
-                    <button
-                      type="button"
-                      className="rounded bg-green-600 px-3 py-1.5 text-white hover:bg-green-700"
-                      onClick={() => handleApprove(a)}
-                    >
-                      Approve
-                    </button>
-                  )}
-                </div>
-              </div>
+          <div className={`grid gap-4 ${getGridColsClass(daysCount)}`}>
+            {visibleDays.map((d) => (
+              <AppointmentDetail
+                key={d.toDateString()}
+                date={d}
+                appointments={appointmentsByDay[d.toDateString()] ?? []}
+                onCancel={handleCancel}
+                onDelete={handleDelete}
+                onClick={(apt) => setSelectedAppointment(apt)}
+                className="cursor-pointer"
+              />
             ))}
           </div>
         </div>
       </div>
+
+      {/* Appointment detail dialog */}
+      <AppointmentDialog
+        appointment={selectedAppointment}
+        role="lawyer"
+        onClose={() => setSelectedAppointment(null)}
+        onApprove={handleApprove}
+        onCancel={handleCancel}
+      />
     </Layout>
   );
 }
