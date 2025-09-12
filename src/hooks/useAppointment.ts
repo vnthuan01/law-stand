@@ -54,5 +54,12 @@ export function useAppointmentActions() {
     },
   });
 
-  return { approve, cancel, reschedule, remove };
+  const finish = useMutation({
+    mutationFn: (id: string) => appointmentService.finishAppointment(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['appointments'] });
+    },
+  });
+
+  return { approve, cancel, reschedule, remove, finish };
 }

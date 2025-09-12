@@ -11,6 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface ServiceItem {
   id: string;
@@ -62,11 +63,6 @@ export default function ServicesSection() {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
-
-  const handleViewMore = useCallback(() => {
-    // Route exists as "/resources" in routes config
-    navigate('/resources');
-  }, [navigate]);
 
   const handleOpenDetail = useCallback((service: ServiceItem) => {
     setSelectedService(service);
@@ -126,38 +122,20 @@ export default function ServicesSection() {
                   <p className="text-gray-600 text-sm">{service.desc}</p>
                 </div>
                 <div className="w-full h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg mt-4"></div>
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    type="button"
-                    aria-label={`View details for ${service.title}`}
-                    onClick={() => handleOpenDetail(service)}
-                    className="px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
-                  >
-                    Detail
-                  </Button>
-                </div>
               </div>
             </motion.div>
           ))}
         </div>
 
         {/* View More Button */}
-        <div className="text-center mt-10">
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleViewMore}
-            aria-label="View more services"
-            className="inline-flex items-center px-8 py-3 bg-white border border-gray-200 
-               text-gray-700 font-medium rounded-full hover:bg-gray-50 
-               hover:border-gray-300 transition-all duration-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
-          >
-            View More
-          </motion.button>
-        </div>
+        <button
+          onClick={() => navigate('/resources')}
+          className={cn(
+            'mt-10 mx-auto flex justify-center items-center cursor-pointer px-8 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm',
+          )}
+        >
+          View More
+        </button>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent aria-describedby={undefined} className="sm:max-w-lg">

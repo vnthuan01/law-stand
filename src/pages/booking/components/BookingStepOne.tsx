@@ -75,7 +75,7 @@ export const BookingStepOne = ({
             selected={selectedDate}
             onSelect={setSelectedDate}
             disabled={{ before: new Date() }}
-            className="mt-2 rounded-md border p-3 bg-white text-primary shadow-sm h-auto md:h-[420px]"
+            className="mt-2 rounded-md border p-3 bg-white text-primary shadow-sm h-auto md:h-[420px] overflow-y-auto"
           />
         </div>
 

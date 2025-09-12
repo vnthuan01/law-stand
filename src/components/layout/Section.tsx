@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { motion, type Variants } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 // Container để stagger children
 const textContainer: Variants = {
@@ -30,6 +31,7 @@ const scaleUp: Variants = {
 };
 
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -111,6 +113,7 @@ const HeroSection: React.FC = () => {
               variant="orange"
               size="lg"
               className="mt-4 px-6 py-4 font-semibold rounded-lg text-sm max-w-xs mx-auto"
+              onClick={() => navigate('/booking')}
             >
               Book a Consultation
             </Button>
@@ -124,6 +127,7 @@ const HeroSection: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="hidden md:block mt-6"
+        onClick={() => navigate('/booking')}
       >
         <Button variant="orange" size="lg" className="px-8 py-5 font-semibold rounded-lg">
           Book a Consultation

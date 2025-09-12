@@ -1,8 +1,10 @@
 // components/CTASection.tsx
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 export default function CTASection() {
+  const navigate = useNavigate();
   return (
     <section className="py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 bg-black p-4 rounded-md">
@@ -27,6 +29,7 @@ export default function CTASection() {
                 variant="orange"
                 size="lg"
                 className="px-8 py-4 font-semibold self-start rounded-lg"
+                onClick={() => navigate('/booking')}
               >
                 Book a Consultation
               </Button>

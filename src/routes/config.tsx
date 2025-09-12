@@ -17,6 +17,7 @@ import BookingPage from '@/pages/booking/BookingPage';
 import UserAppointmentsPage from '@/pages/appointments/UserAppointmentsPage';
 import LawyerAppointmentsPage from '@/pages/appointments/LawyerAppointmentsPage';
 import ChatGPTLikePage from '@/pages/chatbot/ChatBotPage';
+import PricingPage from '@/pages/package/PremuimPage';
 
 export const routes = [
   //Public routes
@@ -30,7 +31,11 @@ export const routes = [
     element: <AboutPage />,
     isProtected: false,
   },
-
+  {
+    path: '/service-package',
+    element: <PricingPage />,
+    isProtected: false,
+  },
   //Resource Page
   //======================================
   {
