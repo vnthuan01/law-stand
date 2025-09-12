@@ -10,6 +10,7 @@ import {
   useAppointmentsByMonth,
 } from '@/hooks/useAppointment';
 import AppointmentDialog from './components/AppointmentShowDetail';
+import { toast } from 'sonner';
 
 // Hook responsive: chỉ 1, 3, 5
 function useResponsiveDays() {
@@ -90,9 +91,7 @@ export default function UserAppointmentsPage() {
   }, [selectedDate]);
 
   // Actions
-  const handleCancel = async (apt: TAppointment) => {
-    const reason = prompt('Reason for cancel:') ?? '';
-    if (!confirm('Confirm cancel?')) return;
+  const handleCancel = async (apt: TAppointment, reason: string) => {
     try {
       await cancel.mutateAsync({ id: apt.id, reason });
       await Promise.all([refetchDay(), refetchMonth()]);
@@ -113,27 +112,17 @@ export default function UserAppointmentsPage() {
     }
   };
 
-  const handleReschedule = async (apt: TAppointment) => {
-    const newDateStr = prompt('Enter new date (YYYY-MM-DD):');
-    const newTimeStr = prompt('Enter new time (HH:mm):');
-    if (!newDateStr || !newTimeStr) return;
-
-    const newStartsAt = new Date(`${newDateStr}T${newTimeStr}`);
-    if (isNaN(newStartsAt.getTime())) {
-      alert('Invalid date/time');
-      return;
-    }
-
+  const handleReschedule = async (apt: TAppointment, newDate: Date) => {
     try {
       await reschedule.mutateAsync({
         id: apt.id,
-        startsAtISO: newStartsAt.toISOString(),
-        reason: '',
+        startsAtISO: newDate.toISOString(),
+        reason: 'Rescheduled by user',
       });
       await Promise.all([refetchDay(), refetchMonth()]);
-      alert('Appointment rescheduled');
+      toast('Appointment rescheduled');
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Failed to reschedule');
+      toast(e instanceof Error ? e.message : 'Failed to reschedule');
     }
   };
 
@@ -207,7 +196,6 @@ export default function UserAppointmentsPage() {
                 key={d.toDateString()}
                 date={d}
                 appointments={appointmentsByDay[d.toDateString()] ?? []}
-                onCancel={handleCancel}
                 onDelete={handleDelete}
                 onClick={(apt) => setSelectedAppointment(apt)}
                 className="cursor-pointer"

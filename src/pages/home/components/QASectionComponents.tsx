@@ -9,8 +9,11 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const FAQSection = () => {
+  const navigate = useNavigate();
   const articles = [
     {
       id: 1,
@@ -122,20 +125,14 @@ const FAQSection = () => {
         </Carousel>
 
         {/* View More Button */}
-        <div className="text-center mt-10">
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center px-8 py-3 bg-white border border-gray-200 
-               text-gray-700 font-medium rounded-full hover:bg-gray-50 
-               hover:border-gray-300 transition-all duration-200 shadow-sm"
-          >
-            View More
-          </motion.button>
-        </div>
+        <button
+          onClick={() => navigate('/resources')}
+          className={cn(
+            'mt-10 mx-auto flex justify-center items-center cursor-pointer px-8 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm',
+          )}
+        >
+          View More
+        </button>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 // components/TestimonialsSection.tsx
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 export default function TestimonialsSection() {
   const testimonials = [
@@ -15,6 +16,7 @@ export default function TestimonialsSection() {
       text: `"Beyond solving immediate issues, Lawstand clients often mention how the platform gives them peace of mind..."`,
     },
   ];
+  const navigate = useNavigate();
 
   return (
     <section className="py-20 bg-white">
@@ -56,7 +58,12 @@ export default function TestimonialsSection() {
         </div>
 
         <div className="text-center">
-          <Button variant="orange" size="lg" className="px-8 py-3 font-semibold rounded-lg">
+          <Button
+            variant="orange"
+            size="lg"
+            className="px-8 py-3 font-semibold rounded-lg"
+            onClick={() => navigate('/booking')}
+          >
             Book a Consultation
           </Button>
         </div>

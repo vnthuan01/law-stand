@@ -19,6 +19,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { UserForm } from '@/hooks/useInformationForm';
+import { ArrowLeft } from 'lucide-react';
 
 export const BookingStepTwo = ({
   serviceId,
@@ -497,6 +498,7 @@ export const BookingStepTwo = ({
       selectedLocation,
       hostId: selectedHost?.id ?? null,
       hostName: selectedHost?.name ?? null,
+      selectedHost,
       userInfo,
     });
   };
@@ -634,6 +636,7 @@ export const BookingStepTwo = ({
       {/* Buttons */}
       <div className="flex justify-between gap-2 mt-4">
         <Button variant="outline" onClick={onBack}>
+          <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
         <Button

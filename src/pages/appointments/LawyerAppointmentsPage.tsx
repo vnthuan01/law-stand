@@ -76,7 +76,7 @@ export default function UserAppointmentsPage() {
     actorId: lawyerId,
   });
 
-  const { cancel, remove, approve } = useAppointmentActions();
+  const { cancel, remove, approve, finish } = useAppointmentActions();
 
   useEffect(() => {
     setLoading(isLoadingDay || isFetchingMonth);
@@ -90,9 +90,7 @@ export default function UserAppointmentsPage() {
   }, [selectedDate]);
 
   // Actions
-  const handleCancel = async (apt: TAppointment) => {
-    const reason = prompt('Reason for cancel:') ?? '';
-    if (!confirm('Confirm cancel?')) return;
+  const handleCancel = async (apt: TAppointment, reason: string) => {
     try {
       await cancel.mutateAsync({ id: apt.id, reason });
       await Promise.all([refetchDay(), refetchMonth()]);
@@ -121,6 +119,17 @@ export default function UserAppointmentsPage() {
       alert('Appointment approved');
     } catch (e: unknown) {
       alert(e instanceof Error ? e.message : 'Failed to approve');
+    }
+  };
+
+  const handleFinish = async (apt: TAppointment) => {
+    if (!confirm('Mark this appointment as finished?')) return;
+    try {
+      await finish.mutateAsync(apt.id);
+      await Promise.all([refetchDay(), refetchMonth()]);
+      alert('Appointment marked as finished');
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : 'Failed to finish appointment');
     }
   };
 
@@ -194,7 +203,6 @@ export default function UserAppointmentsPage() {
                 key={d.toDateString()}
                 date={d}
                 appointments={appointmentsByDay[d.toDateString()] ?? []}
-                onCancel={handleCancel}
                 onDelete={handleDelete}
                 onClick={(apt) => setSelectedAppointment(apt)}
                 className="cursor-pointer"
@@ -211,6 +219,8 @@ export default function UserAppointmentsPage() {
         onClose={() => setSelectedAppointment(null)}
         onApprove={handleApprove}
         onCancel={handleCancel}
+        onFinish={handleFinish}
+        onDelete={handleDelete}
       />
     </Layout>
   );
