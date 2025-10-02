@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { motion, type Variants } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
+import HeroImage from '@/assets/images/img7.jpg';
 // Container để stagger children
 const textContainer: Variants = {
   hidden: { opacity: 0 },
@@ -101,7 +101,7 @@ const HeroSection: React.FC = () => {
         >
           <div className="rounded-2xl overflow-hidden shadow-xl w-full">
             <img
-              src="/api/placeholder/600/400"
+              src={HeroImage}
               alt="Legal gavel and books"
               className="w-full h-64 sm:h-80 md:h-96 object-cover"
             />

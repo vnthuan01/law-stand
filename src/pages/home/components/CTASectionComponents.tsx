@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import CTAImage from '@/assets/images/img2.jpg';
 
 export default function CTASection() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function CTASection() {
                 viewport={{ once: true }}
                 className="text-orange-600 text-8xl"
               >
-                Image here
+                <img src={CTAImage} alt="CTA Image" className="w-full h-full object-cover" />
               </motion.div>
             </div>
           </div>

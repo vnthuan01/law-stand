@@ -12,12 +12,19 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import ServiceImage01 from '@/assets/images/workpermits.jpg';
+import ServiceImage02 from '@/assets/images/inheritance.png';
+import ServiceImage03 from '@/assets/images/marriage.jpg';
+import ServiceImage04 from '@/assets/images/tax.jpeg';
+import ServiceImage05 from '@/assets/images/document.jpg';
+import ServiceImage06 from '@/assets/images/consulting.jpg';
 
 interface ServiceItem {
   id: string;
   number: string;
   title: string;
   desc: string;
+  image: string;
 }
 
 const services: ServiceItem[] = [
@@ -26,36 +33,42 @@ const services: ServiceItem[] = [
     number: '01',
     title: 'Immigration & Work Permits',
     desc: 'Expert guidance through visa and work permit processes',
+    image: ServiceImage01,
   },
   {
     id: '02',
     number: '02',
     title: 'Property & Inheritance Law',
     desc: 'Secure your property rights and inheritance matters',
+    image: ServiceImage02,
   },
   {
     id: '03',
     number: '03',
     title: 'Family & Marriage Law',
     desc: 'Professional support for family legal matters',
+    image: ServiceImage03,
   },
   {
     id: '04',
     number: '04',
     title: 'Business Setup & Tax',
     desc: 'Complete business registration and tax compliance',
+    image: ServiceImage04,
   },
   {
     id: '05',
     number: '05',
     title: 'Document Legalization & Notarization',
     desc: 'Official document authentication services',
+    image: ServiceImage05,
   },
   {
     id: '06',
     number: '06',
     title: 'Dispute Resolution & Investment Consulting',
     desc: 'Legal dispute resolution and investment advice',
+    image: ServiceImage06,
   },
 ];
 
@@ -121,7 +134,13 @@ export default function ServicesSection() {
                   </h3>
                   <p className="text-gray-600 text-sm">{service.desc}</p>
                 </div>
-                <div className="w-full h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg mt-4"></div>
+                <div className="aspect-[4/3] w-full mt-4">
+                  <img
+                    src={service.image}
+                    alt="Service Image"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
               </div>
             </motion.div>
           ))}

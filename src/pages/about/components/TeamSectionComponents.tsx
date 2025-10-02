@@ -35,7 +35,7 @@ const TEAM_MEMBERS = [
     name: 'Lauren Thomas',
     role: 'Attorney',
     photo:
-      'https://images.unsplash.com/photo-1544005316-04ce1f7c219c?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     linkedin: '#',
     email: 'lauren@example.com',
   },

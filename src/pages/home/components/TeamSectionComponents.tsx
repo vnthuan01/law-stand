@@ -6,7 +6,8 @@ const ProfessionalSection = () => {
     {
       id: 1,
       name: 'Sarah Johnson',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b587?...',
+      image:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     },
     {
       id: 2,
