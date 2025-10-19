@@ -20,16 +20,22 @@ import {
   AccordionMenuLabel,
 } from '@/components/ui/accordion-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
-  const [lang, setLang] = useState<'EN' | 'VI'>('EN');
+  const { t, i18n } = useTranslation();
+  const [lang, setLang] = useState<'EN' | 'VI'>(i18n.language === 'vi' ? 'VI' : 'EN');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const toggleLang = () => setLang(lang === 'EN' ? 'VI' : 'EN');
+  const toggleLang = () => {
+    const newLang = lang === 'EN' ? 'vi' : 'en';
+    setLang(newLang === 'vi' ? 'VI' : 'EN');
+    i18n.changeLanguage(newLang);
+  };
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // Close dropdown if click outside
@@ -64,22 +70,22 @@ const Header: React.FC = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/">Home</Link>
+                  <Link to="/">{t('home')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/about">About Us</Link>
+                  <Link to="/about">{t('about_us')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/resources">Resources</Link>
+                  <Link to="/resources">{t('resources')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/contact">Contact</Link>
+                  <Link to="/contact">{t('contact')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -102,7 +108,7 @@ const Header: React.FC = () => {
                 <div className="absolute top-full mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                   <AccordionMenu type="single" collapsible>
                     <AccordionMenuLabel className="px-4 py-2 text-sm font-semibold">
-                      My Account
+                      {t('my_account')}
                     </AccordionMenuLabel>
                     <AccordionMenuGroup>
                       <AccordionMenuItem
@@ -114,7 +120,7 @@ const Header: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2">
                           <User className="w-4 h-4" />
-                          <span>Profile</span>
+                          <span>{t('profile')}</span>
                         </div>
                       </AccordionMenuItem>
                       <AccordionMenuItem
@@ -126,7 +132,7 @@ const Header: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2">
                           <Settings className="w-4 h-4" />
-                          <span>Settings</span>
+                          <span>{t('settings')}</span>
                         </div>
                       </AccordionMenuItem>
                       <AccordionMenuItem
@@ -138,7 +144,7 @@ const Header: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2 text-red-600 font-semibold">
                           <LogOut className="w-4 h-4" />
-                          <span>Logout</span>
+                          <span>{t('logout')}</span>
                         </div>
                       </AccordionMenuItem>
                     </AccordionMenuGroup>
@@ -164,7 +170,7 @@ const Header: React.FC = () => {
                 className="px-6 py-2 rounded-lg"
                 onClick={() => navigate('/register')}
               >
-                Register
+                {t('register')}
               </Button>
               <Button
                 variant="orange"
@@ -172,7 +178,7 @@ const Header: React.FC = () => {
                 className="px-6 py-2 rounded-lg"
                 onClick={() => navigate('/login')}
               >
-                Login
+                {t('login')}
               </Button>
             </>
           )}
@@ -212,13 +218,13 @@ const Header: React.FC = () => {
             {/* Navigation Links */}
             <div className="flex-1 px-6 py-6 space-y-4">
               <Link to="/about" className="block text-lg font-medium text-gray-700">
-                About Us
+                {t('about_us')}
               </Link>
               <Link to="/resources" className="block text-lg font-medium text-gray-700">
-                Resources
+                {t('resources')}
               </Link>
               <Link to="/contact" className="block text-lg font-medium text-gray-700">
-                Contact
+                {t('contact')}
               </Link>
             </div>
 
@@ -251,7 +257,7 @@ const Header: React.FC = () => {
                     className="w-full rounded-lg"
                     onClick={() => navigate('/register')}
                   >
-                    Register
+                    {t('register')}
                   </Button>
                   <Button
                     variant="orange"
@@ -259,7 +265,7 @@ const Header: React.FC = () => {
                     className="w-full rounded-lg"
                     onClick={() => navigate('/login')}
                   >
-                    Login
+                    {t('login')}
                   </Button>
                 </div>
               )}
