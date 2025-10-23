@@ -89,7 +89,10 @@
     "register_success": "Registration successful!",
     "register_failed": "Registration failed",
     "enter_confirm_password": "Enter your confirm password",
-    "create_account": "Create Account"
+    "create_account": "Create Account",
+    "invalid_username_or_password": "Invalid username or password",
+    "login_failed": "Login failed",
+    "login_success": "Login successful"
   },
   "profile": {
     "title": "Profile",
@@ -197,6 +200,15 @@
     "services_title": "Legal Main services.",
     "services_subtitle": "Complete legal solutions for your needs",
     "service_detail": "Service Detail",
+    "subscription": "Subscription",
+    "subscription_plans": "Plans",
+    "subscription_plans_desc": "Choose the plan that suits you best. Start for free and upgrade when you're ready.",
+    "subscription_plans_free": "Free",
+    "subscription_plans_standard": "Standard",
+    "subscription_plans_professional": "Professional",
+    "subscription_plans_free_desc": "Get access to basic AI legal Q&A",
+    "subscription_plans_standard_desc": "Get access to basic AI legal Q&A and limited lawyer booking",
+    "subscription_plans_professional_desc": "Get access to basic AI legal Q&A and limited lawyer booking and exclusive legal document templates",
     "service_detail_desc": "We provide comprehensive consultation tailored to your needs. Choose an action below to continue.",
     "booking_appointment": "Booking Appointment",
     "view_more": "View More",

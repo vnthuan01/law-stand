@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Plan = {
   name: string;
@@ -43,17 +44,20 @@ const plans: Plan[] = [
 ];
 
 export default function PricingPage() {
+  const { t } = useTranslation();
   const handleBuyNow = () => {
     console.log('Buy Now');
   };
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        <span className="text-3xl font-bold text-gray-800 mb-6 text-orange-500">Subscription</span>{' '}
-        Plans
+        <span className="text-3xl font-bold text-gray-800 mb-6 text-orange-500">
+          {t('home.subscription')}
+        </span>{' '}
+        {t('home.subscription_plans')}
       </h1>
       <p className="text-gray-600 mb-12 text-center max-w-lg">
-        Choose the plan that suits you best. Start for free and upgrade when you're ready.
+        {t('home.subscription_plans_desc')}
       </p>
 
       <div className="grid md:grid-cols-3 gap-8 w-full max-w-5xl">

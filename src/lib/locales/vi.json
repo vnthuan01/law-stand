@@ -89,8 +89,12 @@
     "register_success": "Đăng ký thành công!",
     "register_failed": "Đăng ký thất bại",
     "enter_confirm_password": "Nhập xác nhận mật khẩu",
-    "create_account": "Tạo tài khoản"
+    "create_account": "Tạo tài khoản",
+    "invalid_username_or_password": "Tên đăng nhập hoặc mật khẩu không hợp lệ",
+    "login_failed": "Đăng nhập thất bại",
+    "login_success": "Đăng nhập thành công"
   },
+
   "profile": {
     "title": "Hồ sơ",
     "user_info": "Thông tin người dùng",
@@ -195,6 +199,15 @@
     "search_placeholder": "Tìm kiếm luật cần thiết",
     "book_consultation": "Đặt lịch tư vấn",
     "services_title": "Dịch vụ pháp lý chính.",
+    "subscription": "Đăng ký",
+    "subscription_plans": "Gói ",
+    "subscription_plans_desc": "Chọn gói đăng ký phù hợp nhất. Bắt đầu miễn phí và nâng cấp khi bạn sẵn sàng.",
+    "subscription_plans_free": "Miễn phí",
+    "subscription_plans_standard": "Cơ bản",
+    "subscription_plans_professional": "Nâng cao",
+    "subscription_plans_free_desc": "Truy cập cơ bản AI tư vấn pháp lý",
+    "subscription_plans_standard_desc": "Truy cập cơ bản AI tư vấn pháp lý và đặt lịch luật sư có giới hạn",
+    "subscription_plans_professional_desc": "Truy cập cơ bản AI tư vấn pháp lý và đặt lịch luật sư có giới hạn và mẫu văn bản pháp lý độc quyền",
     "services_subtitle": "Giải pháp pháp lý toàn diện cho nhu cầu của bạn",
     "service_detail": "Chi tiết dịch vụ",
     "service_detail_desc": "Chúng tôi cung cấp tư vấn toàn diện phù hợp với nhu cầu của bạn. Chọn hành động bên dưới để tiếp tục.",
