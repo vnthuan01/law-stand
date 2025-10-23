@@ -1,9 +1,11 @@
 // components/TestimonialsSection.tsx
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 export default function TestimonialsSection() {
+  const { t } = useTranslation();
   const testimonials = [
     {
       name: 'Anthony Williams',
@@ -29,9 +31,9 @@ export default function TestimonialsSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">Response</span> From guests like you.
+            {t('home.testimonials_title')}
           </h2>
-          <p className="text-gray-600">Real experiences from our clients</p>
+          <p className="text-gray-600">{t('home.testimonials_subtitle')}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
@@ -64,7 +66,7 @@ export default function TestimonialsSection() {
             className="px-8 py-3 font-semibold rounded-lg"
             onClick={() => navigate('/booking')}
           >
-            Book a Consultation
+            {t('home.book_consultation')}
           </Button>
         </div>
       </div>

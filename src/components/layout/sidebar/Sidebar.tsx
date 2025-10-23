@@ -23,6 +23,10 @@ interface AppSidebarProps {
 
 export function AppSidebar({ items }: AppSidebarProps) {
   const navigate = useNavigate();
+
+  // Safety check: ensure items is an array
+  const menuItems = Array.isArray(items) ? items : [];
+
   return (
     <Sidebar>
       {/* Header */}
@@ -48,7 +52,7 @@ export function AppSidebar({ items }: AppSidebarProps) {
           <SidebarGroupLabel>Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {menuItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   {item.children ? (
                     <Collapsible defaultOpen className="w-full">

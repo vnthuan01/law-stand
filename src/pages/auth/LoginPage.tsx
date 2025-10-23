@@ -1,6 +1,7 @@
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,25 +10,30 @@ import AuthLayout from './layout';
 import { useAuth } from '@/hooks/useAuth';
 import logo from '@/assets/law-firm-logo.png';
 import background from '@/assets/background-auth-layout.png';
+
 function LoginPage() {
+  const { t } = useTranslation();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState('');
+  const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
-  // const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     try {
-      await login({ us: username, pw: password });
-
-      // navigate('/');
-    } catch (err: unknown) {
-      setError((err as Error).message || 'Invalid username or password');
+      await login({ emailOrPhone, password });
+      navigate('/');
+    } catch (err: any) {
+      if (err?.response?.status === 401) {
+        setError(t('auth.invalid_username_or_password'));
+      } else {
+        setError(t('auth.login_failed'));
+      }
     }
   };
 
@@ -39,13 +45,12 @@ function LoginPage() {
             <img
               src={logo}
               alt="Logo Lawstand"
-              className="h-14 w-14 cover-contain border rounded-full bg-white cursor-pọinter"
+              className="h-14 w-14 cover-contain border rounded-full bg-white cursor-pointer"
               onClick={() => navigate('/')}
             />
-            <h1 className="text-4xl font-bold text-center text-black">Login</h1>
-            <h4 className="text-sm text-center text-gray-500">
-              Welcome back! Please enter your details.
-            </h4>
+            <h1 className="text-4xl font-bold text-center text-black">{t('common.login')}</h1>
+            <h4 className="text-sm text-center text-gray-500">{t('auth.login_welcome')}</h4>
+
             <Button
               variant="outline"
               className="w-full h-[50px] rounded-lg border border-[#dadce0] bg-white hover:bg-gray-50 flex items-center justify-center gap-3 shadow-sm"
@@ -77,32 +82,39 @@ function LoginPage() {
       C43.9,22,43.8,21.3,43.6,20.5z"
                 />
               </svg>
-              <span className="text-sm font-medium text-gray-700">Sign up with Google</span>
+              <span className="text-sm font-medium text-gray-700">
+                {t('auth.sign_in_with_google')}
+              </span>
             </Button>
+
             {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
+
             <div className="relative w-full flex items-center">
               <div className="w-full h-px bg-[#dadce0]" />
               <span className="absolute left-1/2 -translate-x-1/2 bg-white px-2 text-base text-[#2f1c6a]">
-                or
+                {t('auth.or')}
               </span>
             </div>
+
             <div className="w-full flex flex-col gap-1">
-              <Label className="text-sm text-[#6d7081]">Username</Label>
+              <Label className="text-sm text-[#6d7081]">
+                {t('common.email')} / {t('common.phone')}
+              </Label>
               <Input
                 type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder={`${t('auth.enter_email')} / ${t('common.phone')}`}
+                value={emailOrPhone}
+                onChange={(e) => setEmailOrPhone(e.target.value)}
                 className="rounded-lg border border-[#dadce0] focus:border-2 focus:border-[#101010] py-6"
               />
             </div>
 
             <div className="w-full flex flex-col gap-1">
-              <Label className="text-sm text-[#6d7081]">Password</Label>
+              <Label className="text-sm text-[#6d7081]">{t('auth.password')}</Label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder={t('auth.enter_password')}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="rounded-lg border border-[#dadce0] pr-10 py-6"
@@ -110,13 +122,13 @@ function LoginPage() {
 
                 {showPassword ? (
                   <EyeOffIcon
-                    aria-label="Hide password"
+                    aria-label={t('auth.hide_password')}
                     onClick={() => setShowPassword(false)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 cursor-pointer"
                   />
                 ) : (
                   <EyeIcon
-                    aria-label="Show password"
+                    aria-label={t('auth.show_password')}
                     onClick={() => setShowPassword(true)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 cursor-pointer"
                   />
@@ -128,13 +140,13 @@ function LoginPage() {
               type="submit"
               className="w-full h-[50px] bg-[#ef4f23] rounded-lg font-bold text-white hover:bg-[#ef4f23]/90"
             >
-              Login
+              {t('common.login')}
             </Button>
 
             <p className="text-base text-center">
-              <span className="italic">Don&apos;t have an account? </span>
+              <span className="italic">{t('auth.dont_have_account')} </span>
               <Link to="/register" className="font-extrabold italic text-[#ef4f23]">
-                Register
+                {t('common.register')}
               </Link>
             </p>
           </form>

@@ -1,17 +1,17 @@
 import { Clock, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
-import { type TAppointment } from '@/services/appointmentService';
+import { type AppointmentDetail } from '@/services/appointmentService';
 
 interface PlanningScheduleProps {
-  appointment: TAppointment;
+  appointment: AppointmentDetail;
 }
 
-const getTimelineItem = (appointment: TAppointment) => {
-  const startTime = new Date(appointment.startsAt);
-  const endTime = new Date(appointment.endsAt);
+const getTimelineItem = (appointment: AppointmentDetail) => {
+  const startTime = new Date(appointment.slot.startTime);
+  const endTime = new Date(appointment.slot.endTime);
   const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
 
   // Mock data for lawyer
-  const lawyer = (appointment as any).lawyer ?? { name: 'Luật sư B' };
+  const lawyer = appointment.slot.lawyer;
 
   const timelineItems = [
     {
@@ -25,14 +25,14 @@ const getTimelineItem = (appointment: TAppointment) => {
     {
       id: 2,
       icon:
-        appointment.status === 'approved' ? (
+        appointment.status === 'Confirmed' ? (
           <CheckCircle className="h-5 w-5 text-green-600" />
-        ) : appointment.status === 'cancelled' ? (
+        ) : appointment.status === 'Cancelled' ? (
           <XCircle className="h-5 w-5 text-red-600" />
         ) : (
           <AlertCircle className="h-5 w-5 text-yellow-600" />
         ),
-      title: `Meeting with ${lawyer.name}`,
+      title: `Meeting with ${lawyer.fullName}`,
       time: `${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`,
       status: appointment.status,
       description: `Duration: ${duration} minutes`,
@@ -40,16 +40,16 @@ const getTimelineItem = (appointment: TAppointment) => {
     {
       id: 3,
       icon:
-        appointment.status === 'approved' ? (
+        appointment.status === 'Confirmed' ? (
           <Clock className="h-5 w-5 text-gray-400" />
         ) : (
           <XCircle className="h-5 w-5 text-gray-400" />
         ),
-      title: appointment.status === 'approved' ? 'Meeting in progress' : 'Meeting cancelled',
-      time: appointment.status === 'approved' ? 'Upcoming' : 'Cancelled',
-      status: appointment.status === 'approved' ? 'upcoming' : 'cancelled',
+      title: appointment.status === 'Confirmed' ? 'Meeting in progress' : 'Meeting cancelled',
+      time: appointment.status === 'Confirmed' ? 'Upcoming' : 'Cancelled',
+      status: appointment.status === 'Confirmed' ? 'upcoming' : 'cancelled',
       description:
-        appointment.status === 'approved'
+        appointment.status === 'Confirmed'
           ? 'Waiting for meeting to start'
           : 'This meeting has been cancelled',
     },

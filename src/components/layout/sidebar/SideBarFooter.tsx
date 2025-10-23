@@ -31,15 +31,21 @@ export default function SidebarFooterMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex w-full items-center text-white gap-2 px-2 py-1 bg-orange-500 hover:bg-orange-300 rounded-md cursor-pointer">
-            <img
-              src={user?.avatar || '/avatar.png'}
-              alt="User avatar"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
+            {user?.avatar ? (
+              <img
+                src={user.avatar}
+                alt="User avatar"
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold uppercase">
+                {user?.fullName ? user.fullName.trim().charAt(0) : 'U'}
+              </div>
+            )}
             <div className="flex flex-col text-sm leading-tight text-left">
-              <span className="font-medium">{user?.name || "User's Name"}</span>
+              <span className="font-medium">{user?.fullName || "User's Name"}</span>
               <span className="text-xs opacity-60">{user?.email || 'm@example.com'}</span>
             </div>
             <ChevronDown className="ml-auto h-4 w-4 opacity-60" />

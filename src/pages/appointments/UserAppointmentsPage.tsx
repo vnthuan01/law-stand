@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Calendar from '@/pages/appointments/components/calendar';
-import { type TAppointment } from '@/services/appointmentService';
+import { type MyAppointment } from '@/services/appointmentService';
 import { getDateKey } from '@/lib/utils';
 import Layout from '@/components/layout/UserLayout';
-import AppointmentDetail from '@/pages/appointments/components/AppointmentShowCard';
-import {
-  useAppointmentActions,
-  useAppointmentsByDate,
-  useAppointmentsByMonth,
-} from '@/hooks/useAppointment';
+import AppointmentShowCard from '@/pages/appointments/components/AppointmentShowCard';
+import { useMyAppointments, useAppointments, useAppointmentDetail } from '@/hooks/useAppointment';
 import AppointmentDialog from './components/AppointmentShowDetail';
 import { toast } from 'sonner';
 
@@ -48,85 +45,59 @@ function getGridColsClass(daysCount: number) {
 }
 
 export default function UserAppointmentsPage() {
+  const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [monthAppointments, setMonthAppointments] = useState<TAppointment[]>([]);
-  const [selectedAppointment, setSelectedAppointment] = useState<TAppointment | null>(null);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
-  const userId = 'user-1';
+  // Fetch my appointments
+  const { data: appointments, isLoading, error, refetch } = useMyAppointments();
 
-  const {
-    data: dayData,
-    isLoading: isLoadingDay,
-    error: errorDay,
-    refetch: refetchDay,
-  } = useAppointmentsByDate({
-    dateISO: getDateKey(selectedDate),
-    role: 'user',
-    actorId: userId,
-  });
+  // Fetch full appointment detail when selected
+  const { data: selectedAppointment } = useAppointmentDetail(selectedAppointmentId || '');
 
-  const {
-    data: monthData,
-    refetch: refetchMonth,
-    isFetching: isFetchingMonth,
-  } = useAppointmentsByMonth({
-    monthISO: getDateKey(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)),
-    role: 'user',
-    actorId: userId,
-  });
-
-  const { cancel, remove, reschedule } = useAppointmentActions();
-
-  useEffect(() => {
-    setLoading(isLoadingDay || isFetchingMonth);
-    setError(errorDay ? (errorDay as Error).message : null);
-    setMonthAppointments(monthData ?? []);
-  }, [dayData, isLoadingDay, errorDay, monthData, isFetchingMonth]);
-
-  useEffect(() => {
-    refetchDay();
-    refetchMonth();
-  }, [selectedDate]);
+  const { cancel } = useAppointments();
 
   // Actions
-  const handleCancel = async (apt: TAppointment, reason: string) => {
+  const handleCancel = async (apt: MyAppointment) => {
+    if (!confirm(t('appointments.cancel_confirm'))) return;
     try {
-      await cancel.mutateAsync({ id: apt.id, reason });
-      await Promise.all([refetchDay(), refetchMonth()]);
-      alert('Appointment canceled');
+      await cancel(apt.id);
+      await refetch();
+      toast.success(t('appointments.appointment_cancelled'));
     } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Failed to cancel');
+      toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
     }
   };
 
-  const handleDelete = async (apt: TAppointment) => {
-    if (!confirm('Confirm delete this appointment?')) return;
-    try {
-      await remove.mutateAsync(apt.id);
-      await refetchMonth();
-      alert('Appointment deleted');
-    } catch (e: unknown) {
-      alert(e instanceof Error ? e.message : 'Failed to delete');
-    }
-  };
+  // Filter appointments by selected month
+  const monthAppointments = useMemo(() => {
+    if (!appointments) return [];
+    const month = selectedDate.getMonth();
+    const year = selectedDate.getFullYear();
+    return appointments.filter((apt) => {
+      const aptDate = new Date(apt.date);
+      return aptDate.getMonth() === month && aptDate.getFullYear() === year;
+    });
+  }, [appointments, selectedDate]);
 
-  const handleReschedule = async (apt: TAppointment, newDate: Date) => {
-    try {
-      await reschedule.mutateAsync({
-        id: apt.id,
-        startsAtISO: newDate.toISOString(),
-        reason: 'Rescheduled by user',
-      });
-      await Promise.all([refetchDay(), refetchMonth()]);
-      toast('Appointment rescheduled');
-    } catch (e: unknown) {
-      toast(e instanceof Error ? e.message : 'Failed to reschedule');
+  // Group appointments by day for calendar view
+  const appointmentsByDay = useMemo(() => {
+    const byKey: Record<string, MyAppointment[]> = {};
+    for (const apt of monthAppointments) {
+      if (!byKey[apt.date]) byKey[apt.date] = [];
+      byKey[apt.date].push(apt);
     }
-  };
+    Object.values(byKey).forEach((list) =>
+      list.sort((x, y) => {
+        const timeA = new Date(`${x.date} ${x.startTime}`).getTime();
+        const timeB = new Date(`${y.date} ${y.startTime}`).getTime();
+        return timeA - timeB;
+      }),
+    );
+    return byKey;
+  }, [monthAppointments]);
 
-  // Week & days view
+  const daysCount = useResponsiveDays();
   const startOfWindow = useMemo(() => {
     const d = new Date(selectedDate);
     d.setHours(0, 0, 0, 0);
@@ -141,28 +112,14 @@ export default function UserAppointmentsPage() {
     });
   }, [startOfWindow]);
 
-  const daysCount = useResponsiveDays();
   const visibleDays = useMemo(() => weekDays.slice(0, daysCount), [weekDays, daysCount]);
-
-  const appointmentsByDay = useMemo(() => {
-    const byKey: Record<string, TAppointment[]> = {};
-    for (const a of monthAppointments) {
-      const d = new Date(a.startsAt);
-      const key = d.toDateString();
-      if (!byKey[key]) byKey[key] = [];
-      byKey[key].push(a);
-    }
-    Object.values(byKey).forEach((list) =>
-      list.sort((x, y) => new Date(x.startsAt).getTime() - new Date(y.startsAt).getTime()),
-    );
-    return byKey;
-  }, [monthAppointments]);
 
   return (
     <Layout>
-      <h1 className="mb-1 text-2xl font-semibold">My Appointments</h1>
+      <h1 className="mb-1 text-2xl font-semibold">{t('appointments.my_appointments')}</h1>
       <p className="mb-4 text-sm text-gray-600">
-        {selectedDate.toLocaleDateString()} · {monthAppointments.length} appointments this month
+        {selectedDate.toLocaleDateString()} · {monthAppointments.length}{' '}
+        {t('appointments.appointments_this_month')}
       </p>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -171,48 +128,50 @@ export default function UserAppointmentsPage() {
           <div className="sticky top-4">
             <Calendar
               value={selectedDate}
-              onChange={async (d) => {
-                setSelectedDate(d);
-              }}
-              onMonthChange={async (newMonth) => {
-                // refetch month khi đổi tháng
-                setSelectedDate(newMonth);
-              }}
-              markedDates={monthAppointments.map((a) => getDateKey(new Date(a.startsAt)))}
+              onChange={(d) => setSelectedDate(d)}
+              onMonthChange={(newMonth) => setSelectedDate(newMonth)}
+              markedDates={monthAppointments.map((a) => a.date)}
             />
           </div>
         </div>
 
         {/* Appointments grid */}
         <div className="flex-1">
-          <h2 className="mb-2 text-lg font-medium">Appointments ({daysCount} days view)</h2>
+          <h2 className="mb-2 text-lg font-medium">
+            {t('appointments.title')} ({daysCount} {t('appointments.days_view')})
+          </h2>
 
-          {loading && <p className="text-sm">Loading...</p>}
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {isLoading && <p className="text-sm">{t('common.loading')}</p>}
+          {error && <p className="text-sm text-red-600">{t('appointments.error_loading')}</p>}
 
           <div className={`grid gap-4 ${getGridColsClass(daysCount)}`}>
-            {visibleDays.map((d) => (
-              <AppointmentDetail
-                key={d.toDateString()}
-                date={d}
-                appointments={appointmentsByDay[d.toDateString()] ?? []}
-                onDelete={handleDelete}
-                onClick={(apt) => setSelectedAppointment(apt)}
-                className="cursor-pointer"
-              />
-            ))}
+            {visibleDays.map((d) => {
+              const dateKey = getDateKey(d);
+              const dayAppts = appointmentsByDay[dateKey] ?? [];
+              return (
+                <AppointmentShowCard
+                  key={d.toDateString()}
+                  date={d}
+                  appointments={dayAppts}
+                  onDelete={handleCancel}
+                  onClick={(apt) => setSelectedAppointmentId(apt.id)}
+                  className="cursor-pointer"
+                />
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Appointment detail dialog */}
       <AppointmentDialog
-        appointment={selectedAppointment}
-        role="user"
-        onClose={() => setSelectedAppointment(null)}
-        onReschedule={handleReschedule}
-        onCancel={handleCancel}
-        onDelete={handleDelete}
+        appointment={selectedAppointment || null}
+        role="User"
+        onClose={() => setSelectedAppointmentId(null)}
+        onCancel={async (apt) => {
+          await handleCancel(apt as unknown as MyAppointment);
+          setSelectedAppointmentId(null);
+        }}
       />
     </Layout>
   );

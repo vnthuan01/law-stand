@@ -11,30 +11,32 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useLocation, Link } from 'react-router-dom';
 import { menuConfig } from './sidebar/MenuItemConfig';
-import type { UserRole } from '@/enums/UserRole';
-
-const userRole: UserRole = 'customer';
+import { useAuth } from '@/hooks/useAuth';
+import { UserRole } from '@/enums/UserRole';
 
 // Role prefix mapping (có thể mở rộng thêm nếu sau này có role khác)
-const rolePrefixMap: Record<UserRole, string> = {
+const rolePrefixMap: Record<string, string> = {
   staff: 'profile',
   admin: 'dashboard',
-  customer: 'profile',
+  user: 'profile',
   lawyer: 'profile',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { user } = useAuth();
 
   // Tách pathname
   const pathnames = location.pathname.split('/').filter(Boolean);
 
   // Nếu có role trong path (vd: /staff/...) thì thay bằng route thực tế
-  if (pathnames[0] && rolePrefixMap[pathnames[0] as UserRole]) {
-    pathnames[0] = rolePrefixMap[pathnames[0] as UserRole];
+  if (pathnames[0] && rolePrefixMap[pathnames[0]]) {
+    pathnames[0] = rolePrefixMap[pathnames[0]];
   }
 
-  const menuItems = menuConfig[userRole];
+  // Get menu items based on user role, fallback to user if no role
+  const userRole = user?.role || UserRole.User;
+  const menuItems = menuConfig[userRole] || menuConfig[UserRole.User];
 
   return (
     <SidebarProvider defaultOpen>

@@ -7,6 +7,8 @@ import { UserRole } from '@/enums/UserRole';
 import AddServicePage from '../pages/user/staff/AddServicePage';
 import EditServicePage from '@/pages/user/staff/EditService';
 import CustomerPage from '@/pages/user/ProfilePage';
+import ServiceManagement from '@/pages/user/admin/ServiceManagement';
+import SlotManagement from '@/pages/user/admin/SlotManagement';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import ResourcesPage from '@/pages/resources/ResourcesPage';
 import AllLastestUpdateLaw from '@/pages/resources/all/AllLastestUpdateLaw';
@@ -71,51 +73,50 @@ export const routes = [
     isProtected: false,
   },
   //For all users is authenticated
-  // {
-  //   path: '/profile',
-  //   element: <ProfilePage />,
-  //   isProtected: true,
-  //   roles: [UserRole.Admin, UserRole.Customer, UserRole.Lawyer],
-  // },
   {
     path: '/profile',
     element: <ProfilePage />,
-    isProtected: false,
+    isProtected: true,
+    roles: [UserRole.Admin, UserRole.User, UserRole.Lawyer],
   },
   {
     path: '/chat-with-ai-supported',
     element: <ChatGPTLikePage />,
-    isProtected: false,
+    isProtected: true,
+    roles: [UserRole.User],
   },
 
   //Appointments Routes
   {
-    path: '/appointments/history',
-    element: <ProfilePage />,
-    isProtected: false,
-  },
-  {
     path: '/customer/appointments',
     element: <UserAppointmentsPage />,
-    isProtected: false,
+    isProtected: true,
+    roles: [UserRole.User],
   },
   {
     path: '/lawyer/appointments',
     element: <LawyerAppointmentsPage />,
-    isProtected: false,
+    isProtected: true,
+    roles: [UserRole.Lawyer],
   },
   //Admin
-  // {
-  //   path: '/admin',
-  //   element: <AdminPage />,
-  //   isProtected: true,
-  //   roles: [UserRole.Admin],
-  // },
   {
     path: '/dashboard',
     element: <AdminPage />,
-    isProtected: false,
-    // roles: [UserRole.Admin],
+    isProtected: true,
+    roles: [UserRole.Admin],
+  },
+  {
+    path: '/admin/services',
+    element: <ServiceManagement />,
+    isProtected: true,
+    roles: [UserRole.Admin],
+  },
+  {
+    path: '/admin/slots',
+    element: <SlotManagement />,
+    isProtected: true,
+    roles: [UserRole.Admin],
   },
   //Staff
   {
@@ -137,8 +138,10 @@ export const routes = [
     path: '/customer',
     element: <CustomerPage />,
     isProtected: true,
-    roles: [UserRole.Customer],
+    roles: [UserRole.User],
   },
+
+  //Authencication
   { path: '/login', element: <LoginPage />, isProtected: false },
   { path: '/register', element: <RegisterPage />, isProtected: false },
 ];
