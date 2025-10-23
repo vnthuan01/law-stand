@@ -1,10 +1,12 @@
 // components/CTASection.tsx
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import CTAImage from '@/assets/images/img2.jpg';
 
 export default function CTASection() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <section className="py-20 bg-transparent">
@@ -19,20 +21,18 @@ export default function CTASection() {
           <div className="grid lg:grid-cols-2 gap-0">
             <div className="p-12 lg:p-16 flex flex-col justify-center">
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-                You don't have to
+                {t('home.cta_title_1')}
                 <br />
-                fight alone.
+                {t('home.cta_title_2')}
               </h2>
-              <p className="text-xl text-white mb-8">
-                Book a consultation with one of our lawyers today.
-              </p>
+              <p className="text-xl text-white mb-8">{t('home.cta_subtitle')}</p>
               <Button
                 variant="orange"
                 size="lg"
                 className="px-8 py-4 font-semibold self-start rounded-lg"
                 onClick={() => navigate('/booking')}
               >
-                Book a Consultation
+                {t('home.book_consultation')}
               </Button>
             </div>
             <div className="bg-gradient-to-br from-orange-100 to-orange-200 min-h-96 flex items-center justify-center">

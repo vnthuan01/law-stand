@@ -1,8 +1,6 @@
-'use client';
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Earth, Menu, X, User, Settings, LogOut } from 'lucide-react';
+import { Earth, Menu, X, User, Bot, LogOut, Calendar } from 'lucide-react';
 import logo from '@/assets/law-firm-logo.png';
 import { Avatar, AvatarImage, AvatarFallback, AvatarStatus } from '@/components/ui/avatar';
 import { Link, useNavigate } from 'react-router-dom';
@@ -21,6 +19,7 @@ import {
 } from '@/components/ui/accordion-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import { UserRole } from '@/enums/UserRole';
 
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -70,22 +69,22 @@ const Header: React.FC = () => {
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/">{t('home')}</Link>
+                  <Link to="/">{t('nav.home')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/about">{t('about_us')}</Link>
+                  <Link to="/about">{t('nav.about_us')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/resources">{t('resources')}</Link>
+                  <Link to="/resources">{t('nav.resources')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/contact">{t('contact')}</Link>
+                  <Link to="/contact">{t('nav.contact')}</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -94,11 +93,14 @@ const Header: React.FC = () => {
           {/* User Avatar + Language */}
           {isAuthenticated ? (
             <div className="flex items-center space-x-4 relative" ref={menuRef}>
-              <Avatar className="cursor-pointer" onClick={() => setIsMenuOpen((prev) => !prev)}>
+              <Avatar
+                className="cursor-pointer py-1"
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+              >
                 {user?.avatar ? (
-                  <AvatarImage src={user.avatar} alt={user.name || ''} />
+                  <AvatarImage src={user.avatar} alt={user.fullName || ''} />
                 ) : (
-                  <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                  <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
                 )}
                 <AvatarStatus variant="online" />
               </Avatar>
@@ -108,7 +110,7 @@ const Header: React.FC = () => {
                 <div className="absolute top-full mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                   <AccordionMenu type="single" collapsible>
                     <AccordionMenuLabel className="px-4 py-2 text-sm font-semibold">
-                      {t('my_account')}
+                      {t('nav.my_account')}
                     </AccordionMenuLabel>
                     <AccordionMenuGroup>
                       <AccordionMenuItem
@@ -120,19 +122,36 @@ const Header: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2">
                           <User className="w-4 h-4" />
-                          <span>{t('profile')}</span>
+                          <span>{t('nav.profile')}</span>
                         </div>
                       </AccordionMenuItem>
                       <AccordionMenuItem
-                        value="settings"
+                        value="chat"
                         onClick={() => {
-                          navigate('/settings');
+                          navigate('/chat-with-ai-supported');
                           setIsMenuOpen(false);
                         }}
                       >
                         <div className="flex items-center space-x-2">
-                          <Settings className="w-4 h-4" />
-                          <span>{t('settings')}</span>
+                          <Bot className="w-4 h-4" />
+                          <span>{t('nav.chat_with_ai')}</span>
+                        </div>
+                      </AccordionMenuItem>
+                      <AccordionMenuItem
+                        value="appointments"
+                        onClick={() => {
+                          // Navigate based on user role
+                          const appointmentPath =
+                            user?.role === UserRole.Lawyer
+                              ? '/lawyer/appointments'
+                              : '/customer/appointments';
+                          navigate(appointmentPath);
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="w-4 h-4" />
+                          <span>{t('nav.appointments')}</span>
                         </div>
                       </AccordionMenuItem>
                       <AccordionMenuItem
@@ -144,7 +163,7 @@ const Header: React.FC = () => {
                       >
                         <div className="flex items-center space-x-2 text-red-600 font-semibold">
                           <LogOut className="w-4 h-4" />
-                          <span>{t('logout')}</span>
+                          <span>{t('common.logout')}</span>
                         </div>
                       </AccordionMenuItem>
                     </AccordionMenuGroup>
@@ -170,7 +189,7 @@ const Header: React.FC = () => {
                 className="px-6 py-2 rounded-lg"
                 onClick={() => navigate('/register')}
               >
-                {t('register')}
+                {t('common.register')}
               </Button>
               <Button
                 variant="orange"
@@ -178,8 +197,15 @@ const Header: React.FC = () => {
                 className="px-6 py-2 rounded-lg"
                 onClick={() => navigate('/login')}
               >
-                {t('login')}
+                {t('common.login')}
               </Button>
+              <div
+                className="flex items-center space-x-1 cursor-pointer border rounded-md px-2 py-1 bg-gray-100"
+                onClick={toggleLang}
+              >
+                <Earth className="size-4" />
+                <span className="text-sm">{lang}</span>
+              </div>
             </>
           )}
         </div>
@@ -218,13 +244,13 @@ const Header: React.FC = () => {
             {/* Navigation Links */}
             <div className="flex-1 px-6 py-6 space-y-4">
               <Link to="/about" className="block text-lg font-medium text-gray-700">
-                {t('about_us')}
+                {t('nav.about_us')}
               </Link>
               <Link to="/resources" className="block text-lg font-medium text-gray-700">
-                {t('resources')}
+                {t('nav.resources')}
               </Link>
               <Link to="/contact" className="block text-lg font-medium text-gray-700">
-                {t('contact')}
+                {t('nav.contact')}
               </Link>
             </div>
 
@@ -233,11 +259,11 @@ const Header: React.FC = () => {
             <div className="px-6 py-4 border-t">
               {isAuthenticated ? (
                 <div className="flex items-center justify-between">
-                  <Avatar className="cursor-pointer">
+                  <Avatar onClick={() => navigate('/profile')} className="cursor-pointer py-1">
                     {user?.avatar ? (
-                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarImage src={user.avatar} alt={user.fullName} />
                     ) : (
-                      <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
                     )}
                     <AvatarStatus variant="online" />
                   </Avatar>
@@ -257,7 +283,7 @@ const Header: React.FC = () => {
                     className="w-full rounded-lg"
                     onClick={() => navigate('/register')}
                   >
-                    {t('register')}
+                    {t('common.register')}
                   </Button>
                   <Button
                     variant="orange"
@@ -265,7 +291,7 @@ const Header: React.FC = () => {
                     className="w-full rounded-lg"
                     onClick={() => navigate('/login')}
                   >
-                    {t('login')}
+                    {t('common.login')}
                   </Button>
                 </div>
               )}

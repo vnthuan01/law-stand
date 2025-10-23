@@ -1,30 +1,33 @@
+import { useTranslation } from 'react-i18next';
 import { MailIcon, MapPinIcon, PhoneIcon } from 'lucide-react';
 
-const contactDetails = [
-  {
-    label: 'Client Support:',
-    value: '1-800-1234-567',
-    icon: PhoneIcon,
-    type: 'phone',
-  },
-  {
-    label: 'E-mail:',
-    value: 'info@demolink.org',
-    icon: MailIcon,
-    type: 'email',
-  },
-  {
-    label: 'Main Office:',
-    value: '18/A, New Born Town Hall\nNew York, US',
-    icon: MapPinIcon,
-    type: 'address',
-  },
-];
-
 export default function ContactInfoSection() {
+  const { t } = useTranslation();
+
+  const contactDetails = [
+    {
+      label: t('contact.client_support'),
+      value: '1-800-1234-567',
+      icon: PhoneIcon,
+      type: 'phone',
+    },
+    {
+      label: t('contact.email_label'),
+      value: 'info@demolink.org',
+      icon: MailIcon,
+      type: 'email',
+    },
+    {
+      label: t('contact.main_office'),
+      value: '18/A, New Born Town Hall\nNew York, US',
+      icon: MapPinIcon,
+      type: 'address',
+    },
+  ];
+
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-16">
-      <h2 className="text-4xl font-semibold text-gray-800 mb-8">Get in Touch</h2>
+      <h2 className="text-4xl font-semibold text-gray-800 mb-8">{t('contact.get_in_touch')}</h2>
       <div className="space-y-8">
         {contactDetails.map((detail, index) => {
           const Icon = detail.icon;

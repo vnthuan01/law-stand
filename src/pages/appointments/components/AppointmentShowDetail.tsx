@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { Textarea } from '@/components/ui/textarea';
-import { type TAppointment } from '@/services/appointmentService';
+import { type AppointmentDetail } from '@/services/appointmentService';
 
 import { CustomerInfo } from './CustomerInfo';
 import { LawyerInfo } from './LawyerInfo';
@@ -24,14 +24,14 @@ import { BookingInfo } from './BookingInfo';
 import { PlanningSchedule } from './PlanningSchedule';
 
 interface AppointmentDialogProps {
-  appointment: TAppointment | null;
-  role: 'user' | 'lawyer';
+  appointment: AppointmentDetail | null;
+  role: 'User' | 'Lawyer';
   onClose: () => void;
-  onReschedule?: (apt: TAppointment, newDate: Date) => void;
-  onCancel?: (apt: TAppointment, reason: string) => void;
-  onDelete?: (apt: TAppointment) => void;
-  onApprove?: (apt: TAppointment) => void;
-  onFinish?: (apt: TAppointment) => void;
+  onReschedule?: (apt: AppointmentDetail, newDate: Date) => void;
+  onCancel?: (apt: AppointmentDetail, reason: string) => void;
+  onDelete?: (apt: AppointmentDetail) => void;
+  onApprove?: (apt: AppointmentDetail) => void;
+  onFinish?: (apt: AppointmentDetail) => void;
 }
 
 export default function AppointmentDialog({
@@ -85,7 +85,7 @@ export default function AppointmentDialog({
 
                   <div className="flex flex-col gap-2">
                     {/* USER actions */}
-                    {role === 'user' && appointment.status !== 'cancelled' && (
+                    {role === 'User' && appointment.status !== 'Cancelled' && (
                       <>
                         {/* Reschedule */}
                         {onReschedule && (
@@ -153,10 +153,10 @@ export default function AppointmentDialog({
                     )}
 
                     {/* LAWYER actions */}
-                    {role === 'lawyer' && appointment.status !== 'cancelled' && (
+                    {role === 'Lawyer' && appointment.status !== 'Cancelled' && (
                       <>
                         {/* For approved appointments - only show Finished button */}
-                        {appointment.status === 'approved' && onFinish && (
+                        {appointment.status === 'Confirmed' && onFinish && (
                           <>
                             <p className="text-xs text-muted-foreground ml-1">
                               Mark this appointment as completed and finished.
@@ -168,7 +168,7 @@ export default function AppointmentDialog({
                         )}
 
                         {/* For pending appointments - show Decline and Approve */}
-                        {appointment.status === 'pending' && (
+                        {appointment.status === 'Pending' && (
                           <>
                             {/* Decline */}
                             {onCancel && (
@@ -219,7 +219,7 @@ export default function AppointmentDialog({
                     )}
 
                     {/* DELETE only after cancelled */}
-                    {onDelete && appointment.status === 'cancelled' && (
+                    {onDelete && appointment.status === 'Cancelled' && (
                       <>
                         {onReschedule && (
                           <Popover open={rescheduleOpen} onOpenChange={setRescheduleOpen}>

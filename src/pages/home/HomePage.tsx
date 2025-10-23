@@ -5,7 +5,9 @@ import ServicesSection from './components/ServicesSectionComponents';
 import TestimonialsSection from './components/TestimonialsSectionComponents';
 import CTASection from './components/CTASectionComponents';
 import TeamSectionComponents from './components/TeamSectionComponents';
-import FAQSection from './components/QASectionComponents';
+import BlogSection from './components/BlogSectionComponents';
+import PricingPage from '../package/PremuimPage';
+import FAQSection from './components/FAQSectionComponents';
 
 const HomePage: React.FC = () => {
   return (
@@ -14,9 +16,11 @@ const HomePage: React.FC = () => {
       <HeroSection />
       <main>
         <ServicesSection />
+        <PricingPage />
         <TestimonialsSection />
         <TeamSectionComponents />
         <FAQSection />
+        <BlogSection />
         <CTASection />
       </main>
       {/* Footer */}

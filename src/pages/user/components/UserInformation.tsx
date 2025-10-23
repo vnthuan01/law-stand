@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -36,12 +37,12 @@ const CountryOption = (props: any) => {
 
 interface UserInfoCardsProps {
   name: string;
-  role: string;
+  role?: string;
   email: string;
   phone?: string;
-  country: string;
-  city: string;
-  street: string;
+  country?: string;
+  city?: string;
+  street?: string;
   avatarUrl?: string;
   onAvatarChange?: (file: File) => void;
   onUpdateInfo?: (data: {
@@ -66,6 +67,7 @@ export function UserInfoCards({
   onAvatarChange,
   onUpdateInfo,
 }: UserInfoCardsProps) {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleAvatarClick = () => fileInputRef.current?.click();
@@ -78,12 +80,12 @@ export function UserInfoCards({
 
   const [formData, setFormData] = useState({
     name,
-    role,
+    role: role || '',
     email,
     phone: phone || '',
-    country,
-    city,
-    street,
+    country: country || '',
+    city: city || '',
+    street: street || '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +112,7 @@ export function UserInfoCards({
               <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-white bg-black/60 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-              Change
+              {t('common.change')}
             </span>
           </div>
           <input
@@ -121,7 +123,9 @@ export function UserInfoCards({
             onChange={handleFileChange}
           />
           <h2 className="text-2xl font-bold">{formData.name}</h2>
-          <p className="text-muted-foreground mt-1">Role: {formData.role}</p>
+          <p className="text-muted-foreground mt-1">
+            {t('profile.role')}: {formData.role}
+          </p>
         </Card>
 
         {/* Right column */}
@@ -129,11 +133,11 @@ export function UserInfoCards({
           {/* Personal + Address Info */}
           <Card>
             <CardHeader className="flex justify-between items-center">
-              <CardTitle>Personal Information</CardTitle>
+              <CardTitle>{t('profile.personal_info')}</CardTitle>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline">
-                    Edit
+                    {t('common.edit')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent
@@ -141,16 +145,16 @@ export function UserInfoCards({
                   aria-describedby="full-info-description"
                 >
                   <DialogHeader>
-                    <DialogTitle>Edit Information</DialogTitle>
+                    <DialogTitle>{t('profile.edit_info')}</DialogTitle>
                     <DialogDescription id="full-info-description">
-                      Update your personal and address information including phone
+                      {t('profile.update_hint')}
                     </DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4 mt-2">
                     {/* Name */}
                     <div>
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">{t('profile.full_name')}</Label>
                       <Input
                         id="name"
                         name="name"
@@ -161,13 +165,13 @@ export function UserInfoCards({
 
                     {/* Role (disabled) */}
                     <div>
-                      <Label>Role</Label>
+                      <Label>{t('profile.role')}</Label>
                       <Input value={formData.role} disabled />
                     </div>
 
                     {/* Email */}
                     <div>
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('profile.email')}</Label>
                       <Input
                         id="email"
                         name="email"
@@ -178,7 +182,7 @@ export function UserInfoCards({
 
                     {/* Country */}
                     <div>
-                      <Label htmlFor="country">Country</Label>
+                      <Label htmlFor="country">{t('profile.country')}</Label>
                       <Select
                         options={countries}
                         value={countries.find((c) => c.value === formData.country)}
@@ -189,7 +193,7 @@ export function UserInfoCards({
 
                     {/* Phone */}
                     <div>
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone">{t('profile.phone')}</Label>
                       <PhoneInput
                         country={formData.country.toLowerCase() as any}
                         value={formData.phone}
@@ -210,7 +214,7 @@ export function UserInfoCards({
 
                     {/* City */}
                     <div>
-                      <Label htmlFor="city">City</Label>
+                      <Label htmlFor="city">{t('profile.city')}</Label>
                       <Input
                         id="city"
                         name="city"
@@ -221,7 +225,7 @@ export function UserInfoCards({
 
                     {/* Street */}
                     <div>
-                      <Label htmlFor="street">Street</Label>
+                      <Label htmlFor="street">{t('profile.street')}</Label>
                       <Input
                         id="street"
                         name="street"
@@ -231,7 +235,7 @@ export function UserInfoCards({
                     </div>
 
                     <Button className="mt-2 w-full" onClick={handleSubmit}>
-                      Save
+                      {t('common.save')}
                     </Button>
                   </div>
                 </DialogContent>
@@ -239,16 +243,32 @@ export function UserInfoCards({
             </CardHeader>
 
             <CardContent className="space-y-2">
-              <p>Email: {formData.email}</p>
-              {formData.phone && <p>Phone: {formData.phone}</p>}
+              <p>
+                {t('profile.email')}: {formData.email}
+              </p>
+              {formData.phone && (
+                <p>
+                  {t('profile.phone')}: {formData.phone}
+                </p>
+              )}
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="space-y-2">
-              <p>Country: {formData.country}</p>
-              {formData.city && <p>City: {formData.city}</p>}
-              {formData.street && <p>Street: {formData.street}</p>}
+              <p>
+                {t('profile.country')}: {formData.country}
+              </p>
+              {formData.city && (
+                <p>
+                  {t('profile.city')}: {formData.city}
+                </p>
+              )}
+              {formData.street && (
+                <p>
+                  {t('profile.street')}: {formData.street}
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>

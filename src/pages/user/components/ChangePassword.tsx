@@ -1,6 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,7 @@ const changePasswordSchema = z
 type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 export function ChangePasswordForm() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState<{ [key: string]: boolean }>({});
 
@@ -65,7 +67,7 @@ export function ChangePasswordForm() {
   return (
     <Card className="w-full max-w-xl">
       <CardHeader>
-        <CardTitle>Change Password</CardTitle>
+        <CardTitle>{t('profile.change_password')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -76,12 +78,12 @@ export function ChangePasswordForm() {
               name="currentPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Password</FormLabel>
+                  <FormLabel>{t('auth.current_password')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         type={show.currentPassword ? 'text' : 'password'}
-                        placeholder="Enter current password"
+                        placeholder={t('auth.enter_current_password')}
                         {...field}
                       />
                       <button
@@ -106,12 +108,12 @@ export function ChangePasswordForm() {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>{t('auth.new_password')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         type={show.newPassword ? 'text' : 'password'}
-                        placeholder="Enter new password"
+                        placeholder={t('auth.enter_new_password')}
                         {...field}
                       />
                       <button
@@ -136,12 +138,12 @@ export function ChangePasswordForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm New Password</FormLabel>
+                  <FormLabel>{t('auth.confirm_password')}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         type={show.confirmPassword ? 'text' : 'password'}
-                        placeholder="Confirm new password"
+                        placeholder={t('auth.confirm_new_password')}
                         {...field}
                       />
                       <button
@@ -167,7 +169,7 @@ export function ChangePasswordForm() {
             <PasswordStrength password={newPassword} />
 
             <Button type="submit" className="w-full" disabled={loading || !form.formState.isValid}>
-              {loading ? 'Changing...' : 'Change Password'}
+              {loading ? t('auth.changing_password') : t('profile.change_password')}
             </Button>
           </form>
         </Form>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -31,6 +32,7 @@ const scaleUp: Variants = {
 };
 
 const HeroSection: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
@@ -44,7 +46,7 @@ const HeroSection: React.FC = () => {
         >
           <motion.div variants={fromTop}>
             <p className="text-gray-600 text-base sm:text-lg font-jersey25">
-              Lawstand is a digital platform
+              {t('home.hero_tagline')}
             </p>
           </motion.div>
 
@@ -53,15 +55,15 @@ const HeroSection: React.FC = () => {
               variants={fromBottom}
               className="text-3xl sm:text-4xl lg:text-5xl text-gray-900 font-bold"
             >
-              WE COMMITTED TO
+              {t('home.hero_title_1')}
             </motion.div>
             <motion.div
               variants={fromBottom}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold"
             >
-              <span className="text-orange-500">ACCOUNTABILITY</span>{' '}
-              <span className="text-orange-500">AND</span>{' '}
-              <span className="text-orange-500">TRANSPARENCY</span>
+              <span className="text-orange-500">{t('home.hero_title_2')}</span>{' '}
+              <span className="text-orange-500">{t('home.hero_title_3')}</span>{' '}
+              <span className="text-orange-500">{t('home.hero_title_4')}</span>
             </motion.div>
           </motion.h1>
 
@@ -69,7 +71,7 @@ const HeroSection: React.FC = () => {
             variants={fromTop}
             className="text-gray-600 text-base sm:text-lg max-w-md mx-auto md:mx-0"
           >
-            If you are unsure about the laws of Vietnam, we can help you address those issues.
+            {t('home.hero_subtitle')}
           </motion.p>
 
           {/* Search Bar */}
@@ -79,7 +81,7 @@ const HeroSection: React.FC = () => {
           >
             <Input
               type="text"
-              placeholder="Searching law needed"
+              placeholder={t('home.search_placeholder')}
               className="w-full text-base px-4 py-5 md:py-6 border border-gray-300 rounded-lg sm:rounded-r-none sm:border-r-0 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
             <Button
@@ -87,7 +89,7 @@ const HeroSection: React.FC = () => {
               size="lg"
               className="rounded-lg sm:rounded-l-none text-sm font-medium px-5 py-5 md:py-6 flex items-center justify-center gap-2 border border-orange-500 sm:border-l-0"
             >
-              Search <Search className="w-5 h-5" />
+              {t('common.search')} <Search className="w-5 h-5" />
             </Button>
           </motion.div>
         </motion.div>
@@ -115,7 +117,7 @@ const HeroSection: React.FC = () => {
               className="mt-4 px-6 py-4 font-semibold rounded-lg text-sm max-w-xs mx-auto"
               onClick={() => navigate('/booking')}
             >
-              Book a Consultation
+              {t('home.book_consultation')}
             </Button>
           </div>
         </motion.div>
@@ -130,7 +132,7 @@ const HeroSection: React.FC = () => {
         onClick={() => navigate('/booking')}
       >
         <Button variant="orange" size="lg" className="px-8 py-5 font-semibold rounded-lg">
-          Book a Consultation
+          {t('home.book_consultation')}
         </Button>
       </motion.div>
     </section>
