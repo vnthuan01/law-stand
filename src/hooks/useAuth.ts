@@ -1,95 +1,94 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
 import type { AxiosResponse } from 'axios';
 import { authService } from '@/services/authService';
-import type { LoginPayload, RegisterPayload, User } from '@/services/authService';
-import { getAuthToken, setAuthToken, clearAuthToken } from '@/lib/cookies';
-
-interface LoginResponse {
-  token: string;
-}
-
-interface RegisterResponse {
-  accessToken: string;
-}
+import type {
+  LoginPayload,
+  RegisterPayload,
+  User,
+  AuthResponse,
+  LoginResponseData,
+} from '@/services/authService';
+import { getAuthToken, setAuthToken, clearAuthToken, setRefreshToken } from '@/lib/cookies';
 
 export function useAuth() {
   const queryClient = useQueryClient();
-  const [user, setUser] = useState<User | null>(null);
-
   const token = getAuthToken();
 
   // Fetch profile nếu có token
-  const { data: profile, isLoading } = useQuery<User>({
+  const {
+    data: profile,
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useQuery<User>({
     queryKey: ['users', 'profile'],
     queryFn: async () => {
-      const res: AxiosResponse<User> = await authService.profile();
-      return res.data;
+      const res: AxiosResponse<AuthResponse<User>> = await authService.me();
+      return res.data.data;
     },
     enabled: !!token,
     retry: false,
+    staleTime: 5 * 60 * 1000, // Cache 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
-  useEffect(() => {
-    if (profile) setUser(profile);
-  }, [profile]);
+  // Tính toán loading state
+  // Loading = true khi:
+  // 1. Có token nhưng chưa có data và đang loading/fetching
+  // 2. Hoặc có token nhưng chưa success
+  const isAuthLoading = !!token && (!profile || isLoading || isFetching || !isSuccess);
 
   // Login
-  const loginMutation = useMutation<AxiosResponse<LoginResponse>, unknown, LoginPayload>({
+  const loginMutation = useMutation<
+    AxiosResponse<AuthResponse<LoginResponseData>>,
+    unknown,
+    LoginPayload
+  >({
     mutationFn: (data: LoginPayload) => authService.login(data),
-    onSuccess: async (res: AxiosResponse<LoginResponse>) => {
-      const accessToken = res.data?.token;
+    onSuccess: async (res: AxiosResponse<AuthResponse<LoginResponseData>>) => {
+      const { accessToken, refreshToken } = res.data.data;
+
       if (accessToken) {
         setAuthToken(accessToken);
+        if (refreshToken) {
+          setRefreshToken(refreshToken);
+        }
 
-        const userData: User = await queryClient.fetchQuery<User>({
+        // Fetch user profile và set vào cache
+        await queryClient.fetchQuery<User>({
           queryKey: ['users', 'profile'],
           queryFn: async () => {
-            const profileRes: AxiosResponse<User> = await authService.profile();
-            return profileRes.data;
+            const profileRes: AxiosResponse<AuthResponse<User>> = await authService.me();
+            return profileRes.data.data;
           },
         });
-
-        setUser(userData);
       }
     },
   });
 
   // Register
-  const registerMutation = useMutation<AxiosResponse<RegisterResponse>, unknown, RegisterPayload>({
+  const registerMutation = useMutation<
+    AxiosResponse<AuthResponse<string>>,
+    unknown,
+    RegisterPayload
+  >({
     mutationFn: (data: RegisterPayload) => authService.register(data),
-    onSuccess: async (res: AxiosResponse<RegisterResponse>) => {
-      const accessToken = res.data?.accessToken;
-      if (accessToken) {
-        setAuthToken(accessToken);
-
-        const userData: User = await queryClient.fetchQuery<User>({
-          queryKey: ['users', 'profile'],
-          queryFn: async () => {
-            const profileRes: AxiosResponse<User> = await authService.profile();
-            return profileRes.data;
-          },
-        });
-
-        setUser(userData);
-      }
-    },
   });
 
   // Logout
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      // await authService.logout();
       clearAuthToken();
-      setUser(null);
       queryClient.removeQueries({ queryKey: ['users', 'profile'] });
     },
   });
 
   return {
-    user,
-    role: user?.role,
-    isAuthenticated: !!user,
-    isLoading,
+    user: profile || null,
+    role: profile?.role || null,
+    isAuthenticated: !!profile && !!token,
+    isLoading: isAuthLoading,
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,

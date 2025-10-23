@@ -15,8 +15,8 @@ export function useCheckAuth(): AuthInfo {
   const { data: user, isLoading } = useQuery({
     queryKey: ['users', 'profile'],
     queryFn: async () => {
-      const res = await authService.profile();
-      return res.data;
+      const res = await authService.me();
+      return res.data.data;
     },
     retry: false, // không retry nếu chưa login
   });

@@ -1,5 +1,6 @@
 // components/ServicesSection.tsx
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -27,55 +28,57 @@ interface ServiceItem {
   image: string;
 }
 
-const services: ServiceItem[] = [
+const getServices = (t: (key: string) => string): ServiceItem[] => [
   {
     id: '01',
     number: '01',
-    title: 'Immigration & Work Permits',
-    desc: 'Expert guidance through visa and work permit processes',
+    title: t('services.immigration'),
+    desc: t('services.immigration_desc'),
     image: ServiceImage01,
   },
   {
     id: '02',
     number: '02',
-    title: 'Property & Inheritance Law',
-    desc: 'Secure your property rights and inheritance matters',
+    title: t('services.property'),
+    desc: t('services.property_desc'),
     image: ServiceImage02,
   },
   {
     id: '03',
     number: '03',
-    title: 'Family & Marriage Law',
-    desc: 'Professional support for family legal matters',
+    title: t('services.family'),
+    desc: t('services.family_desc'),
     image: ServiceImage03,
   },
   {
     id: '04',
     number: '04',
-    title: 'Business Setup & Tax',
-    desc: 'Complete business registration and tax compliance',
+    title: t('services.business'),
+    desc: t('services.business_desc'),
     image: ServiceImage04,
   },
   {
     id: '05',
     number: '05',
-    title: 'Document Legalization & Notarization',
-    desc: 'Official document authentication services',
+    title: t('services.document'),
+    desc: t('services.document_desc'),
     image: ServiceImage05,
   },
   {
     id: '06',
     number: '06',
-    title: 'Dispute Resolution & Investment Consulting',
-    desc: 'Legal dispute resolution and investment advice',
+    title: t('services.dispute'),
+    desc: t('services.dispute_desc'),
     image: ServiceImage06,
   },
 ];
 
 export default function ServicesSection() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
+  const services = getServices(t);
 
   const handleOpenDetail = useCallback((service: ServiceItem) => {
     setSelectedService(service);
@@ -104,9 +107,10 @@ export default function ServicesSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">Legal</span> Main services.
+            <span className="text-orange-500">{t('services.title')}</span>{' '}
+            {t('home.services_title')}
           </h2>
-          <p className="text-gray-600">Complete legal solutions for your needs</p>
+          <p className="text-gray-600">{t('home.services_subtitle')}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
@@ -153,22 +157,19 @@ export default function ServicesSection() {
             'mt-10 mx-auto flex justify-center items-center cursor-pointer px-8 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm',
           )}
         >
-          View More
+          {t('home.view_more')}
         </button>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent aria-describedby={undefined} className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>{selectedService?.title ?? 'Service Detail'}</DialogTitle>
+              <DialogTitle>{selectedService?.title ?? t('home.service_detail')}</DialogTitle>
               {selectedService?.desc ? (
                 <DialogDescription>{selectedService.desc}</DialogDescription>
               ) : null}
             </DialogHeader>
             <div className="mt-2">
-              <p className="text-sm text-gray-600">
-                We provide comprehensive consultation tailored to your needs. Choose an action below
-                to continue.
-              </p>
+              <p className="text-sm text-gray-600">{t('home.service_detail_desc')}</p>
             </div>
             <DialogFooter className="gap-2 sm:gap-3">
               <Button
@@ -176,10 +177,10 @@ export default function ServicesSection() {
                 onClick={() => selectedService && handleBooking(selectedService)}
                 className="bg-orange-500 hover:bg-orange-600 text-white"
               >
-                Booking Appointment
+                {t('home.booking_appointment')}
               </Button>
               <Button type="button" variant="outline" onClick={handleContact}>
-                Contact
+                {t('nav.contact')}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -11,8 +11,6 @@ import {
   CreditCard,
   ReceiptText,
   Briefcase,
-  FileEdit,
-  Eye,
   Bookmark,
   Package,
   Users,
@@ -27,16 +25,17 @@ export interface MenuItem {
 }
 
 export const menuConfig: Record<UserRole, MenuItem[]> = {
-  admin: [
+  Admin: [
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     {
-      label: 'Appointments',
-      path: '/appointments',
+      label: 'Service Management',
+      path: '/admin/services',
+      icon: Briefcase,
+    },
+    {
+      label: 'Slot Management',
+      path: '/admin/slots',
       icon: Calendar,
-      children: [
-        { label: 'History', path: '/appointments/history', icon: History },
-        { label: 'Edit', path: '/appointments/edit', icon: Edit },
-      ],
     },
     {
       label: 'Payments',
@@ -44,18 +43,9 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
       icon: CreditCard,
       children: [{ label: 'History', path: '/payments/history', icon: ReceiptText }],
     },
-    {
-      label: 'Services',
-      path: '/services',
-      icon: Briefcase,
-      children: [
-        { label: 'Edit', path: '/services/edit', icon: FileEdit },
-        { label: 'View', path: '/services/view', icon: Eye },
-      ],
-    },
   ],
 
-  customer: [
+  User: [
     {
       label: 'Appointments',
       path: '/customer/appointments',
@@ -67,7 +57,7 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     { label: 'Chat With AI', path: '/chat-with-ai-supported', icon: Bot },
   ],
 
-  lawyer: [
+  Lawyer: [
     {
       label: 'Appointments',
       path: '/lawyer/appointments',
@@ -81,7 +71,7 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
     },
   ],
 
-  staff: [
+  Staff: [
     {
       label: 'Appointments',
       path: '/appointments',

@@ -1,79 +1,45 @@
 import { cn } from '@/lib/utils';
-import { type TAppointment } from '@/services/appointmentService';
-import { User, Clock, MapPin, FileText, X } from 'lucide-react';
+import { type MyAppointment } from '@/services/appointmentService';
+import { User, Clock, MapPin, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-interface AppointmentDetailProps {
+interface AppointmentShowCardProps {
   date: Date;
-  appointments: TAppointment[];
-  onClick?: (apt: TAppointment) => void;
-  onDelete?: (apt: TAppointment) => void;
+  appointments: MyAppointment[];
+  onClick?: (apt: MyAppointment) => void;
+  onDelete?: (apt: MyAppointment) => void;
   className?: string;
 }
 
-const getStatusStyle = (status: TAppointment['status']) => {
+const getStatusStyle = (status: MyAppointment['status']) => {
   switch (status) {
-    case 'pending':
+    case 'Pending':
       return 'bg-yellow-50 border-yellow-300 text-yellow-800';
-    case 'approved':
+    case 'Confirmed':
       return 'bg-green-50 border-green-300 text-green-800';
-    case 'cancelled':
+    case 'Cancelled':
       return 'bg-red-50 border-red-300 text-red-800';
-    case 'finished':
+    case 'Completed':
       return 'bg-blue-50 border-blue-300 text-blue-800';
-    case 'rescheduled':
-      return 'bg-purple-50 border-purple-300 text-purple-800';
+    // case 'Rescheduled':
+    // return 'bg-purple-50 border-purple-300 text-purple-800';
     default:
       return 'bg-gray-50 border-gray-300 text-gray-700';
   }
 };
 
-// Mock data for demonstration - in real app this would come from API
-const mockLawyers = {
-  'lawyer-1': { name: 'Nguyen Van An', specialization: 'Immigration Law' },
-  'lawyer-2': { name: 'Tran Thi Binh', specialization: 'Family Law' },
-  'lawyer-3': { name: 'Le Quang Minh', specialization: 'Business Law' },
-};
-
-const mockCustomers = {
-  'user-1': 'Alex Johnson',
-  'user-8': 'Maria Garcia',
-  'user-9': 'David Chen',
-  'user-10': 'Sarah Wilson',
-  'user-11': 'Michael Brown',
-  'user-14': 'Emily Davis',
-  'user-15': 'James Miller',
-  'user-16': 'Lisa Anderson',
-  'user-17': 'Robert Taylor',
-  'user-18': 'Jennifer Thomas',
-  'user-19': 'William Jackson',
-  'user-20': 'Amanda White',
-};
-
-const mockLocations = {
-  'lawyer-1': 'Google Meeting ',
-  'lawyer-2': 'Zoom Meeting Room',
-  'lawyer-3': 'Google Meeting',
-};
-
-const getAppointmentDetails = (appointment: TAppointment) => {
-  const lawyer = mockLawyers[appointment.lawyerId as keyof typeof mockLawyers] || {
-    name: 'Unknown Lawyer',
-    specialization: 'General Practice',
-  };
-  const customer =
-    mockCustomers[appointment.userId as keyof typeof mockCustomers] || 'Unknown Customer';
-  const location =
-    mockLocations[appointment.lawyerId as keyof typeof mockLocations] || 'Location TBD';
-
-  const startTime = new Date(appointment.startsAt);
-  const endTime = new Date(appointment.endsAt);
+const getAppointmentDetails = (appointment: MyAppointment) => {
+  const startTime = new Date(`${appointment.date} ${appointment.startTime}`);
+  const endTime = new Date(`${appointment.date} ${appointment.endTime}`);
+  const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
 
   return {
-    lawyer: lawyer.name,
-    specialization: lawyer.specialization,
-    customer,
-    location,
+    lawyerName: appointment.lawyerName,
+    customerName: appointment.userName,
+    customerEmail: appointment.userEmail,
+    customerPhone: appointment.userPhone,
+    serviceName: appointment.serviceName,
+    servicePrice: appointment.servicePrice,
     startTime: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     endTime: endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     date: startTime.toLocaleDateString([], {
@@ -82,11 +48,11 @@ const getAppointmentDetails = (appointment: TAppointment) => {
       month: 'long',
       day: 'numeric',
     }),
-    duration: Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60)) + ' minutes',
+    duration: duration > 0 ? `${duration} minutes` : 'N/A',
   };
 };
 
-export default function AppointmentDetail(props: AppointmentDetailProps) {
+export default function AppointmentShowCard(props: AppointmentShowCardProps) {
   const { date, appointments, onClick, onDelete, className } = props;
 
   return (
@@ -118,7 +84,7 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                     onClick={() => onClick?.(a)}
                   >
                     {/* Delete button for cancelled appointments */}
-                    {a.status === 'cancelled' && onDelete && (
+                    {a.status === 'Cancelled' && onDelete && (
                       <button
                         type="button"
                         className="absolute top-1 right-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-full p-1 transition-colors"
@@ -133,12 +99,8 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                     )}
 
                     <div className="mb-1 flex items-center gap-2">
-                      <span className="font-medium">
-                        {new Date(a.startsAt).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </span>
+                      <span className="font-medium">{details.startTime}</span>
+                      <span className="text-xs text-muted-foreground">- {a.serviceName}</span>
                     </div>
                   </div>
                 </TooltipTrigger>
@@ -152,8 +114,8 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                         <User className="h-4 w-4 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-gray-900">{details.lawyer}</p>
-                        <p className="text-xs text-gray-500">{details.specialization}</p>
+                        <p className="font-semibold text-sm text-gray-900">{details.lawyerName}</p>
+                        <p className="text-xs text-gray-500">Lawyer</p>
                       </div>
                     </div>
 
@@ -162,8 +124,9 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                         <User className="h-4 w-4 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-gray-800">Customer</p>
-                        <p className="text-xs text-gray-600">{details.customer}</p>
+                        <p className="font-medium text-sm text-gray-800">{details.customerName}</p>
+                        <p className="text-xs text-gray-600">{details.customerEmail}</p>
+                        <p className="text-xs text-gray-600">{details.customerPhone}</p>
                       </div>
                     </div>
 
@@ -172,8 +135,9 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                         <MapPin className="h-4 w-4 text-red-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-gray-800">Location</p>
-                        <p className="text-xs text-gray-600">{details.location}</p>
+                        <p className="font-medium text-sm text-gray-800">Service</p>
+                        <p className="text-xs text-gray-600">{details.serviceName}</p>
+                        <p className="text-xs text-gray-500">Price: ${details.servicePrice}</p>
                       </div>
                     </div>
 
@@ -190,7 +154,7 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                       </div>
                     </div>
 
-                    {a.notes && (
+                    {/* {a.notes && (
                       <div className="flex items-start gap-3">
                         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 mt-0.5">
                           <FileText className="h-4 w-4 text-orange-600" />
@@ -200,7 +164,7 @@ export default function AppointmentDetail(props: AppointmentDetailProps) {
                           <p className="text-xs text-gray-600">{a.notes}</p>
                         </div>
                       </div>
-                    )}
+                    )} */}
 
                     <div className="pt-2 border-t border-gray-100">
                       <p className="text-xs text-gray-400 text-center">{details.date}</p>
