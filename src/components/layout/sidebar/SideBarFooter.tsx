@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Home, LogOut, ChevronDown } from 'lucide-react';
+import { Home, LogOut, ChevronDown, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth'; // <-- hook auth của bạn
 
@@ -31,9 +31,9 @@ export default function SidebarFooterMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex w-full items-center text-white gap-2 px-2 py-1 bg-orange-500 hover:bg-orange-300 rounded-md cursor-pointer">
-            {user?.avatar ? (
+            {user?.avatarUrl ? (
               <img
-                src={user.avatar}
+                src={user.avatarUrl}
                 alt="User avatar"
                 width={40}
                 height={40}
@@ -61,10 +61,10 @@ export default function SidebarFooterMenu() {
             <span>Home</span>
           </DropdownMenuItem>
 
-          {/* <DropdownMenuItem onClick={() => handleNavigate('/settings')}>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem> */}
+          <DropdownMenuItem onClick={() => handleNavigate('/profile')}>
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 

@@ -35,7 +35,7 @@ export interface Slot {
   id: string;
   serviceId: string;
   lawyerId: string;
-  date: string;
+  date: Date | string;
   startTime: string;
   endTime: string;
   status: string;
@@ -50,18 +50,17 @@ export interface Slot {
 export interface CreateSlotPayload {
   serviceId: string;
   lawyerId: string;
-  date: string;
+  date: Date | string;
   startTime: string;
   endTime: string;
-  status: string;
 }
 
 export interface UpdateSlotPayload {
-  serviceId: string;
-  lawyerId: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  serviceId?: string;
+  lawyerId?: string;
+  date?: Date | string;
+  startTime?: string;
+  endTime?: string;
   status: string;
 }
 

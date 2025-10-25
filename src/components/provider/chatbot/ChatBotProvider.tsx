@@ -88,7 +88,7 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
   const pathname = window.location.pathname;
   const excludedPaths = ['/login', '/register'];
   const isExcluded = excludedPaths.some((path) => pathname.startsWith(path));
-  const canShowChatbot = isAuthenticated && user && !isExcluded;
+  const canShowChatbot = isAuthenticated && user && user.role === 'User' && !isExcluded;
 
   useEffect(() => {
     if (chatBodyRef.current) {
