@@ -32,11 +32,17 @@ export interface RegisterPayload {
 // User Profile
 export interface User {
   id: string;
-  avatar?: string | null;
+  avatarUrl?: string | null;
   email: string;
   fullName: string;
   phoneNumber: string;
   address?: string;
+  dateOfBirth?: string;
+  gender?: string;
+  bio?: string;
+  postalCode?: string;
+  city?: string;
+  province?: string;
   role: UserRole;
 }
 

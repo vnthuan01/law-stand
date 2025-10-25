@@ -8,8 +8,6 @@ import {
   Calendar,
   History,
   Edit,
-  CreditCard,
-  ReceiptText,
   Briefcase,
   Bookmark,
   Package,
@@ -38,11 +36,16 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
       icon: Calendar,
     },
     {
-      label: 'Payments',
-      path: '/payments',
-      icon: CreditCard,
-      children: [{ label: 'History', path: '/payments/history', icon: ReceiptText }],
+      label: 'User Management',
+      path: '/admin/user-management',
+      icon: Users,
     },
+    // {
+    //   label: 'Payments',
+    //   path: '/payments',
+    //   icon: CreditCard,
+    //   children: [{ label: 'History', path: '/payments/history', icon: ReceiptText }],
+    // },
   ],
 
   User: [

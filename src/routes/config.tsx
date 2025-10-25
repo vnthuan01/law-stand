@@ -20,6 +20,7 @@ import UserAppointmentsPage from '@/pages/appointments/UserAppointmentsPage';
 import LawyerAppointmentsPage from '@/pages/appointments/LawyerAppointmentsPage';
 import ChatGPTLikePage from '@/pages/chatbot/ChatBotPage';
 import PricingPage from '@/pages/package/PremuimPage';
+import UserManagement from '@/pages/user/admin/UserManagement';
 
 export const routes = [
   //Public routes
@@ -115,6 +116,12 @@ export const routes = [
   {
     path: '/admin/slots',
     element: <SlotManagement />,
+    isProtected: true,
+    roles: [UserRole.Admin],
+  },
+  {
+    path: '/admin/user-management',
+    element: <UserManagement />,
     isProtected: true,
     roles: [UserRole.Admin],
   },
