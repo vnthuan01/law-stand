@@ -22,7 +22,7 @@ function TitleUpdater() {
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length === 0) {
-      document.title = t('app_name');
+      document.title = t('common.app_name');
       return;
     }
 
@@ -34,10 +34,19 @@ function TitleUpdater() {
     // Take last segment of pathname
     const lastSegment = segments[segments.length - 1];
 
-    // Dịch segment cuối cùng để làm tiêu đề, nếu không có bản dịch thì dùng chính segment đó
-    const pageTitle = t(`paths.${lastSegment}`, { defaultValue: lastSegment.replace('-', ' ') });
+    // Ưu tiên dịch các đường dẫn con như 'settings' trong 'profile/settings'
+    // Nếu không có, thử dịch các trang chính như 'appointments'
+    const pageTitle = t([`paths.${lastSegment}`, `${lastSegment}.my_appointments`], {
+      defaultValue: lastSegment.replace('-', ' '),
+    });
 
-    document.title = `${t('common.app_name')} - ${pageTitle}`;
+    // Capitalize first letter, only if pageTitle is not empty and not the same as the default value
+    if (pageTitle && pageTitle !== lastSegment.replace('-', ' ')) {
+      const capitalizedTitle = pageTitle.charAt(0).toUpperCase() + pageTitle.slice(1);
+      document.title = `${t('common.app_name')} - ${capitalizedTitle}`;
+    } else {
+      document.title = t('common.app_name');
+    }
   }, [pathname, t]);
 
   return null;

@@ -8,12 +8,12 @@ export default function TestimonialsSection() {
   const { t } = useTranslation();
   const testimonials = [
     {
-      name: 'Anthony Williams',
+      nameKey: 'home.testimonial_1_name',
       initial: 'A',
       textKey: 'home.testimonial_1_text',
     },
     {
-      name: 'John Shea',
+      nameKey: 'home.testimonial_2_name',
       initial: 'J',
       textKey: 'home.testimonial_2_text',
     },
@@ -51,7 +51,7 @@ export default function TestimonialsSection() {
                   <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                     {testimonial.initial}
                   </div>
-                  <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                  <h4 className="font-semibold text-gray-900">{t(testimonial.nameKey)}</h4>
                 </div>
                 <p className="text-gray-700 leading-relaxed">{t(testimonial.textKey)}</p>
               </div>

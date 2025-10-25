@@ -37,7 +37,8 @@
     "required": "This field is required",
     "saving": "Saving...",
     "unknown_error": "Unknown error",
-    "view_all": "View all"
+    "view_all": "View all",
+    "app_name": "Law Stand"
   },
   "nav": {
     "home": "Home",
@@ -329,7 +330,9 @@
     "team_member_1_name": "Sarah Johnson",
     "team_member_2_name": "Michael Chen",
     "team_member_3_name": "Emily Rodriguez",
-    "team_member_4_name": "David Park"
+    "team_member_4_name": "David Park",
+    "testimonial_1_name": "Anthony Williams",
+    "testimonial_2_name": "John Shea"
   },
   "services": {
     "title": "Legal Services",

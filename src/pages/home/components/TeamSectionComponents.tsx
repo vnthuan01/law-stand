@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Briefcase, Users, Scale, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const ProfessionalSection = () => {
+const TeamSectionComponents = () => {
   const { t } = useTranslation();
   const teamMembers: { id: number; nameKey: string; image: string }[] = [
     {
@@ -14,17 +14,20 @@ const ProfessionalSection = () => {
     {
       id: 2,
       nameKey: 'home.team_member_2_name',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...',
+      image:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     },
     {
       id: 3,
       nameKey: 'home.team_member_3_name',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...',
+      image:
+        'https://images.unsplash.com/photo-1557862921-37829c790f19?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     },
     {
       id: 4,
       nameKey: 'home.team_member_4_name',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...',
+      image:
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     },
   ];
 
@@ -130,8 +133,8 @@ const ProfessionalSection = () => {
             <div className="relative">
               <div className="bg-white rounded-3xl p-6 shadow-2xl max-w-md">
                 <img
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?..."
-                  alt="Executive Director"
+                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80"
+                  alt={t('home.team_role_director')}
                   className="w-full h-80 object-cover rounded-2xl"
                 />
               </div>
@@ -209,4 +212,4 @@ const ProfessionalSection = () => {
   );
 };
 
-export default ProfessionalSection;
+export default TeamSectionComponents;
