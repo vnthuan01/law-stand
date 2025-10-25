@@ -1,54 +1,60 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Users, Scale, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const ProfessionalSection = () => {
-  const teamMembers = [
+  const { t } = useTranslation();
+  const teamMembers: { id: number; nameKey: string; image: string }[] = [
     {
       id: 1,
-      name: 'Sarah Johnson',
+      nameKey: 'home.team_member_1_name',
       image:
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
     },
     {
       id: 2,
-      name: 'Michael Chen',
+      nameKey: 'home.team_member_2_name',
       image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?...',
     },
     {
       id: 3,
-      name: 'Emily Rodriguez',
+      nameKey: 'home.team_member_3_name',
       image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?...',
     },
     {
       id: 4,
-      name: 'David Park',
+      nameKey: 'home.team_member_4_name',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?...',
     },
   ];
 
   const stats = [
-    { label: 'Years of Experience', value: '15+' },
-    { label: 'Successful Cases', value: '1200+' },
-    { label: 'Trusted Clients', value: '900+' },
-    { label: 'Expert Lawyers', value: '20+' },
+    { labelKey: 'home.stat_experience', value: '15+' },
+    { labelKey: 'home.stat_cases', value: '1200+' },
+    { labelKey: 'home.stat_clients', value: '900+' },
+    { labelKey: 'home.stat_lawyers', value: '20+' },
   ];
 
   const practiceAreas = [
     {
       icon: Briefcase,
-      title: 'Business Law',
-      desc: 'Helping businesses grow with legal confidence.',
+      titleKey: 'home.practice_area_business_title',
+      descKey: 'home.practice_area_business_desc',
     },
     {
       icon: Users,
-      title: 'Family Law',
-      desc: 'Protecting relationships, resolving disputes with care.',
+      titleKey: 'home.practice_area_family_title',
+      descKey: 'home.practice_area_family_desc',
     },
-    { icon: Scale, title: 'Civil Litigation', desc: 'Defending your rights in critical matters.' },
+    {
+      icon: Scale,
+      titleKey: 'home.practice_area_civil_title',
+      descKey: 'home.practice_area_civil_desc',
+    },
     {
       icon: Shield,
-      title: 'Intellectual Property',
-      desc: 'Safeguarding your ideas and innovations.',
+      titleKey: 'home.practice_area_ip_title',
+      descKey: 'home.practice_area_ip_desc',
     },
   ];
 
@@ -77,14 +83,10 @@ const ProfessionalSection = () => {
             className="space-y-8"
           >
             <h1 className="text-5xl lg:text-6xl font-extrabold text-white leading-tight">
-              Proudly <span className="text-blue-400">unconventional.</span>
+              {t('home.team_title')}
             </h1>
 
-            <p className="text-lg text-gray-200 max-w-lg">
-              At <span className="font-semibold text-white">Lawstand</span>, we redefine legal
-              practice by combining deep expertise with innovative strategies to deliver clarity,
-              confidence, and justice.
-            </p>
+            <p className="text-lg text-gray-200 max-w-lg">{t('home.team_subtitle')}</p>
 
             {/* Team Avatars */}
             <div className="space-y-5">
@@ -97,11 +99,11 @@ const ProfessionalSection = () => {
                   >
                     <img
                       src={member.image}
-                      alt={member.name}
+                      alt={t(member.nameKey)}
                       className="w-20 h-20 rounded-full border-2 border-white object-cover shadow-xl group-hover:ring-4 group-hover:ring-blue-400 transition"
                     />
                     <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-black/80 text-white px-3 py-1 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition">
-                      {member.name}
+                      {t(member.nameKey)}
                     </div>
                   </motion.div>
                 ))}
@@ -112,7 +114,7 @@ const ProfessionalSection = () => {
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center px-6 py-3 bg-transparent border border-white/30 text-white font-medium rounded-full shadow-md hover:border-white hover:shadow-lg transition"
               >
-                Meet the Team
+                {t('home.meet_the_team')}
               </motion.button>
             </div>
           </motion.div>
@@ -135,7 +137,7 @@ const ProfessionalSection = () => {
               </div>
               <div className="absolute -bottom-8 -right-8 bg-white rounded-2xl p-6 shadow-xl border border-gray-200 max-w-xs">
                 <h3 className="font-bold text-gray-900 text-lg leading-tight">
-                  Executive Director & <br /> General Counsel
+                  {t('home.team_role_director')}
                 </h3>
               </div>
               {/* Decorative dots */}
@@ -178,7 +180,7 @@ const ProfessionalSection = () => {
               className="bg-white/10 border border-white/20 rounded-2xl p-6 shadow-md hover:bg-white/20 transition"
             >
               <h3 className="text-4xl font-bold text-white">{item.value}</h3>
-              <p className="text-gray-300 text-sm mt-2">{item.label}</p>
+              <p className="text-gray-300 text-sm mt-2">{t(item.labelKey)}</p>
             </div>
           ))}
         </motion.div>
@@ -197,8 +199,8 @@ const ProfessionalSection = () => {
               className="bg-gradient-to-br from-white to-gray-100 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition"
             >
               <area.icon className="w-10 h-10 text-blue-600 mb-4" />
-              <h4 className="font-bold text-gray-900 text-lg mb-2">{area.title}</h4>
-              <p className="text-gray-600 text-sm">{area.desc}</p>
+              <h4 className="font-bold text-gray-900 text-lg mb-2">{t(area.titleKey)}</h4>
+              <p className="text-gray-600 text-sm">{t(area.descKey)}</p>
             </div>
           ))}
         </motion.div>

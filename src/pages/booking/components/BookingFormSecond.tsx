@@ -7,42 +7,43 @@ import { BookingStepThree } from './BookingStepThree';
 import { BookingTimeline } from './BookingTimeline';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-
-// demo services (có thể import từ constants/serviceData.ts)
-const services = [
-  {
-    id: '01',
-    title: 'Immigration & Work Permits',
-    description: 'Help with visas, work permits, and residency applications',
-  },
-  {
-    id: '02',
-    title: 'Property & Inheritance Law',
-    description: 'Property transactions, inheritance planning, and estate matters',
-  },
-  {
-    id: '03',
-    title: 'Family & Marriage Law',
-    description: 'Divorce, custody, adoption, and family mediation services',
-  },
-  {
-    id: '04',
-    title: 'Business Setup & Tax',
-    description: 'Company formation, tax planning, and business compliance',
-  },
-  {
-    id: '05',
-    title: 'Document Legalization & Notarization',
-    description: 'Document authentication, notarization, and legal verification',
-  },
-  {
-    id: '06',
-    title: 'Dispute Resolution & Investment Consulting',
-    description: 'Commercial disputes, arbitration, and investment law advice',
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 export const BookingFormSection = () => {
+  const { t } = useTranslation();
+  const services = [
+    {
+      id: '01',
+      title: t('booking.services.immigration.title'),
+      description: t('booking.services.immigration.description'),
+    },
+    {
+      id: '02',
+      title: t('booking.services.property.title'),
+      description: t('booking.services.property.description'),
+    },
+    {
+      id: '03',
+      title: t('booking.services.family.title'),
+      description: t('booking.services.family.description'),
+    },
+    {
+      id: '04',
+      title: t('booking.services.business.title'),
+      description: t('booking.services.business.description'),
+    },
+    {
+      id: '05',
+      title: t('booking.services.document.title'),
+      description: t('booking.services.document.description'),
+    },
+    {
+      id: '06',
+      title: t('booking.services.dispute.title'),
+      description: t('booking.services.dispute.description'),
+    },
+  ];
+
   const [step, setStep] = useState(1);
   const today = new Date();
   const location = useLocation();
@@ -110,7 +111,7 @@ export const BookingFormSection = () => {
     };
     console.log('Complete booking payload:', finalPayload);
     // Here you would typically send the data to your backend API
-    alert('Booking completed successfully!');
+    alert(t('booking.bookingCompletedSuccess'));
   };
 
   return (
@@ -123,7 +124,7 @@ export const BookingFormSection = () => {
           <CardHeader className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4  ">
             <div className="flex items-center justify-between w-full sm:w-auto">
               {/* Label mờ hơn */}
-              <span className="text-sm text-gray-400 mx-2">Service choosed:</span>
+              <span className="text-sm text-gray-400 mx-2">{t('booking.serviceChoosed')}</span>
 
               <div className="flex items-center gap-2">
                 <h2
@@ -132,10 +133,14 @@ export const BookingFormSection = () => {
                   }`}
                   onClick={() => step < 3 && setIsDialogOpen(true)}
                 >
-                  {serviceTitle || 'Select your needed service'}
+                  {serviceTitle || t('booking.selectYourNeededService')}
                 </h2>
 
-                {step < 3 && <span className="text-xs text-gray-400 sm:hidden">Tap to change</span>}
+                {step < 3 && (
+                  <span className="text-xs text-gray-400 sm:hidden">
+                    {t('booking.tapToChange')}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -146,7 +151,7 @@ export const BookingFormSection = () => {
                 onClick={() => setIsDialogOpen(true)}
                 className="hidden sm:flex"
               >
-                Change Service
+                {t('booking.changeService')}
               </Button>
             )}
           </CardHeader>
@@ -202,7 +207,7 @@ export const BookingFormSection = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-lg w-[calc(100vw-2rem)] sm:w-full sm:mx-auto">
           <DialogHeader>
-            <DialogTitle>Select a Service</DialogTitle>
+            <DialogTitle>{t('booking.selectAService')}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-1 gap-3 mt-2 max-h-96 overflow-y-auto">
             {services.map((svc) => (

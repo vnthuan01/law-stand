@@ -13,6 +13,7 @@ import {
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const BookingStepOne = ({
   selectedDate,
@@ -26,6 +27,7 @@ export const BookingStepOne = ({
   setSelectedLocation,
   onNext,
 }: any) => {
+  const { t } = useTranslation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -36,7 +38,7 @@ export const BookingStepOne = ({
   };
 
   const parseTimeToMinutes = (timeStr: string) => {
-    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
+    const match = timeStr.trim().match(/ˆ(\d{1,2}):(\d{2})(am|pm)$/i);
     if (!match) return null;
     const hours = parseInt(match[1], 10);
     const minutes = parseInt(match[2], 10);
@@ -68,7 +70,7 @@ export const BookingStepOne = ({
                   day: 'numeric',
                   year: 'numeric',
                 })
-              : 'Select a date'}
+              : t('booking.stepOne.selectADate')}
           </div>
           <DayPicker
             mode="single"
@@ -84,14 +86,14 @@ export const BookingStepOne = ({
           {/* Timezone */}
           <div>
             <p className="bg-slate-100 px-2 py-1 rounded-md text-xs font-bold text-slate-800 mb-1">
-              Confirm Timezone
+              {t('booking.stepOne.confirmTimezone')}
             </p>
             <Select defaultValue="vietnam">
               <SelectTrigger className="w-full h-10 text-sm">
-                <SelectValue placeholder="Select timezone" />
+                <SelectValue placeholder={t('booking.stepOne.selectTimezone')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="vietnam">Vietnam UTC +07:00</SelectItem>
+                <SelectItem value="vietnam">{t('booking.stepOne.vietnamTimezone')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -99,14 +101,14 @@ export const BookingStepOne = ({
           {/* Location */}
           <div>
             <p className="bg-slate-100 px-2 py-1 rounded-md text-xs font-bold text-slate-800 mb-1">
-              Location
+              {t('booking.stepOne.location')}
             </p>
             <Select
               value={selectedLocation || undefined}
               onValueChange={(val) => setSelectedLocation(val)}
             >
               <SelectTrigger className="w-full h-10 text-sm">
-                <SelectValue placeholder="Choose a location for meeting." />
+                <SelectValue placeholder={t('booking.stepOne.chooseLocation')} />
               </SelectTrigger>
               <SelectContent className="max-h-60">
                 {locations.map((loc: any) => (
@@ -121,7 +123,7 @@ export const BookingStepOne = ({
           {/* Time Slots */}
           <div>
             <p className="bg-slate-100 px-2 py-1 rounded-md text-xs font-bold text-slate-800 mb-1">
-              Choose Time
+              {t('booking.stepOne.chooseTime')}
             </p>
             <ScrollArea className="h-60 md:h-72 w-full pr-2">
               <div className="flex flex-col gap-2">
@@ -155,7 +157,7 @@ export const BookingStepOne = ({
           onClick={handleNext}
           className="px-6"
         >
-          Next
+          {t('common.next')}
         </Button>
       </div>
     </div>

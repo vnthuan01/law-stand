@@ -1,6 +1,7 @@
 import lawImage from '@/assets/law-firm-logo.png';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface UpdateItem {
   id: string;
@@ -9,38 +10,40 @@ interface UpdateItem {
   summary: string;
 }
 
-const mockUpdates: UpdateItem[] = [
-  {
-    id: '1',
-    title: 'Labor Code Amendments 2025',
-    date: '2025-08-01',
-    summary: 'Flexible working hours and updated regional minimum wage guidance.',
-  },
-  {
-    id: '2',
-    title: 'New Decree on Road Traffic Penalties',
-    date: '2025-07-15',
-    summary: 'Stronger fines for alcohol violations and overspeeding.',
-  },
-  {
-    id: '3',
-    title: 'Circular guiding the Law on Enterprises',
-    date: '2025-07-01',
-    summary: 'Simplified business registration procedures and disclosures.',
-  },
-];
-
 function LatestUpdateLawSection() {
+  const { t } = useTranslation();
+
+  const mockUpdates: UpdateItem[] = [
+    {
+      id: '1',
+      title: t('resources.updates.u1_title'),
+      date: '2025-08-01',
+      summary: t('resources.updates.u1_summary'),
+    },
+    {
+      id: '2',
+      title: t('resources.updates.u2_title'),
+      date: '2025-07-15',
+      summary: t('resources.updates.u2_summary'),
+    },
+    {
+      id: '3',
+      title: t('resources.updates.u3_title'),
+      date: '2025-07-01',
+      summary: t('resources.updates.u3_summary'),
+    },
+  ];
+
   return (
     <section aria-label="Latest legal updates">
       <div className="mx-auto max-w-6xl px-4">
         <header className="mb-6 flex items-end justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Latest legal updates</h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t('resources.latest_updates')}</h2>
           <Link
             to="/resources/updates"
             className="text-sm text-blue-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
           >
-            View all
+            {t('common.view_all')}
           </Link>
         </header>
 
@@ -53,7 +56,7 @@ function LatestUpdateLawSection() {
                   <CardHeader className="p-0">
                     <img
                       src={lawImage}
-                      alt="Illustration for legal update"
+                      alt={t('resources.latest_updates_illustration_alt')}
                       className="h-32 w-full rounded-t-lg object-contain bg-gray-50"
                     />
                   </CardHeader>

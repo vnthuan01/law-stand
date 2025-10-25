@@ -3,6 +3,7 @@ import { routes } from './config';
 import NotFoundPage from '@/pages/notfound/NotFoundPage';
 import RoleBasedRoute from './protectedRoute';
 import { AuthProvider } from '@/components/provider/auth/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 
 function ScrollToTop() {
@@ -15,12 +16,13 @@ function ScrollToTop() {
 
 function TitleUpdater() {
   const { pathname } = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length === 0) {
-      document.title = 'Law Stand';
+      document.title = t('app_name');
       return;
     }
 
@@ -32,14 +34,11 @@ function TitleUpdater() {
     // Take last segment of pathname
     const lastSegment = segments[segments.length - 1];
 
-    // Split theo dấu "-" và viết hoa chữ cái đầu mỗi từ
-    const formatted = lastSegment
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+    // Dịch segment cuối cùng để làm tiêu đề, nếu không có bản dịch thì dùng chính segment đó
+    const pageTitle = t(`paths.${lastSegment}`, { defaultValue: lastSegment.replace('-', ' ') });
 
-    document.title = `Law Stand - ${formatted}`;
-  }, [pathname]);
+    document.title = `${t('common.app_name')} - ${pageTitle}`;
+  }, [pathname, t]);
 
   return null;
 }

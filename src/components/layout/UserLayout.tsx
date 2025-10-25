@@ -7,36 +7,39 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { useLocation, Link } from 'react-router-dom';
-import { menuConfig } from './sidebar/MenuItemConfig';
-import { useAuth } from '@/hooks/useAuth';
-import { UserRole } from '@/enums/UserRole';
 
-// Role prefix mapping (có thể mở rộng thêm nếu sau này có role khác)
-const rolePrefixMap: Record<string, string> = {
-  staff: 'profile',
-  admin: 'dashboard',
-  user: 'profile',
-  lawyer: 'profile',
+import { menuConfig, type MenuItem } from './sidebar/MenuItemConfig';
+import { useTranslation } from 'react-i18next';
+import type { UserRole } from '@/enums/UserRole';
+import React from 'react';
+import { useAuth } from '@/hooks/useAuth';
+
+const rolePrefixMap: Record<UserRole, string> = {
+  Staff: 'profile',
+  Admin: 'dashboard',
+  User: 'profile',
+  Lawyer: 'profile',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
-  // Tách pathname
+  const userRole = user?.role || 'User';
+
   const pathnames = location.pathname.split('/').filter(Boolean);
 
-  // Nếu có role trong path (vd: /staff/...) thì thay bằng route thực tế
-  if (pathnames[0] && rolePrefixMap[pathnames[0]]) {
-    pathnames[0] = rolePrefixMap[pathnames[0]];
+  const firstSegment = pathnames[0];
+  if (firstSegment && rolePrefixMap[firstSegment as UserRole]) {
+    pathnames[0] = rolePrefixMap[firstSegment as UserRole];
   }
 
-  // Get menu items based on user role, fallback to user if no role
-  const userRole = user?.role || UserRole.User;
-  const menuItems = menuConfig[userRole] || menuConfig[UserRole.User];
+  const menuItems: MenuItem[] = menuConfig[userRole] || [];
 
   return (
     <SidebarProvider defaultOpen>
@@ -54,7 +57,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
-                    <Link to="/">Home</Link>
+                    <Link to="/">{t('nav.home')}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
 
@@ -63,20 +66,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   const isLast = index === pathnames.length - 1;
 
                   return (
-                    <div className="flex items-center" key={url}>
+                    <React.Fragment key={url}>
                       <BreadcrumbSeparator />
                       <BreadcrumbItem>
                         {isLast ? (
-                          <span className="font-medium capitalize">{segment}</span>
+                          <BreadcrumbPage>
+                            {/* Dịch segment cuối cùng */}
+                            {t(`paths.${segment}`, { defaultValue: segment.replace('-', ' ') })}
+                          </BreadcrumbPage>
                         ) : (
                           <BreadcrumbLink asChild>
-                            <Link to={url} className="capitalize">
-                              {segment}
+                            <Link to={url}>
+                              {/* Dịch các segment ở giữa */}
+                              {t(`paths.${segment}`, { defaultValue: segment.replace('-', ' ') })}
                             </Link>
                           </BreadcrumbLink>
                         )}
                       </BreadcrumbItem>
-                    </div>
+                    </React.Fragment>
                   );
                 })}
               </BreadcrumbList>
