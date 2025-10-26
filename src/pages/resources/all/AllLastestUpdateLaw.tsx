@@ -1,5 +1,4 @@
 import lawImage from '@/assets/law-firm-logo.png';
-import { useTranslation } from 'react-i18next';
 
 interface UpdateItem {
   id: string;
@@ -8,36 +7,32 @@ interface UpdateItem {
   summary: string;
 }
 
+const mockUpdates: UpdateItem[] = [
+  {
+    id: '1',
+    title: 'Labor Code Amendments 2025',
+    date: '2025-08-01',
+    summary: 'Flexible working hours and updated regional minimum wage guidance.',
+  },
+  {
+    id: '2',
+    title: 'New Decree on Road Traffic Penalties',
+    date: '2025-07-15',
+    summary: 'Stronger fines for alcohol violations and overspeeding.',
+  },
+  {
+    id: '3',
+    title: 'Circular guiding the Law on Enterprises',
+    date: '2025-07-01',
+    summary: 'Simplified business registration procedures and disclosures.',
+  },
+];
+
 function AllLastestUpdateLaw() {
-  const { t } = useTranslation();
-
-  const mockUpdates: UpdateItem[] = [
-    {
-      id: '1',
-      title: t('resources.updates.u1_title'),
-      date: '2025-08-01',
-      summary: t('resources.updates.u1_summary'),
-    },
-    {
-      id: '2',
-      title: t('resources.updates.u2_title'),
-      date: '2025-07-15',
-      summary: t('resources.updates.u2_summary'),
-    },
-    {
-      id: '3',
-      title: t('resources.updates.u3_title'),
-      date: '2025-07-01',
-      summary: t('resources.updates.u3_summary'),
-    },
-  ];
-
   return (
     <section aria-label="All latest legal updates" className="py-12">
       <div className="mx-auto max-w-6xl px-4">
-        <h1 className="mb-6 text-3xl font-bold tracking-tight">
-          {t('resources.all_latest_updates')}
-        </h1>
+        <h1 className="mb-6 text-3xl font-bold tracking-tight">All latest legal updates</h1>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {mockUpdates.map((update) => (
             <li key={update.id} className="rounded-lg border bg-white p-4 shadow-sm">

@@ -1,29 +1,15 @@
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next';
 
 interface BookingTimelineProps {
   currentStep: number;
 }
 
 export const BookingTimeline = ({ currentStep }: BookingTimelineProps) => {
-  const { t } = useTranslation();
   const steps = [
-    {
-      id: 1,
-      title: t('booking.timeline.step1.title'),
-      description: t('booking.timeline.step1.description'),
-    },
-    {
-      id: 2,
-      title: t('booking.timeline.step2.title'),
-      description: t('booking.timeline.step2.description'),
-    },
-    {
-      id: 3,
-      title: t('booking.timeline.step3.title'),
-      description: t('booking.timeline.step3.description'),
-    },
+    { id: 1, title: 'Select Date & Time', description: 'Choose your preferred appointment slot' },
+    { id: 2, title: 'Personal Information', description: 'Provide your contact details' },
+    { id: 3, title: 'Payment', description: 'Complete your booking with payment' },
   ];
 
   return (

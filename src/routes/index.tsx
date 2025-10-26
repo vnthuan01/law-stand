@@ -3,7 +3,6 @@ import { routes } from './config';
 import NotFoundPage from '@/pages/notfound/NotFoundPage';
 import RoleBasedRoute from './protectedRoute';
 import { AuthProvider } from '@/components/provider/auth/AuthContext';
-import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 
 function ScrollToTop() {
@@ -16,13 +15,12 @@ function ScrollToTop() {
 
 function TitleUpdater() {
   const { pathname } = useLocation();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length === 0) {
-      document.title = t('common.app_name');
+      document.title = 'Law Stand';
       return;
     }
 
@@ -34,20 +32,14 @@ function TitleUpdater() {
     // Take last segment of pathname
     const lastSegment = segments[segments.length - 1];
 
-    // Ưu tiên dịch các đường dẫn con như 'settings' trong 'profile/settings'
-    // Nếu không có, thử dịch các trang chính như 'appointments'
-    const pageTitle = t([`paths.${lastSegment}`, `${lastSegment}.my_appointments`], {
-      defaultValue: lastSegment.replace('-', ' '),
-    });
+    // Split theo dấu "-" và viết hoa chữ cái đầu mỗi từ
+    const formatted = lastSegment
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
 
-    // Capitalize first letter, only if pageTitle is not empty and not the same as the default value
-    if (pageTitle && pageTitle !== lastSegment.replace('-', ' ')) {
-      const capitalizedTitle = pageTitle.charAt(0).toUpperCase() + pageTitle.slice(1);
-      document.title = `${t('common.app_name')} - ${capitalizedTitle}`;
-    } else {
-      document.title = t('common.app_name');
-    }
-  }, [pathname, t]);
+    document.title = `Law Stand - ${formatted}`;
+  }, [pathname]);
 
   return null;
 }

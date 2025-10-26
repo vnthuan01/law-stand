@@ -1,14 +1,20 @@
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { Facebook, Twitter, Instagram, Plus } from 'lucide-react';
 
-interface NotFoundPageProps {
+interface Error404Props {
+  onReturnHome?: () => void;
   className?: string;
 }
 
-const NotFoundPage: React.FC<NotFoundPageProps> = ({ className = '' }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+const Error404: React.FC<Error404Props> = ({ onReturnHome, className = '' }) => {
+  const handleReturnHome = () => {
+    if (onReturnHome) {
+      onReturnHome();
+    } else {
+      // Default behavior - navigate to home
+      window.location.href = '/';
+    }
+  };
 
   return (
     <div className={`min-h-screen bg-gray-50 flex items-center justify-center px-4 ${className}`}>
@@ -21,16 +27,17 @@ const NotFoundPage: React.FC<NotFoundPageProps> = ({ className = '' }) => {
         {/* Error Message */}
         <div className="mb-8">
           <h2 className="text-2xl md:text-3xl font-medium text-gray-700 mb-4 tracking-wide">
-            {t('errors.page_not_found_title')}
+            OOPS! NOTHING WAS FOUND
           </h2>
 
           <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md mx-auto">
-            {t('errors.page_not_found_description')}{' '}
+            The page you are looking for might have been removed had its name changed or is
+            temporarily unavailable.{' '}
             <button
-              onClick={() => navigate('/')}
+              onClick={handleReturnHome}
               className="text-orange-400 hover:text-orange-500 underline transition-colors duration-200"
             >
-              {t('errors.return_to_homepage')}
+              Return to homepage
             </button>
           </p>
         </div>
@@ -74,4 +81,4 @@ const NotFoundPage: React.FC<NotFoundPageProps> = ({ className = '' }) => {
   );
 };
 
-export default NotFoundPage;
+export default Error404;

@@ -16,7 +16,6 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Textarea } from '@/components/ui/textarea';
 import { type AppointmentDetail } from '@/services/appointmentService';
-import { useTranslation } from 'react-i18next';
 
 import { CustomerInfo } from './CustomerInfo';
 import { LawyerInfo } from './LawyerInfo';
@@ -45,7 +44,6 @@ export default function AppointmentDialog({
   onApprove,
   onFinish,
 }: AppointmentDialogProps) {
-  const { t } = useTranslation();
   const [cancelReason, setCancelReason] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -58,40 +56,45 @@ export default function AppointmentDialog({
     <TooltipProvider>
       <Dialog open={!!appointment} onOpenChange={onClose}>
         <DialogContent className="!w-[95vw] !max-w-[90vw] !h-[95vh] flex flex-col">
+          {/* Header */}
           <DialogHeader className="flex flex-row items-center justify-between mb-2">
             <div>
-              <DialogTitle className="text-lg font-semibold">
-                {t('appointments.dialog.title')}
-              </DialogTitle>
+              <DialogTitle className="text-lg font-semibold">Appointment Request</DialogTitle>
               <p className="text-xs text-muted-foreground">ID #{appointment.id}</p>
             </div>
           </DialogHeader>
 
+          {/* Body */}
           <div className="flex-1 overflow-y-auto pr-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left column */}
               <div className="space-y-6">
                 <CustomerInfo appointment={appointment} />
                 <ServiceInfo appointment={appointment} />
                 <PlanningSchedule appointment={appointment} />
               </div>
 
+              {/* Right column */}
               <div className="space-y-6">
                 <LawyerInfo appointment={appointment} />
                 <BookingInfo appointment={appointment} />
 
+                {/* Actions section */}
                 <div className="border rounded-lg p-4 space-y-3">
-                  <h4 className="font-medium text-sm">{t('common.actions')}</h4>
+                  <h4 className="font-medium text-sm">Actions</h4>
 
                   <div className="flex flex-col gap-2">
+                    {/* USER actions */}
                     {role === 'User' && appointment.status !== 'Cancelled' && (
                       <>
+                        {/* Reschedule */}
                         {onReschedule && (
                           <Popover open={rescheduleOpen} onOpenChange={setRescheduleOpen}>
                             <p className="text-xs text-muted-foreground ml-1">
-                              {t('appointments.dialog.rescheduleDescription')}
+                              Change your appointment to a new date.
                             </p>
                             <PopoverTrigger asChild>
-                              <Button variant="primary">{t('appointments.reschedule')}</Button>
+                              <Button variant="primary">Reschedule</Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto">
                               <Calendar
@@ -109,29 +112,26 @@ export default function AppointmentDialog({
                                   }
                                 }}
                               >
-                                {t('appointments.dialog.confirmReschedule')}
+                                Confirm Reschedule
                               </Button>
                             </PopoverContent>
                           </Popover>
                         )}
 
+                        {/* Cancel */}
                         {onCancel && (
                           <Popover open={cancelOpen} onOpenChange={setCancelOpen}>
                             <p className="text-xs text-muted-foreground ml-1">
-                              {t('appointments.dialog.cancelDescription')}
+                              Cancel this appointment permanently.
                             </p>
                             <PopoverTrigger asChild>
-                              <Button variant="destructive">
-                                {t('appointments.cancel_appointment')}
-                              </Button>
+                              <Button variant="destructive">Cancel Appointment</Button>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-80 space-y-2">
-                              <p className="text-sm font-medium">
-                                {t('appointments.dialog.cancelReason')}:
-                              </p>
+                              <p className="text-sm font-medium">Reason for cancellation:</p>
                               <Textarea
-                                placeholder={t('appointments.dialog.enterReason')}
+                                placeholder="Enter your reason..."
                                 value={cancelReason}
                                 onChange={(e) => setCancelReason(e.target.value)}
                               />
@@ -144,7 +144,7 @@ export default function AppointmentDialog({
                                   setCancelOpen(false);
                                 }}
                               >
-                                {t('appointments.dialog.confirmCancel')}
+                                Confirm Cancel
                               </Button>
                             </PopoverContent>
                           </Popover>
@@ -152,38 +152,38 @@ export default function AppointmentDialog({
                       </>
                     )}
 
+                    {/* LAWYER actions */}
                     {role === 'Lawyer' && appointment.status !== 'Cancelled' && (
                       <>
+                        {/* For approved appointments - only show Finished button */}
                         {appointment.status === 'Confirmed' && onFinish && (
                           <>
                             <p className="text-xs text-muted-foreground ml-1">
-                              {t('appointments.dialog.finishDescription')}
+                              Mark this appointment as completed and finished.
                             </p>
                             <Button variant="primary" onClick={() => onFinish(appointment)}>
-                              {t('appointments.dialog.markAsFinished')}
+                              Mark as Finished
                             </Button>
                           </>
                         )}
 
+                        {/* For pending appointments - show Decline and Approve */}
                         {appointment.status === 'Pending' && (
                           <>
+                            {/* Decline */}
                             {onCancel && (
                               <Popover open={cancelOpen} onOpenChange={setCancelOpen}>
                                 <p className="text-xs text-muted-foreground ml-1">
-                                  {t('appointments.dialog.declineDescription')}
+                                  Reject this appointment request with a reason.
                                 </p>
                                 <PopoverTrigger asChild>
-                                  <Button variant="destructive">
-                                    {t('appointments.dialog.decline')}
-                                  </Button>
+                                  <Button variant="destructive">Decline Appointment</Button>
                                 </PopoverTrigger>
 
                                 <PopoverContent className="w-80 space-y-2">
-                                  <p className="text-sm font-medium">
-                                    {t('appointments.dialog.declineReason')}:
-                                  </p>
+                                  <p className="text-sm font-medium">Reason for decline:</p>
                                   <Textarea
-                                    placeholder={t('appointments.dialog.enterReason')}
+                                    placeholder="Enter reason..."
                                     value={cancelReason}
                                     onChange={(e) => setCancelReason(e.target.value)}
                                   />
@@ -196,19 +196,20 @@ export default function AppointmentDialog({
                                       setCancelOpen(false);
                                     }}
                                   >
-                                    {t('appointments.dialog.confirmDecline')}
+                                    Confirm Decline
                                   </Button>
                                 </PopoverContent>
                               </Popover>
                             )}
 
+                            {/* Approve */}
                             {onApprove && (
                               <>
                                 <p className="text-xs text-muted-foreground ml-1">
-                                  {t('appointments.dialog.approveDescription')}
+                                  Accept and confirm this appointment request.
                                 </p>
                                 <Button onClick={() => onApprove(appointment)}>
-                                  {t('appointments.approve_appointment')}
+                                  Approve Appointment
                                 </Button>
                               </>
                             )}
@@ -217,15 +218,16 @@ export default function AppointmentDialog({
                       </>
                     )}
 
+                    {/* DELETE only after cancelled */}
                     {onDelete && appointment.status === 'Cancelled' && (
                       <>
                         {onReschedule && (
                           <Popover open={rescheduleOpen} onOpenChange={setRescheduleOpen}>
                             <p className="text-xs text-muted-foreground ml-1">
-                              {t('appointments.dialog.rescheduleCancelled')}
+                              Choose a new date to reschedule this cancelled appointment.
                             </p>
                             <PopoverTrigger asChild>
-                              <Button variant="primary">{t('appointments.reschedule')}</Button>
+                              <Button variant="primary">Reschedule</Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto">
                               <Calendar
@@ -243,32 +245,32 @@ export default function AppointmentDialog({
                                   }
                                 }}
                               >
-                                {t('appointments.dialog.confirmReschedule')}
+                                Confirm Reschedule
                               </Button>
                             </PopoverContent>
                           </Popover>
                         )}
                         <p className="text-xs text-muted-foreground ml-1">
-                          {t('appointments.dialog.deleteDescription')}
+                          Remove this appointment record permanently from the system.
                         </p>
                         <Button variant="destructive" onClick={() => setDeleteConfirm(true)}>
-                          {t('appointments.dialog.deletePermanently')}
+                          Delete Permanently
                         </Button>
 
+                        {/* Delete Confirmation Dialog */}
                         <AlertDialog open={deleteConfirm} onOpenChange={setDeleteConfirm}>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                {t('appointments.dialog.deleteTitle')}
-                              </AlertDialogTitle>
+                              <AlertDialogTitle>Delete Appointment</AlertDialogTitle>
                               <AlertDialogDescription>
-                                {t('appointments.dialog.deleteConfirmation')}
+                                Are you sure you want to delete this appointment permanently? This
+                                action cannot be undone.
                                 <br />
                                 <strong>ID#:</strong> {appointment.id}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => {
                                   onDelete?.(appointment);
@@ -276,7 +278,7 @@ export default function AppointmentDialog({
                                 }}
                                 className="bg-red-600 hover:bg-red-700"
                               >
-                                {t('appointments.dialog.deletePermanently')}
+                                Delete Permanently
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

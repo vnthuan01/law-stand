@@ -1,12 +1,34 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { User, Scale } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
   imageSrc?: string;
 }
+
+const messages = [
+  {
+    icon: <Scale className="w-4 h-4 inline mr-1" />,
+    text: 'AI: Hello! What do you want to know about Labor Law in Vietnam?',
+  },
+  {
+    icon: <User className="w-4 h-4 inline mr-1" />,
+    text: 'User: I want to know about the probation period in labor contracts.',
+  },
+  {
+    icon: <Scale className="w-4 h-4 inline mr-1" />,
+    text: 'AI: According to Labor Code 2019, probation is:\n- Up to 180 days for managers\n- Up to 60 days for technical jobs\n- Up to 30 days for others',
+  },
+  {
+    icon: <User className="w-4 h-4 inline mr-1" />,
+    text: 'User: What happens if the company doesn’t sign a contract after probation?',
+  },
+  {
+    icon: <Scale className="w-4 h-4 inline mr-1" />,
+    text: 'AI: If you keep working after probation without a contract, an official labor contract is automatically established.',
+  },
+];
 
 // config
 const gap = 4; // delay between appearances
@@ -14,35 +36,6 @@ const fade = 1.2; // fade in/out time
 const visibleTime = 6; // how long each bubble stays fully visible
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, imageSrc }) => {
-  const { t } = useTranslation();
-
-  const messages = [
-    {
-      icon: <Scale className="w-4 h-4 inline mr-1" />,
-      text: t('auth.chat.ai_greeting'),
-      sender: 'ai',
-    },
-    {
-      icon: <User className="w-4 h-4 inline mr-1" />,
-      text: t('auth.chat.user_question_probation'),
-      sender: 'user',
-    },
-    {
-      icon: <Scale className="w-4 h-4 inline mr-1" />,
-      text: t('auth.chat.ai_answer_probation'),
-      sender: 'ai',
-    },
-    {
-      icon: <User className="w-4 h-4 inline mr-1" />,
-      text: t('auth.chat.user_question_after_probation'),
-      sender: 'user',
-    },
-    {
-      icon: <Scale className="w-4 h-4 inline mr-1" />,
-      text: t('auth.chat.ai_answer_after_probation'),
-      sender: 'ai',
-    },
-  ];
   return (
     <div className="flex w-full min-h-screen">
       {/* Left side */}
@@ -50,7 +43,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, imageSrc }) => {
         {imageSrc && (
           <img
             src={imageSrc}
-            alt={t('auth.illustration_alt')}
+            alt="Auth illustration"
             className="w-full h-full object-cover object-center"
           />
         )}
@@ -82,7 +75,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, imageSrc }) => {
                   repeatDelay: (messages.length - 1) * gap, // chờ trước khi vòng lặp mới
                 }}
                 className={`rounded-2xl px-4 py-2 shadow-lg max-w-sm ${
-                  msg.sender === 'user' ? 'bg-blue-500/80 text-white self-end' : 'bg-white/80'
+                  msg.text.startsWith('User') ? 'bg-blue-500/80 text-white self-end' : 'bg-white/80'
                 }`}
               >
                 <div>

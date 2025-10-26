@@ -7,19 +7,19 @@ export default function ContactInfoSection() {
   const contactDetails = [
     {
       label: t('contact.client_support'),
-      value: t('contact.phone_number_value'),
+      value: '1-800-1234-567',
       icon: PhoneIcon,
       type: 'phone',
     },
     {
       label: t('contact.email_label'),
-      value: t('contact.email_address_value'),
+      value: 'info@demolink.org',
       icon: MailIcon,
       type: 'email',
     },
     {
       label: t('contact.main_office'),
-      value: t('contact.address_value'),
+      value: '18/A, New Born Town Hall\nNew York, US',
       icon: MapPinIcon,
       type: 'address',
     },
