@@ -7,6 +7,7 @@ import Layout from '@/components/layout/UserLayout';
 import AppointmentShowCard from '@/pages/appointments/components/AppointmentShowCard';
 import { useMyAppointments, useAppointments, useAppointmentDetail } from '@/hooks/useAppointment';
 import AppointmentDialog from './components/AppointmentShowDetail';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 
 // Hook responsive: chỉ 1, 3, 5
@@ -48,6 +49,21 @@ export default function UserAppointmentsPage() {
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    variant: 'default' | 'destructive';
+    confirmText: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: () => {},
+    variant: 'default',
+    confirmText: 'Confirm',
+  });
 
   // Fetch my appointments
   const { data: appointments, isLoading, error, refetch } = useMyAppointments();
@@ -59,14 +75,22 @@ export default function UserAppointmentsPage() {
 
   // Actions
   const handleCancel = async (apt: MyAppointment) => {
-    if (!confirm(t('appointments.cancel_confirm'))) return;
-    try {
-      await cancel(apt.id);
-      await refetch();
-      toast.success(t('appointments.appointment_cancelled'));
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
-    }
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.cancel_title'),
+      description: t('appointments.cancel_confirm'),
+      variant: 'destructive',
+      confirmText: t('common.delete'),
+      onConfirm: async () => {
+        try {
+          await cancel(apt.id);
+          await refetch();
+          toast.success(t('appointments.appointment_cancelled'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
+        }
+      },
+    });
   };
 
   // Filter appointments by selected month
@@ -172,6 +196,18 @@ export default function UserAppointmentsPage() {
           await handleCancel(apt as unknown as MyAppointment);
           setSelectedAppointmentId(null);
         }}
+      />
+
+      {/* Confirm dialog */}
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        confirmText={confirmDialog.confirmText}
+        cancelText={t('common.cancel')}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
       />
     </Layout>
   );

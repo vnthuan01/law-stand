@@ -4,7 +4,6 @@ import type { LoginPayload, User } from '@/services/authService';
 import { AuthContext } from './AuthContextType';
 import { useNavigate } from 'react-router-dom';
 
-
 type AuthProviderProps = { children: ReactNode };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -18,7 +17,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (user) {
       navigate('/');
     }
-
   }, [user]);
 
   const login = (data: LoginPayload) => loginMutate(data);

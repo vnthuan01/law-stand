@@ -5,32 +5,33 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CreditCard, Smartphone, Shield, ArrowLeft } from 'lucide-react';
+import { CreditCard, Smartphone, Shield, ArrowLeft, CheckCircle } from 'lucide-react';
+import { PaymentPage } from './PaymentPage';
+import { PaymentCallback } from './PaymentCallback';
+import type { Slot } from '@/services/slotService';
 
 interface BookingStepThreeProps {
   serviceTitle?: string | null;
-  selectedDate?: Date;
-  selectedTimeSlot?: string | null;
-  duration?: string | null;
-  selectedLocation?: string | null;
-  hostName?: string | null;
+  selectedSlot?: Slot;
   userInfo?: {
     name: string;
     email: string;
     phone: string;
+    address: string;
+    country: string;
   };
+  appointmentId?: string;
+  appointment?: any;
   onBack: () => void;
   onComplete: (paymentData: unknown) => void;
 }
 
 export const BookingStepThree = ({
   serviceTitle,
-  selectedDate,
-  selectedTimeSlot,
-  duration,
-  selectedLocation,
-  hostName,
+  selectedSlot,
   userInfo,
+  appointmentId,
+  appointment,
   onBack,
   onComplete,
 }: BookingStepThreeProps) => {
@@ -41,6 +42,8 @@ export const BookingStepThree = ({
   const [cardHolderName, setCardHolderName] = useState(userInfo?.name || '');
   const [saveCard, setSaveCard] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showPaymentPage, setShowPaymentPage] = useState(false);
+  const [showPaymentFallback, setShowPaymentFallback] = useState(false);
 
   // Mock pricing - in real app this would come from API
   const basePrice = 150;
@@ -69,6 +72,42 @@ export const BookingStepThree = ({
 
     onComplete(paymentData);
   };
+
+  const handlePaymentSuccess = (paymentData: any) => {
+    onComplete(paymentData);
+  };
+
+  const handlePaymentFailure = () => {
+    setShowPaymentFallback(true);
+  };
+
+  const handleBackToPayment = () => {
+    setShowPaymentFallback(false);
+  };
+
+  // Show payment page if appointment is created
+  if (appointmentId && appointment && showPaymentPage) {
+    return (
+      <PaymentPage
+        appointmentId={appointmentId}
+        appointment={appointment}
+        onPaymentSuccess={handlePaymentSuccess}
+        onPaymentFailure={handlePaymentFailure}
+      />
+    );
+  }
+
+  // Show payment fallback if needed
+  if (appointmentId && appointment && showPaymentFallback) {
+    return (
+      <PaymentCallback
+        appointmentId={appointmentId}
+        appointment={appointment}
+        onPaymentSuccess={handlePaymentSuccess}
+        onBackToPayment={handleBackToPayment}
+      />
+    );
+  }
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -107,28 +146,32 @@ export const BookingStepThree = ({
             <div>
               <p className="text-sm text-gray-500">Date & Time</p>
               <p className="font-medium">
-                {selectedDate?.toLocaleDateString('en-GB', {
+                {new Date(selectedSlot?.date || '').toLocaleDateString('en-GB', {
                   weekday: 'long',
                   day: '2-digit',
                   month: 'short',
                   year: 'numeric',
                 })}{' '}
-                at {selectedTimeSlot}
+                at {selectedSlot?.startTime} - {selectedSlot?.endTime}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Duration</p>
-              <p className="font-medium">{duration ? `${duration} minutes` : '60 minutes'}</p>
+              <p className="font-medium">
+                {selectedSlot?.service?.price
+                  ? `${selectedSlot?.service?.price.toLocaleString('vi-VN')} VND`
+                  : 'Free'}
+              </p>
             </div>
           </div>
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-gray-500">Location</p>
-              <p className="font-medium">{selectedLocation}</p>
+              <p className="text-sm text-gray-500">Service</p>
+              <p className="font-medium">{selectedSlot?.service?.name || 'To be assigned'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Lawyer</p>
-              <p className="font-medium">{hostName || 'To be assigned'}</p>
+              <p className="font-medium">{selectedSlot?.lawyer?.fullName || 'To be assigned'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Contact</p>
@@ -292,16 +335,27 @@ export const BookingStepThree = ({
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
         </Button>
-        <Button
-          onClick={handleCompletePayment}
-          disabled={
-            !termsAccepted ||
-            (paymentMethod === 'card' && (!cardNumber || !expiryDate || !cvv || !cardHolderName))
-          }
-          className="bg-orange-600 hover:bg-orange-700 text-white px-6 sm:px-8 order-1 sm:order-2"
-        >
-          Complete Payment - ${total.toFixed(2)}
-        </Button>
+        <div className="flex gap-2 order-1 sm:order-2">
+          {appointmentId && appointment && (
+            <Button
+              onClick={() => setShowPaymentPage(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Pay with PayOS
+            </Button>
+          )}
+          <Button
+            onClick={handleCompletePayment}
+            disabled={
+              !termsAccepted ||
+              (paymentMethod === 'card' && (!cardNumber || !expiryDate || !cvv || !cardHolderName))
+            }
+            className="bg-orange-600 hover:bg-orange-700 text-white px-6 sm:px-8"
+          >
+            Complete Payment - ${total.toFixed(2)}
+          </Button>
+        </div>
       </div>
     </div>
   );

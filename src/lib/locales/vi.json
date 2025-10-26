@@ -194,6 +194,7 @@
     "approve_appointment": "Chấp nhận lịch hẹn",
     "complete_appointment": "Hoàn thành lịch hẹn",
     "cancel_confirm": "Bạn có chắc chắn muốn hủy lịch hẹn này?",
+    "cancel_delete": "Bạn có chắc chắn muốn xóa lịch hẹn này?",
     "approve_confirm": "Chấp nhận lịch hẹn này?",
     "complete_confirm": "Đánh dấu lịch hẹn này là hoàn thành?",
     "appointment_cancelled": "Đã hủy lịch hẹn thành công",

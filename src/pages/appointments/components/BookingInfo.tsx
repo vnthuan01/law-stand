@@ -14,8 +14,15 @@ export const BookingInfo = ({ appointment }: BookingInfoProps) => {
         <div>
           <p className="font-medium">Date & Time</p>
           <p className="text-muted-foreground">
-            {new Date(appointment.slot.startTime).toLocaleString()} -{' '}
-            {new Date(appointment.slot.endTime).toLocaleTimeString()}
+            {new Date(appointment.slot.date).toLocaleDateString('vi-VN', {
+              weekday: 'long',
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            })}
+          </p>
+          <p className="text-muted-foreground">
+            {appointment.slot.startTime} - {appointment.slot.endTime}
           </p>
         </div>
       </div>
