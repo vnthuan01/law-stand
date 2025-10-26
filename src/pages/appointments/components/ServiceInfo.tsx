@@ -50,10 +50,7 @@ export const ServiceInfo = ({ appointment }: ServiceInfoProps) => {
         <p className="text-muted-foreground">
           {service?.description || 'No description available'}
         </p>
-        <p className="font-medium text-green-700">
-          Price:{' '}
-          {service?.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) || 0}
-        </p>
+        <p className="font-medium text-green-700">Price: ${service?.price || 0}</p>
       </div>
     </section>
   );

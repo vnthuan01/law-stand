@@ -1,6 +1,8 @@
 import { apiClient } from '@/lib/apiClients';
 
-export interface UserDetail {
+// ========== TYPES ==========
+
+export interface User {
   id: string;
   fullName: string;
   phoneNumber: string;
@@ -11,8 +13,6 @@ export interface UserDetail {
   city: string;
   province: string;
   avatarUrl: string;
-  bio: string;
-  postalCode: string;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   role: number;
@@ -29,102 +29,36 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface PaginationInfo {
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  totalPages: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
-
-export interface UserResponse {
-  data: UserDetail[];
-  pagination: PaginationInfo;
-}
-
-export interface UpdateProfileRequest {
-  fullName: string;
-  phoneNumber?: string;
-  email?: string;
-  dateOfBirth?: string;
-  gender?: string;
-  address?: string;
-  city?: string;
-  province?: string;
-  postalCode?: string;
-  bio?: string;
-  avatarUrl?: string;
-}
-
-export interface CreateUserRequest {
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
-  role: number;
-}
-
-export interface GetUsersParams {
-  role?: number;
-  isActive?: boolean;
-  searchTerm?: string;
-  sortBy?: string;
-  sortDescending?: boolean;
-  page?: number;
-  pageSize?: number;
-}
+// ========== SERVICE METHODS ==========
 
 export const userService = {
-  // ===== ADMIN ENDPOINTS =====
-  // updateUser: (userId: string, data: Partial<User>) =>
-  //   apiClient.put<ApiResponse<User>>(`/Users/${userId}`, data),
+  // ===== USERS =====
 
-  // deleteUser: (userId: string) => apiClient.delete<ApiResponse<User>>(`/Users/${userId}`),
+  // GET /api/Users/{id} - Get user by ID
+  getUserById: (userId: string) => apiClient.get<ApiResponse<User>>(`/Users/${userId}`),
 
-  // getLawyerById: (lawyerId: string) => apiClient.get<ApiResponse<User>>(`/Lawyers/${lawyerId}`),
+  // GET /api/Users - Get all users
+  getAllUsers: () => apiClient.get<ApiResponse<User[]>>('/Users'),
 
-  // getAllLawyers: () => apiClient.get<ApiResponse<User[]>>('/Lawyers'),
+  // PUT /api/Users/{id} - Update user info
+  updateUser: (userId: string, data: Partial<User>) =>
+    apiClient.put<ApiResponse<User>>(`/Users/${userId}`, data),
 
-  // updateLawyer: (lawyerId: string, data: Partial<User>) =>
-  //   apiClient.put<ApiResponse<User>>(`/Lawyers/${lawyerId}`, data),
+  // DELETE /api/Users/{id}
+  deleteUser: (userId: string) => apiClient.delete<ApiResponse<User>>(`/Users/${userId}`),
 
-  // deleteLawyer: (lawyerId: string) => apiClient.delete<ApiResponse<User>>(`/Lawyers/${lawyerId}`),
+  // ===== LAWYERS =====
 
-  getUsers: (params?: GetUsersParams) => {
-    const queryParams = new URLSearchParams();
+  // GET /api/Lawyers/{id} - Get lawyer by ID
+  getLawyerById: (lawyerId: string) => apiClient.get<ApiResponse<User>>(`/Lawyers/${lawyerId}`),
 
-    if (params?.role !== undefined) queryParams.append('Role', params.role.toString());
-    if (params?.isActive !== undefined) queryParams.append('IsActive', params.isActive.toString());
-    if (params?.searchTerm) queryParams.append('SearchTerm', params.searchTerm);
-    if (params?.sortBy) queryParams.append('SortBy', params.sortBy);
-    if (params?.sortDescending !== undefined)
-      queryParams.append('SortDescending', params.sortDescending.toString());
-    if (params?.page !== undefined) queryParams.append('Page', params.page.toString());
-    if (params?.pageSize !== undefined) queryParams.append('PageSize', params.pageSize.toString());
+  // GET /api/Lawyers - Get all lawyers
+  getAllLawyers: () => apiClient.get<ApiResponse<User[]>>('/Lawyers'),
 
-    const queryString = queryParams.toString();
-    const url = `/Auth/users${queryString ? `?${queryString}` : ''}`;
+  // PUT /api/Lawyers/{id} - Update lawyer info
+  updateLawyer: (lawyerId: string, data: Partial<User>) =>
+    apiClient.put<ApiResponse<User>>(`/Lawyers/${lawyerId}`, data),
 
-    return apiClient.get<ApiResponse<UserResponse>>(url);
-  },
-
-  updateProfile: (data: UpdateProfileRequest) =>
-    apiClient.put<ApiResponse<UserDetail>>('/Auth/profile', data),
-
-  updateUser: (userId: string, data: UpdateProfileRequest) =>
-    apiClient.put<ApiResponse<UserDetail>>(`/Auth/users/${userId}`, data),
-
-  deleteUser: (userId: string) => apiClient.delete<ApiResponse<void>>(`/Auth/users/${userId}`),
-
-  activateUser: (userId: string) =>
-    apiClient.put<ApiResponse<UserDetail>>(`/Auth/users/${userId}/activate`),
-
-  deactivateUser: (userId: string) =>
-    apiClient.delete<ApiResponse<UserDetail>>(`/Auth/users/${userId}`),
-
-  getUserById: (userId: string) => apiClient.get<ApiResponse<UserDetail>>(`/Auth/users/${userId}`),
-
-  createUser: (data: CreateUserRequest) =>
-    apiClient.post<ApiResponse<UserDetail>>('/Auth/users', data),
+  // DELETE /api/Lawyers/{id}
+  deleteLawyer: (lawyerId: string) => apiClient.delete<ApiResponse<User>>(`/Lawyers/${lawyerId}`),
 };

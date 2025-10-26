@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { type AppointmentDetail } from '@/services/appointmentService';
 
 interface LawyerInfoProps {
@@ -13,7 +13,7 @@ export const LawyerInfo = ({ appointment }: LawyerInfoProps) => {
       <h4 className="font-medium text-sm">Lawyer Information</h4>
       <div className="flex items-center gap-3">
         <Avatar>
-          <AvatarImage src={lawyer.avatarUrl} />
+          {/* <AvatarImage src={lawyer.avatarUrl} /> */}
           <AvatarFallback>{lawyer.fullName.charAt(0) || 'L'}</AvatarFallback>
         </Avatar>
         <div>

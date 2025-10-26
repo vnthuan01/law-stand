@@ -50,17 +50,18 @@ export interface Slot {
 export interface CreateSlotPayload {
   serviceId: string;
   lawyerId: string;
-  date: Date | string;
+  date: string;
   startTime: string;
   endTime: string;
+  status: string;
 }
 
 export interface UpdateSlotPayload {
-  serviceId?: string;
-  lawyerId?: string;
-  date?: Date | string;
-  startTime?: string;
-  endTime?: string;
+  serviceId: string;
+  lawyerId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
   status: string;
 }
 
@@ -115,7 +116,7 @@ export const slotService = {
 
   // POST /api/Slots/available - Get available slots
   getAvailable: (data: AvailableSlotPayload) =>
-    apiClient.get<SlotListResponse>('/Slots/available', { params: data }),
+    apiClient.post<SlotListResponse>('/Slots/available', data),
 
   // PATCH /api/Slots/{slotId}/status - Update status
   updateStatus: (slotId: string, data: UpdateSlotStatusPayload) =>

@@ -9,11 +9,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Home, LogOut, ChevronDown, User } from 'lucide-react';
+import { Home, LogOut, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth'; // <-- hook auth của bạn
-import { Avatar } from '@/components/ui/avatar';
-import { AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function SidebarFooterMenu() {
   const navigate = useNavigate();
@@ -33,11 +31,14 @@ export default function SidebarFooterMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex w-full items-center text-white gap-2 px-2 py-1 bg-orange-500 hover:bg-orange-300 rounded-md cursor-pointer">
-            {user?.avatarUrl ? (
-              <Avatar>
-                <AvatarImage src={user.avatarUrl} />
-                <AvatarFallback>{user.fullName.charAt(0) || 'U'}</AvatarFallback>
-              </Avatar>
+            {user?.avatar ? (
+              <img
+                src={user.avatar}
+                alt="User avatar"
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
             ) : (
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold uppercase">
                 {user?.fullName ? user.fullName.trim().charAt(0) : 'U'}
@@ -60,10 +61,10 @@ export default function SidebarFooterMenu() {
             <span>Home</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => handleNavigate('/profile')}>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
+          {/* <DropdownMenuItem onClick={() => handleNavigate('/settings')}>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+          </DropdownMenuItem> */}
 
           <DropdownMenuSeparator />
 

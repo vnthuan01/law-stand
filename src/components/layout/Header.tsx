@@ -97,8 +97,8 @@ const Header: React.FC = () => {
                 className="cursor-pointer py-1"
                 onClick={() => setIsMenuOpen((prev) => !prev)}
               >
-                {user?.avatarUrl ? (
-                  <AvatarImage src={user.avatarUrl} alt={user.fullName || ''} />
+                {user?.avatar ? (
+                  <AvatarImage src={user.avatar} alt={user.fullName || ''} />
                 ) : (
                   <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
                 )}
@@ -260,8 +260,8 @@ const Header: React.FC = () => {
               {isAuthenticated ? (
                 <div className="flex items-center justify-between">
                   <Avatar onClick={() => navigate('/profile')} className="cursor-pointer py-1">
-                    {user?.avatarUrl ? (
-                      <AvatarImage src={user.avatarUrl} alt={user.fullName} />
+                    {user?.avatar ? (
+                      <AvatarImage src={user.avatar} alt={user.fullName} />
                     ) : (
                       <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
                     )}

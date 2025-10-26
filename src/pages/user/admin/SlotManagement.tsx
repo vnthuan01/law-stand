@@ -2,10 +2,17 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { useCreateSlot, useUpdateSlot, useDeleteSlot, useSlotsByLawyer } from '@/hooks/useSlot';
-import { useUsers } from '@/hooks/useUser';
+import { useLawyers } from '@/hooks/useUser';
 import { serviceService } from '@/services/serviceService';
 import Layout from '@/components/layout/UserLayout';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -21,27 +28,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { SlotEditForm } from './components/SlotEditForm';
-import { SlotCreateForm } from './components/SlotCreateForm';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Loader2, Calendar as CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
+import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import type { Slot, CreateSlotPayload } from '@/services/slotService';
 
 export default function SlotManagement() {
   const { t } = useTranslation();
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSlot, setEditingSlot] = useState<Slot | null>(null);
   const [selectedLawyerId, setSelectedLawyerId] = useState<string>('');
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [formData, setFormData] = useState<CreateSlotPayload>({
+    serviceId: '',
+    lawyerId: '',
+    date: '',
+    startTime: '',
+    endTime: '',
+    status: 'available',
+  });
 
   // Fetch services and lawyers
   const { data: servicesData } = useQuery({
@@ -52,62 +57,62 @@ export default function SlotManagement() {
     },
   });
 
-  const { data: lawyersData, isLoading: isLoadingLawyers } = useUsers({ role: 2 });
+  const { data: lawyersData, isLoading: isLoadingLawyers } = useLawyers();
 
-  // Fetch slots by lawyer with date range
-  const {
-    data: slotsData,
-    isLoading: isLoadingSlots,
-    error,
-  } = useSlotsByLawyer(
-    selectedLawyerId,
-    startDate.toISOString().split('T')[0],
-    endDate?.toISOString().split('T')[0],
-  );
+  // Fetch slots by lawyer
+  const { data: slotsData, isLoading: isLoadingSlots, error } = useSlotsByLawyer(selectedLawyerId);
 
   // Mutations
   const createMutation = useCreateSlot();
   const updateMutation = useUpdateSlot();
   const deleteMutation = useDeleteSlot();
 
-  const handleOpenCreateDialog = () => {
-    setIsCreateDialogOpen(true);
+  const handleOpenDialog = (slot?: Slot) => {
+    if (slot) {
+      setEditingSlot(slot);
+      setFormData({
+        serviceId: slot.serviceId,
+        lawyerId: slot.lawyerId,
+        date: slot.date.split('T')[0],
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        status: slot.status,
+      });
+    } else {
+      setEditingSlot(null);
+      setFormData({
+        serviceId: '',
+        lawyerId: selectedLawyerId || '',
+        date: '',
+        startTime: '',
+        endTime: '',
+        status: 'available',
+      });
+    }
+    setIsDialogOpen(true);
   };
 
-  const handleOpenEditDialog = (slot: Slot) => {
-    setEditingSlot(slot);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleCloseCreateDialog = () => {
-    setIsCreateDialogOpen(false);
-  };
-
-  const handleCloseEditDialog = () => {
-    setIsEditDialogOpen(false);
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
     setEditingSlot(null);
   };
 
-  const handleCreateSlot = async (data: CreateSlotPayload) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      await createMutation.mutateAsync(data);
-      toast.success(t('admin.slot_created'));
+      if (editingSlot) {
+        await updateMutation.mutateAsync({
+          slotId: editingSlot.id,
+          data: formData,
+        });
+        toast.success(t('admin.slot_updated'));
+      } else {
+        await createMutation.mutateAsync(formData);
+        toast.success(t('admin.slot_created'));
+      }
+      handleCloseDialog();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t('admin.operation_failed'));
-      throw error;
-    }
-  };
-
-  const handleUpdateSlot = async (slotId: string, data: { status: string }) => {
-    try {
-      await updateMutation.mutateAsync({
-        slotId,
-        data,
-      });
-      toast.success(t('admin.slot_updated'));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('admin.operation_failed'));
-      throw error;
     }
   };
 
@@ -133,111 +138,39 @@ export default function SlotManagement() {
             <h1 className="text-2xl font-bold">{t('admin.slot_management')}</h1>
             <p className="text-sm text-muted-foreground">{t('admin.slot_management_desc')}</p>
           </div>
-          <Button onClick={handleOpenCreateDialog}>
+          <Button onClick={() => handleOpenDialog()}>
             <Plus className="mr-2 h-4 w-4" />
             {t('admin.add_slot')}
           </Button>
         </div>
 
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{t('admin.filters')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              {/* Lawyer Selector */}
-              <div className="space-y-2">
-                <Label>{t('admin.lawyer')}</Label>
-                <Select value={selectedLawyerId} onValueChange={setSelectedLawyerId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('admin.select_lawyer')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {isLoadingLawyers ? (
-                      <div className="p-2 text-sm text-muted-foreground">
-                        {t('admin.loading_lawyers')}
-                      </div>
-                    ) : (
-                      lawyersData?.data?.data?.map((lawyer) => (
-                        <SelectItem key={lawyer.id} value={lawyer.id}>
-                          {lawyer.fullName} ({lawyer.email})
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">{t('admin.choose_lawyer_desc')}</p>
-              </div>
-
-              {/* Start Date */}
-              <div className="space-y-2">
-                <Label>{t('admin.start_date')}</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        'w-full justify-start text-left font-normal',
-                        !startDate && 'text-muted-foreground',
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {startDate ? (
-                        format(startDate, 'dd/MM/yyyy', { locale: vi })
-                      ) : (
-                        <span>{t('admin.pick_date')}</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={startDate}
-                      onSelect={(date) => date && setStartDate(date)}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <p className="text-xs text-muted-foreground">{t('admin.start_date_desc')}</p>
-              </div>
-
-              {/* End Date */}
-              <div className="space-y-2">
-                <Label>{t('admin.end_date')}</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        'w-full justify-start text-left font-normal',
-                        !endDate && 'text-muted-foreground',
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {endDate ? (
-                        format(endDate, 'dd/MM/yyyy', { locale: vi })
-                      ) : (
-                        <span>{t('admin.pick_date')}</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={endDate}
-                      onSelect={setEndDate}
-                      disabled={(date) => date < startDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <p className="text-xs text-muted-foreground">{t('admin.end_date_desc')}</p>
-              </div>
+        {/* Lawyer Selector */}
+        <div className="rounded-md border p-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label>{t('admin.lawyer')}</Label>
+              <Select value={selectedLawyerId} onValueChange={setSelectedLawyerId}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('admin.select_lawyer')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {isLoadingLawyers ? (
+                    <div className="p-2 text-sm text-muted-foreground">
+                      {t('admin.loading_lawyers')}
+                    </div>
+                  ) : (
+                    lawyersData?.map((lawyer) => (
+                      <SelectItem key={lawyer.id} value={lawyer.id}>
+                        {lawyer.fullName} ({lawyer.email})
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">{t('admin.choose_lawyer_desc')}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Slots Table */}
         {isLoadingSlots && (
@@ -292,9 +225,7 @@ export default function SlotManagement() {
                             ? 'bg-green-100 text-green-800'
                             : slot.status === 'booked'
                               ? 'bg-yellow-100 text-yellow-800'
-                              : slot.status === 'cancelled'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-gray-100 text-gray-800'
+                              : 'bg-gray-100 text-gray-800'
                         }`}
                       >
                         {t(`admin.${slot.status}`)}
@@ -302,11 +233,7 @@ export default function SlotManagement() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleOpenEditDialog(slot)}
-                        >
+                        <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(slot)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
@@ -327,27 +254,125 @@ export default function SlotManagement() {
         )}
       </div>
 
-      {/* Create Dialog */}
-      <SlotCreateForm
-        isOpen={isCreateDialogOpen}
-        onClose={handleCloseCreateDialog}
-        onCreate={handleCreateSlot}
-        isCreating={createMutation.isPending}
-        servicesData={servicesData}
-        lawyersData={lawyersData?.data?.data}
-        selectedLawyerId={selectedLawyerId}
-      />
+      {/* Create/Edit Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingSlot ? t('admin.edit_slot') : t('admin.create_slot')}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Service */}
+            <div className="space-y-2">
+              <Label>{t('admin.service')}</Label>
+              <Select
+                value={formData.serviceId}
+                onValueChange={(value) => setFormData({ ...formData, serviceId: value })}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('admin.select_service')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {servicesData?.map((service) => (
+                    <SelectItem key={service.id} value={service.id}>
+                      {service.name} - ${service.price}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-      {/* Edit Dialog */}
-      {editingSlot && (
-        <SlotEditForm
-          slot={editingSlot}
-          isOpen={isEditDialogOpen}
-          onClose={handleCloseEditDialog}
-          onUpdate={handleUpdateSlot}
-          isUpdating={updateMutation.isPending}
-        />
-      )}
+            {/* Lawyer */}
+            <div className="space-y-2">
+              <Label>{t('admin.lawyer')}</Label>
+              <Select
+                value={formData.lawyerId}
+                onValueChange={(value) => setFormData({ ...formData, lawyerId: value })}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('admin.select_lawyer')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {lawyersData?.map((lawyer) => (
+                    <SelectItem key={lawyer.id} value={lawyer.id}>
+                      {lawyer.fullName} ({lawyer.email})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Date */}
+            <div className="space-y-2">
+              <Label>{t('common.date')}</Label>
+              <Input
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                required
+              />
+            </div>
+
+            {/* Time */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t('admin.start_time')}</Label>
+                <Input
+                  type="time"
+                  value={formData.startTime}
+                  onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('admin.end_time')}</Label>
+                <Input
+                  type="time"
+                  value={formData.endTime}
+                  onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="space-y-2">
+              <Label>{t('common.status')}</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="available">{t('admin.available')}</SelectItem>
+                  <SelectItem value="booked">{t('admin.booked')}</SelectItem>
+                  <SelectItem value="cancelled">{t('admin.cancelled')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Footer */}
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={handleCloseDialog}>
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                {createMutation.isPending || updateMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('common.saving')}
+                  </>
+                ) : (
+                  <>{editingSlot ? t('common.update') : t('common.create')}</>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }

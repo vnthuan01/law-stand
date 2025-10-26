@@ -34,21 +34,3 @@ export function getDateKey(d: Date): string {
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
-
-// helper/formatDateTime.ts
-export function toDateOnly(date: Date): string {
-  // trả về "YYYY-MM-DD"
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-export function toTimeOnly(date: Date): string {
-  // trả về "HH:mm:ss.fffffff"
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const seconds = date.getSeconds().toString().padStart(2, '0');
-  const fraction = '0000000'; // luôn 7 số 0 như TimeOnly yêu cầu
-  return `${hours}:${minutes}:${seconds}.${fraction}`;
-}

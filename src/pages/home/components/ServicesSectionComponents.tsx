@@ -85,9 +85,12 @@ export default function ServicesSection() {
     setIsDialogOpen(true);
   }, []);
 
-  const handleBooking = useCallback(() => {
-    navigate('/booking');
-  }, [navigate]);
+  const handleBooking = useCallback(
+    (svc: ServiceItem) => {
+      navigate('/booking', { state: { serviceId: svc.id, serviceTitle: svc.title } });
+    },
+    [navigate],
+  );
 
   const handleContact = useCallback(() => {
     navigate('/contact');
@@ -171,7 +174,7 @@ export default function ServicesSection() {
             <DialogFooter className="gap-2 sm:gap-3">
               <Button
                 type="button"
-                onClick={handleBooking}
+                onClick={() => selectedService && handleBooking(selectedService)}
                 className="bg-orange-500 hover:bg-orange-600 text-white"
               >
                 {t('home.booking_appointment')}

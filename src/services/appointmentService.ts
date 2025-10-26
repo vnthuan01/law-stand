@@ -13,7 +13,6 @@ export interface AppointmentUser {
   email: string;
   role: string;
   isActive: boolean;
-  avatarUrl: string;
 }
 
 // Service object
@@ -31,7 +30,6 @@ export interface Lawyer {
   phoneNumber: string;
   email: string;
   role: string;
-  avatarUrl: string;
 }
 
 // Slot object

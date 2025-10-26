@@ -28,10 +28,14 @@ export function useAuth() {
     },
     enabled: !!token,
     retry: false,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // Cache 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
   });
 
+  // Tính toán loading state
+  // Loading = true khi:
+  // 1. Có token nhưng chưa có data và đang loading/fetching
+  // 2. Hoặc có token nhưng chưa success
   const isAuthLoading = !!token && (!profile || isLoading || isFetching || !isSuccess);
 
   // Login

@@ -5,36 +5,37 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CreditCard, Smartphone, Shield, ArrowLeft, CheckCircle } from 'lucide-react';
-import { PaymentPage } from './PaymentPage';
-import { PaymentCallback } from './PaymentCallback';
-import type { Slot } from '@/services/slotService';
+import { CreditCard, Smartphone, Shield, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface BookingStepThreeProps {
   serviceTitle?: string | null;
-  selectedSlot?: Slot;
+  selectedDate?: Date;
+  selectedTimeSlot?: string | null;
+  duration?: string | null;
+  selectedLocation?: string | null;
+  hostName?: string | null;
   userInfo?: {
     name: string;
     email: string;
     phone: string;
-    address: string;
-    country: string;
   };
-  appointmentId?: string;
-  appointment?: any;
   onBack: () => void;
   onComplete: (paymentData: unknown) => void;
 }
 
 export const BookingStepThree = ({
   serviceTitle,
-  selectedSlot,
+  selectedDate,
+  selectedTimeSlot,
+  duration,
+  selectedLocation,
+  hostName,
   userInfo,
-  appointmentId,
-  appointment,
   onBack,
   onComplete,
 }: BookingStepThreeProps) => {
+  const { t } = useTranslation();
   const [paymentMethod, setPaymentMethod] = useState<string>('card');
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
@@ -42,8 +43,6 @@ export const BookingStepThree = ({
   const [cardHolderName, setCardHolderName] = useState(userInfo?.name || '');
   const [saveCard, setSaveCard] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [showPaymentPage, setShowPaymentPage] = useState(false);
-  const [showPaymentFallback, setShowPaymentFallback] = useState(false);
 
   // Mock pricing - in real app this would come from API
   const basePrice = 150;
@@ -73,42 +72,6 @@ export const BookingStepThree = ({
     onComplete(paymentData);
   };
 
-  const handlePaymentSuccess = (paymentData: any) => {
-    onComplete(paymentData);
-  };
-
-  const handlePaymentFailure = () => {
-    setShowPaymentFallback(true);
-  };
-
-  const handleBackToPayment = () => {
-    setShowPaymentFallback(false);
-  };
-
-  // Show payment page if appointment is created
-  if (appointmentId && appointment && showPaymentPage) {
-    return (
-      <PaymentPage
-        appointmentId={appointmentId}
-        appointment={appointment}
-        onPaymentSuccess={handlePaymentSuccess}
-        onPaymentFailure={handlePaymentFailure}
-      />
-    );
-  }
-
-  // Show payment fallback if needed
-  if (appointmentId && appointment && showPaymentFallback) {
-    return (
-      <PaymentCallback
-        appointmentId={appointmentId}
-        appointment={appointment}
-        onPaymentSuccess={handlePaymentSuccess}
-        onBackToPayment={handleBackToPayment}
-      />
-    );
-  }
-
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     const matches = v.match(/\d{4,16}/g);
@@ -136,45 +99,47 @@ export const BookingStepThree = ({
     <div className="space-y-6">
       {/* Booking Summary */}
       <div className="bg-slate-50 rounded-lg p-4 sm:p-6">
-        <h2 className="text-lg font-semibold mb-4">Booking Summary</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('booking.stepThree.bookingSummary')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-gray-500">Service</p>
-              <p className="font-medium">{serviceTitle || 'Legal Consultation'}</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.service')}</p>
+              <p className="font-medium">
+                {serviceTitle || t('booking.stepThree.legalConsultation')}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Date & Time</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.dateTime')}</p>
               <p className="font-medium">
-                {new Date(selectedSlot?.date || '').toLocaleDateString('en-GB', {
+                {selectedDate?.toLocaleDateString('en-GB', {
                   weekday: 'long',
                   day: '2-digit',
                   month: 'short',
                   year: 'numeric',
                 })}{' '}
-                at {selectedSlot?.startTime} - {selectedSlot?.endTime}
+                {t('booking.stepThree.at')} {selectedTimeSlot}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Duration</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.duration')}</p>
               <p className="font-medium">
-                {selectedSlot?.service?.price
-                  ? `${selectedSlot?.service?.price.toLocaleString('vi-VN')} VND`
-                  : 'Free'}
+                {duration
+                  ? `${duration} ${t('booking.stepThree.minutes')}`
+                  : `60 ${t('booking.stepThree.minutes')}`}
               </p>
             </div>
           </div>
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-gray-500">Service</p>
-              <p className="font-medium">{selectedSlot?.service?.name || 'To be assigned'}</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.location')}</p>
+              <p className="font-medium">{selectedLocation}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Lawyer</p>
-              <p className="font-medium">{selectedSlot?.lawyer?.fullName || 'To be assigned'}</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.lawyer')}</p>
+              <p className="font-medium">{hostName || t('booking.stepThree.toBeAssigned')}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Contact</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.contact')}</p>
               <p className="font-medium">
                 {userInfo?.name} ({userInfo?.email})
               </p>
@@ -185,21 +150,21 @@ export const BookingStepThree = ({
 
       {/* Payment Method Selection */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('booking.stepThree.paymentMethod')}</h2>
         <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
           <div className="grid gap-3">
             <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
               <RadioGroupItem value="card" id="card" />
               <Label htmlFor="card" className="flex items-center space-x-3 cursor-pointer flex-1">
                 <CreditCard className="w-5 h-5" />
-                <span>Credit/Debit Card</span>
+                <span>{t('booking.stepThree.creditDebitCard')}</span>
               </Label>
             </div>
             <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
               <RadioGroupItem value="wallet" id="wallet" />
               <Label htmlFor="wallet" className="flex items-center space-x-3 cursor-pointer flex-1">
                 <Smartphone className="w-5 h-5" />
-                <span>Digital Wallet</span>
+                <span>{t('booking.stepThree.digitalWallet')}</span>
               </Label>
             </div>
           </div>
@@ -212,12 +177,12 @@ export const BookingStepThree = ({
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <CreditCard className="w-5 h-5" />
-              <span>Card Information</span>
+              <span>{t('booking.stepThree.cardInformation')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="cardNumber">Card Number</Label>
+              <Label htmlFor="cardNumber">{t('booking.stepThree.cardNumber')}</Label>
               <Input
                 id="cardNumber"
                 placeholder="1234 5678 9012 3456"
@@ -228,7 +193,7 @@ export const BookingStepThree = ({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="expiryDate">Expiry Date</Label>
+                <Label htmlFor="expiryDate">{t('booking.stepThree.expiryDate')}</Label>
                 <Input
                   id="expiryDate"
                   placeholder="MM/YY"
@@ -238,7 +203,7 @@ export const BookingStepThree = ({
                 />
               </div>
               <div>
-                <Label htmlFor="cvv">CVV</Label>
+                <Label htmlFor="cvv">{t('booking.stepThree.cvv')}</Label>
                 <Input
                   id="cvv"
                   placeholder="123"
@@ -249,7 +214,7 @@ export const BookingStepThree = ({
               </div>
             </div>
             <div>
-              <Label htmlFor="cardHolderName">Cardholder Name</Label>
+              <Label htmlFor="cardHolderName">{t('booking.stepThree.cardholderName')}</Label>
               <Input
                 id="cardHolderName"
                 placeholder="John Doe"
@@ -264,7 +229,7 @@ export const BookingStepThree = ({
                 onCheckedChange={(checked) => setSaveCard(checked as boolean)}
               />
               <Label htmlFor="saveCard" className="text-sm">
-                Save card for future payments
+                {t('booking.stepThree.saveCard')}
               </Label>
             </div>
           </CardContent>
@@ -274,19 +239,19 @@ export const BookingStepThree = ({
       {/* Payment Summary */}
       <Card className="bg-orange-50 border-orange-200">
         <CardContent className="p-4 sm:p-6">
-          <h3 className="font-semibold mb-4">Payment Summary</h3>
+          <h3 className="font-semibold mb-4">{t('booking.stepThree.paymentSummary')}</h3>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>Consultation Fee</span>
+              <span>{t('booking.stepThree.consultationFee')}</span>
               <span>${basePrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Tax (10%)</span>
+              <span>{t('booking.stepThree.tax')}</span>
               <span>${tax.toFixed(2)}</span>
             </div>
             <div className="border-t pt-2 mt-2">
               <div className="flex justify-between font-semibold text-lg">
-                <span>Total</span>
+                <span>{t('booking.stepThree.total')}</span>
                 <span>${total.toFixed(2)}</span>
               </div>
             </div>
@@ -298,11 +263,10 @@ export const BookingStepThree = ({
       <div className="flex items-start space-x-3 p-4 bg-green-50 border border-green-200 rounded-lg">
         <Shield className="w-5 h-5 text-green-600 mt-0.5" />
         <div>
-          <p className="text-sm font-medium text-green-800">Secure Payment</p>
-          <p className="text-sm text-green-700">
-            Your payment information is encrypted and secure. We use industry-standard SSL
-            encryption to protect your data.
+          <p className="text-sm font-medium text-green-800">
+            {t('booking.stepThree.securePayment')}
           </p>
+          <p className="text-sm text-green-700">{t('booking.stepThree.securePaymentMessage')}</p>
         </div>
       </div>
 
@@ -314,13 +278,13 @@ export const BookingStepThree = ({
           onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
         />
         <Label htmlFor="terms" className="text-sm cursor-pointer">
-          I agree to the{' '}
+          {t('booking.stepThree.agreeTo')}{' '}
           <a href="#" className="text-orange-600 hover:underline">
-            Terms and Conditions
+            {t('booking.stepThree.termsAndConditions')}
           </a>{' '}
-          and{' '}
+          {t('booking.stepThree.and')}{' '}
           <a href="#" className="text-orange-600 hover:underline">
-            Privacy Policy
+            {t('booking.stepThree.privacyPolicy')}
           </a>
         </Label>
       </div>
@@ -333,29 +297,18 @@ export const BookingStepThree = ({
           className="flex items-center justify-center space-x-2 order-2 sm:order-1"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Back</span>
+          <span>{t('common.back')}</span>
         </Button>
-        <div className="flex gap-2 order-1 sm:order-2">
-          {appointmentId && appointment && (
-            <Button
-              onClick={() => setShowPaymentPage(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8"
-            >
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Pay with PayOS
-            </Button>
-          )}
-          <Button
-            onClick={handleCompletePayment}
-            disabled={
-              !termsAccepted ||
-              (paymentMethod === 'card' && (!cardNumber || !expiryDate || !cvv || !cardHolderName))
-            }
-            className="bg-orange-600 hover:bg-orange-700 text-white px-6 sm:px-8"
-          >
-            Complete Payment - ${total.toFixed(2)}
-          </Button>
-        </div>
+        <Button
+          onClick={handleCompletePayment}
+          disabled={
+            !termsAccepted ||
+            (paymentMethod === 'card' && (!cardNumber || !expiryDate || !cvv || !cardHolderName))
+          }
+          className="bg-orange-600 hover:bg-orange-700 text-white px-6 sm:px-8 order-1 sm:order-2"
+        >
+          {t('booking.stepThree.completePayment')} - ${total.toFixed(2)}
+        </Button>
       </div>
     </div>
   );
