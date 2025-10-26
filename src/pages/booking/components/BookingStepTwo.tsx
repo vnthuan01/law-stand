@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,7 @@ export const BookingStepTwo = ({
   onBack,
   onConfirm,
 }: BookingStepTwoProps) => {
+  const { t } = useTranslation();
   const formatTime = (timeString: string) => {
     return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -55,8 +57,10 @@ export const BookingStepTwo = ({
     <div className="w-full space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
-        <p className="text-gray-600 mt-2">Please review and update your contact details</p>
+        <h2 className="text-2xl font-bold text-gray-900">
+          {t('booking.stepTwo.personalInformation')}
+        </h2>
+        <p className="text-gray-600 mt-2">{t('booking.stepTwo.reviewContactDetails')}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -65,7 +69,7 @@ export const BookingStepTwo = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600" />
-              Appointment Summary
+              {t('booking.stepTwo.appointmentSummary')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -78,7 +82,7 @@ export const BookingStepTwo = ({
                     {formatTime(selectedSlot.endTime)}
                   </p>
                   <p className="text-sm text-blue-600">
-                    {selectedSlot.service?.name || 'Legal Consultation'}
+                    {selectedSlot.service?.name || t('booking.stepOne.legalConsultation')}
                   </p>
                 </div>
               </div>
@@ -86,7 +90,7 @@ export const BookingStepTwo = ({
                 <User className="w-5 h-5 text-blue-600" />
                 <div>
                   <p className="font-medium text-blue-800">
-                    {selectedSlot.lawyer?.fullName || 'Available Lawyer'}
+                    {selectedSlot.lawyer?.fullName || t('booking.stepOne.availableLawyer')}
                   </p>
                   <p className="text-sm text-blue-600">
                     {selectedSlot.lawyer?.email || 'lawyer@example.com'}
@@ -95,11 +99,13 @@ export const BookingStepTwo = ({
               </div>
               <div className="mt-3 pt-3 border-t border-blue-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-blue-700">Consultation Fee</span>
+                  <span className="text-sm text-blue-700">
+                    {t('booking.stepTwo.consultationFee')}
+                  </span>
                   <Badge variant="outline" className="bg-blue-100 text-blue-800">
                     {selectedSlot.service?.price
                       ? `${selectedSlot.service.price.toLocaleString('vi-VN')} VND`
-                      : 'Free'}
+                      : t('common.free')}
                   </Badge>
                 </div>
               </div>
@@ -112,7 +118,7 @@ export const BookingStepTwo = ({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-green-600" />
-              Your Information
+              {t('booking.stepTwo.yourInformation')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -120,27 +126,27 @@ export const BookingStepTwo = ({
               <div>
                 <Label htmlFor="name" className="flex items-center gap-2">
                   <User className="w-4 h-4" />
-                  Full Name *
+                  {t('common.fullName')} *
                 </Label>
                 <Input
                   id="name"
                   value={userInfo.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Enter your full name"
+                  placeholder={t('booking.stepTwo.enterFullName')}
                   className="mt-1"
                 />
               </div>
               <div>
                 <Label htmlFor="email" className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  Email Address *
+                  {t('common.email')} *
                 </Label>
                 <Input
                   id="email"
                   type="email"
                   value={userInfo.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder={t('booking.stepTwo.enterEmail')}
                   className="mt-1"
                 />
               </div>
@@ -150,26 +156,26 @@ export const BookingStepTwo = ({
               <div>
                 <Label htmlFor="phone" className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
-                  Phone Number *
+                  {t('common.phone')} *
                 </Label>
                 <Input
                   id="phone"
                   value={userInfo.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="Enter your phone number"
+                  placeholder={t('booking.stepTwo.enterPhone')}
                   className="mt-1"
                 />
               </div>
               <div>
                 <Label htmlFor="country" className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  Country *
+                  {t('booking.stepTwo.country')} *
                 </Label>
                 <Input
                   id="country"
                   value={userInfo.country}
                   onChange={(e) => handleInputChange('country', e.target.value)}
-                  placeholder="Enter your country"
+                  placeholder={t('booking.stepTwo.enterCountry')}
                   className="mt-1"
                 />
               </div>
@@ -178,13 +184,13 @@ export const BookingStepTwo = ({
             <div>
               <Label htmlFor="address" className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                Address
+                {t('booking.stepTwo.address')}
               </Label>
               <Textarea
                 id="address"
                 value={userInfo.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                placeholder="Enter your full address"
+                placeholder={t('booking.stepTwo.enterAddress')}
                 className="mt-1"
                 rows={3}
               />
@@ -192,8 +198,7 @@ export const BookingStepTwo = ({
 
             <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
               <p className="text-sm text-yellow-800">
-                <strong>Note:</strong> Please ensure all information is accurate as it will be used
-                for your appointment confirmation and communication.
+                <strong>{t('booking.stepTwo.note')}</strong> {t('booking.stepTwo.noteMessage')}
               </p>
             </div>
           </CardContent>
@@ -204,14 +209,14 @@ export const BookingStepTwo = ({
       <div className="flex justify-between">
         <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
           <ArrowLeft className="w-4 h-4" />
-          Back to Time Selection
+          {t('booking.stepTwo.backToTimeSelection')}
         </Button>
         <Button
           onClick={onConfirm}
           disabled={!userInfo.name || !userInfo.email || !userInfo.phone}
           className="px-8 py-3 text-lg"
         >
-          Continue to Payment
+          {t('booking.stepTwo.confirmBooking')}
         </Button>
       </div>
     </div>

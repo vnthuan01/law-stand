@@ -11,6 +11,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 const BlogSection = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const BlogSection = () => {
       category: 'Employment',
     },
   ];
-
+  const { t } = useTranslation();
   return (
     <section className="min-h-screen bg-gray-50 py-16 lg:py-24">
       <div className="container mx-auto px-6 max-w-6xl">
@@ -56,12 +57,10 @@ const BlogSection = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">Blog</span> Articles
+            <span className="text-orange-500">{t('home.blog_title')}</span>{' '}
+            {t('home.blog_titleHighlight')}
           </h2>
-          <p className="text-gray-600">
-            Explore our latest blog articles and stay updated with the latest legal news and
-            insights.
-          </p>
+          <p className="text-gray-600">{t('home.blog_subtitle')}</p>
         </motion.div>
 
         {/* Carousel */}
@@ -134,7 +133,7 @@ const BlogSection = () => {
             'mt-10 mx-auto flex justify-center items-center cursor-pointer px-8 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm',
           )}
         >
-          View More
+          {t('home.view_more')}
         </button>
       </div>
     </section>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Facebook, Twitter, Instagram, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Error404Props {
   onReturnHome?: () => void;
@@ -7,6 +8,7 @@ interface Error404Props {
 }
 
 const Error404: React.FC<Error404Props> = ({ onReturnHome, className = '' }) => {
+  const { t } = useTranslation();
   const handleReturnHome = () => {
     if (onReturnHome) {
       onReturnHome();
@@ -27,17 +29,16 @@ const Error404: React.FC<Error404Props> = ({ onReturnHome, className = '' }) => 
         {/* Error Message */}
         <div className="mb-8">
           <h2 className="text-2xl md:text-3xl font-medium text-gray-700 mb-4 tracking-wide">
-            OOPS! NOTHING WAS FOUND
+            {t('errors.page_not_found_title')}
           </h2>
 
           <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md mx-auto">
-            The page you are looking for might have been removed had its name changed or is
-            temporarily unavailable.{' '}
+            {t('errors.page_not_found_description')}{' '}
             <button
               onClick={handleReturnHome}
               className="text-orange-400 hover:text-orange-500 underline transition-colors duration-200"
             >
-              Return to homepage
+              {t('errors.return_to_homepage')}
             </button>
           </p>
         </div>

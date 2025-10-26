@@ -14,7 +14,9 @@ const AboutHeroSection: React.FC = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">{t('about.title')}</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            {t('about.title')} <span className="text-orange-500">{t('about.titileHighlight')}</span>
+          </h2>
           <p className="text-gray-600">{t('about.subtitle')}</p>
         </motion.div>{' '}
         <p className="mt-4 text-base sm:text-lg lg:text-xl text-zinc-700 max-w-3xl mx-auto leading-relaxed">

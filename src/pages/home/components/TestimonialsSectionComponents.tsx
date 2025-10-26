@@ -31,7 +31,8 @@ export default function TestimonialsSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            {t('home.testimonials_title')}
+            {t('home.testimonials_title')}{' '}
+            <span className="text-orange-500">{t('home.testimonials_titleHighlight')}</span>
           </h2>
           <p className="text-gray-600">{t('home.testimonials_subtitle')}</p>
         </motion.div>

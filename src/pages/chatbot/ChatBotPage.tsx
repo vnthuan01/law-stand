@@ -1,14 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Image as ImageIcon, Mic, Send, StopCircle, Trash2, X, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import Layout from '@/components/layout/UserLayout';
-
-// -----------------------------
-// Types
-// -----------------------------
 
 type Role = 'user' | 'assistant';
 
@@ -31,10 +28,6 @@ interface ChatMessage {
   status?: 'sending' | 'sent' | 'error';
 }
 
-// -----------------------------
-// Helpers
-// -----------------------------
-
 const uid = () => Math.random().toString(36).slice(2);
 
 const formatTime = (ms: number) => {
@@ -44,16 +37,13 @@ const formatTime = (ms: number) => {
   return `${m}:${r.toString().padStart(2, '0')}`;
 };
 
-// -----------------------------
-// Main Component
-// -----------------------------
-
 export default function ChatGPTLikePage() {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: uid(),
       role: 'assistant',
-      text: 'Hello! I am your AI assistant. You can type, send images, or record voice messages below.',
+      text: t('chatbot.initialMessage'),
       createdAt: Date.now() - 10_000,
       status: 'sent',
     },
@@ -76,10 +66,6 @@ export default function ChatGPTLikePage() {
     if (!el) return;
     el.scrollTop = el.scrollHeight;
   }, [messages.length]);
-
-  // -----------------------------
-  // File handlers (images)
-  // -----------------------------
 
   const addImageFiles = useCallback(async (files: FileList | File[]) => {
     const list = Array.from(files);
@@ -143,10 +129,6 @@ export default function ChatGPTLikePage() {
     };
   }, [addImageFiles]);
 
-  // -----------------------------
-  // Audio recording (MediaRecorder)
-  // -----------------------------
-
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -197,10 +179,6 @@ export default function ChatGPTLikePage() {
     }
   };
 
-  // -----------------------------
-  // Send message (mock API hook)
-  // -----------------------------
-
   const sendMessage = async () => {
     if (!input.trim() && pendingAttachments.length === 0) return;
 
@@ -229,8 +207,8 @@ export default function ChatGPTLikePage() {
         role: 'assistant',
         text:
           userMsg.attachments && userMsg.attachments.length > 0
-            ? 'I received the file(s) you sent. (Demo: here you would see the real AI API response.)'
-            : `You just said: "${userMsg.text ?? '(empty)'}"\n\n(This is a demo response. Replace with actual API.)`,
+            ? t('chatbot.fileReceivedResponse')
+            : t('chatbot.textResponse', { text: userMsg.text ?? t('chatbot.empty') }),
         createdAt: Date.now(),
         status: 'sent',
       };
@@ -262,10 +240,6 @@ export default function ChatGPTLikePage() {
       sendMessage();
     }
   };
-
-  // -----------------------------
-  // UI
-  // -----------------------------
 
   return (
     <Layout>
@@ -326,7 +300,7 @@ export default function ChatGPTLikePage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       <p className="text-xs text-muted-foreground truncate">
-                                        Voice Recording
+                                        {t('chatbot.voiceRecording')}
                                       </p>
                                       <p className="text-xs font-medium">
                                         {formatTime(a.durationMs ?? 0)}
@@ -346,9 +320,9 @@ export default function ChatGPTLikePage() {
                             {m.status === 'sending' && <Loader2 className="size-3 animate-spin" />}
                             <span>
                               {m.status === 'sending'
-                                ? 'Sending...'
+                                ? t('chatbot.sending')
                                 : m.status === 'error'
-                                  ? 'Failed to send'
+                                  ? t('chatbot.failedToSend')
                                   : null}
                             </span>
                           </div>
@@ -366,7 +340,7 @@ export default function ChatGPTLikePage() {
                   <div className="mb-2">
                     <div className="flex items-center justify-between mb-2">
                       <p className="text-xs text-muted-foreground">
-                        Attachments ({pendingAttachments.length})
+                        {t('chatbot.attachments')} ({pendingAttachments.length})
                       </p>
                       <Button
                         variant="ghost"
@@ -374,7 +348,7 @@ export default function ChatGPTLikePage() {
                         className="h-7 px-2"
                         onClick={clearPendingAttachments}
                       >
-                        <Trash2 className="size-4" /> Clear All
+                        <Trash2 className="size-4" /> {t('chatbot.clearAll')}
                       </Button>
                     </div>
                     <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
@@ -392,7 +366,7 @@ export default function ChatGPTLikePage() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-[11px] text-muted-foreground truncate">
-                                  Voice Recording
+                                  {t('chatbot.voiceRecording')}
                                 </p>
                                 <p className="text-xs font-medium">
                                   {formatTime(a.durationMs ?? 0)}
@@ -433,7 +407,7 @@ export default function ChatGPTLikePage() {
                     <button
                       className="size-10 rounded-2xl border grid place-items-center hover:bg-gray-50 active:scale-95 transition"
                       onClick={startRecording}
-                      title="Record"
+                      title={t('chatbot.record')}
                     >
                       <Mic className="size-5" />
                     </button>
@@ -441,7 +415,7 @@ export default function ChatGPTLikePage() {
                     <button
                       className="size-10 rounded-2xl border grid place-items-center hover:bg-gray-50 active:scale-95 transition"
                       onClick={stopRecording}
-                      title="Stop Recording"
+                      title={t('chatbot.stopRecording')}
                     >
                       <StopCircle className="size-5" />
                     </button>
@@ -452,7 +426,7 @@ export default function ChatGPTLikePage() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Type a message... (Enter to send, Shift+Enter for new line)"
+                    placeholder={t('chatbot.messagePlaceholder')}
                     className="flex-1 rounded-2xl resize-none min-h-[44px] max-h-[180px] border px-4 py-3"
                     rows={1}
                   />

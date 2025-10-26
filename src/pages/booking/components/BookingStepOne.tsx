@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { slotService, type Slot } from '@/services/slotService';
 import { serviceService } from '@/services/serviceService';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -42,6 +43,7 @@ export const BookingStepOne = ({
   setSelectedSlot,
   onNext,
 }: BookingStepOneProps) => {
+  const { t } = useTranslation();
   const [availableSlots, setAvailableSlots] = useState<Slot[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
@@ -137,10 +139,8 @@ export const BookingStepOne = ({
     <div className="w-full space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">Select Your Appointment Time</h2>
-        <p className="text-gray-600 mt-2">
-          Choose a service and available time slots for the next 7 days
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900">{t('booking.stepOne.title')}</h2>
+        <p className="text-gray-600 mt-2">{t('booking.stepOne.description')}</p>
       </div>
 
       {/* Service Selection */}
@@ -148,21 +148,21 @@ export const BookingStepOne = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="w-5 h-5 text-purple-600" />
-            Select Service
+            {t('booking.stepOne.selectService')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700 mb-2 block">
-                Choose a legal service
+                {t('booking.stepOne.chooseService')}
               </label>
               {isLoadingServices ? (
                 <Skeleton className="h-10 w-full" />
               ) : (
                 <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a service..." />
+                    <SelectValue placeholder={t('booking.stepOne.selectServicePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
                     {services.map((service) => (
@@ -184,14 +184,15 @@ export const BookingStepOne = ({
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-purple-600" />
                   <span className="text-sm font-medium text-purple-800">
-                    Selected: {services.find((s) => s.id === selectedServiceId)?.name}
+                    {t('booking.stepOne.selected')}:{' '}
+                    {services.find((s) => s.id === selectedServiceId)?.name}
                   </span>
                 </div>
                 <p className="text-sm text-purple-600 mt-1">
                   {services.find((s) => s.id === selectedServiceId)?.description}
                 </p>
                 <p className="text-sm text-green-600 mt-1">
-                  Price:{' '}
+                  {t('common.price')}:{' '}
                   {services.find((s) => s.id === selectedServiceId)?.price.toLocaleString('vi-VN')}{' '}
                   VND
                 </p>
@@ -208,7 +209,7 @@ export const BookingStepOne = ({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-blue-600" />
-                Select Date
+                {t('booking.stepOne.selectDate')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -221,7 +222,7 @@ export const BookingStepOne = ({
                         day: 'numeric',
                         year: 'numeric',
                       })
-                    : 'Please select a date'}
+                    : t('booking.stepOne.pleaseSelectDate')}
                 </p>
               </div>
               <DayPicker
@@ -239,7 +240,7 @@ export const BookingStepOne = ({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-green-600" />
-                Available Time Slots
+                {t('booking.stepOne.availableTimeSlots')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -250,12 +251,12 @@ export const BookingStepOne = ({
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-blue-600" />
                       <span className="text-sm font-medium text-blue-800">
-                        {availableSlots.length} available slot{availableSlots.length > 1 ? 's' : ''}
+                        {availableSlots.length} {t('booking.stepOne.availableSlots')}
                       </span>
                     </div>
                     {selectedDate && (
                       <span className="text-xs text-blue-600">
-                        Filtered by {selectedDate.toLocaleDateString('en-GB')}
+                        {t('booking.stepOne.filteredBy')} {selectedDate.toLocaleDateString('en-GB')}
                       </span>
                     )}
                   </div>
@@ -297,15 +298,15 @@ export const BookingStepOne = ({
                             </div>
                             <div className="text-right">
                               <p className="text-sm font-medium text-gray-900">
-                                {slot.service?.name || 'Legal Consultation'}
+                                {slot.service?.name || t('booking.stepOne.legalConsultation')}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {slot.lawyer?.fullName || 'Available Lawyer'}
+                                {slot.lawyer?.fullName || t('booking.stepOne.availableLawyer')}
                               </p>
                               <p className="text-xs text-green-600 font-medium">
                                 {slot.service?.price
                                   ? `${slot.service.price.toLocaleString('vi-VN')} VND`
-                                  : 'Free'}
+                                  : t('common.free')}
                               </p>
                             </div>
                           </div>
@@ -315,10 +316,8 @@ export const BookingStepOne = ({
                   ) : (
                     <div className="text-center text-gray-500 py-8">
                       <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                      <p>No available slots for the selected service.</p>
-                      <p className="text-sm mt-2">
-                        Please try selecting a different service or date.
-                      </p>
+                      <p>{t('booking.stepOne.noAvailableSlots')}</p>
+                      <p className="text-sm mt-2">{t('booking.stepOne.tryDifferentService')}</p>
                     </div>
                   )}
                 </div>
@@ -337,19 +336,22 @@ export const BookingStepOne = ({
                 <Clock className="w-4 h-4 text-green-600" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-green-800">Selected Appointment</h3>
+                <h3 className="font-semibold text-green-800">
+                  {t('booking.stepOne.selectedAppointment')}
+                </h3>
                 <p className="text-sm text-green-700">
                   {formatDate(selectedSlot.date)} at {formatTime(selectedSlot.startTime)} -{' '}
                   {formatTime(selectedSlot.endTime)}
                 </p>
                 <p className="text-sm text-green-600">
-                  {selectedSlot.service?.name} with {selectedSlot.lawyer?.fullName}
+                  {selectedSlot.service?.name} {t('booking.stepOne.with')}{' '}
+                  {selectedSlot.lawyer?.fullName}
                 </p>
               </div>
               <Badge variant="outline" className="bg-green-100 text-green-800">
                 {selectedSlot.service?.price
                   ? `${selectedSlot.service.price.toLocaleString('vi-VN')} VND`
-                  : 'Free'}
+                  : t('common.free')}
               </Badge>
             </div>
           </CardContent>
@@ -363,7 +365,7 @@ export const BookingStepOne = ({
           onClick={handleNext}
           className="px-8 py-3 text-lg"
         >
-          Continue to Personal Information
+          {t('booking.stepOne.continueToPersonalInfo')}
         </Button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 // components/CheckPasswordForm.tsx
+import { useTranslation } from 'react-i18next';
 import { Check, X } from 'lucide-react';
 
 interface PasswordStrengthProps {
@@ -6,12 +7,13 @@ interface PasswordStrengthProps {
 }
 
 export function PasswordStrength({ password }: PasswordStrengthProps) {
+  const { t } = useTranslation();
   const rules = [
-    { label: 'At least 8 characters', test: (val: string) => val.trim().length >= 8 },
-    { label: 'At least 1 uppercase letter', test: (val: string) => /[A-Z]/.test(val) },
-    { label: 'At least 1 lowercase letter', test: (val: string) => /[a-z]/.test(val) },
-    { label: 'At least 1 number', test: (val: string) => /[0-9]/.test(val) },
-    { label: 'At least 1 special character', test: (val: string) => /[^A-Za-z0-9]/.test(val) },
+    { label: t('password.atLeast8Chars'), test: (val: string) => val.trim().length >= 8 },
+    { label: t('password.atLeast1Uppercase'), test: (val: string) => /[A-Z]/.test(val) },
+    { label: t('password.atLeast1Lowercase'), test: (val: string) => /[a-z]/.test(val) },
+    { label: t('password.atLeast1Number'), test: (val: string) => /[0-9]/.test(val) },
+    { label: t('password.atLeast1Special'), test: (val: string) => /[^A-Za-z0-9]/.test(val) },
   ];
 
   return (

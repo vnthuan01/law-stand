@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -35,6 +36,7 @@ export const BookingStepThree = ({
   onBack,
   onComplete,
 }: BookingStepThreeProps) => {
+  const { t } = useTranslation();
   const [paymentMethod, setPaymentMethod] = useState<string>('card');
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
@@ -136,15 +138,17 @@ export const BookingStepThree = ({
     <div className="space-y-6">
       {/* Booking Summary */}
       <div className="bg-slate-50 rounded-lg p-4 sm:p-6">
-        <h2 className="text-lg font-semibold mb-4">Booking Summary</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('booking.stepThree.bookingSummary')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-gray-500">Service</p>
-              <p className="font-medium">{serviceTitle || 'Legal Consultation'}</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.service')}</p>
+              <p className="font-medium">
+                {serviceTitle || t('booking.stepOne.legalConsultation')}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Date & Time</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.dateTime')}</p>
               <p className="font-medium">
                 {new Date(selectedSlot?.date || '').toLocaleDateString('en-GB', {
                   weekday: 'long',
@@ -156,25 +160,29 @@ export const BookingStepThree = ({
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Duration</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.duration')}</p>
               <p className="font-medium">
                 {selectedSlot?.service?.price
                   ? `${selectedSlot?.service?.price.toLocaleString('vi-VN')} VND`
-                  : 'Free'}
+                  : t('common.free')}
               </p>
             </div>
           </div>
           <div className="space-y-3">
             <div>
-              <p className="text-sm text-gray-500">Service</p>
-              <p className="font-medium">{selectedSlot?.service?.name || 'To be assigned'}</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.service')}</p>
+              <p className="font-medium">
+                {selectedSlot?.service?.name || t('booking.stepThree.toBeAssigned')}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Lawyer</p>
-              <p className="font-medium">{selectedSlot?.lawyer?.fullName || 'To be assigned'}</p>
+              <p className="text-sm text-gray-500">{t('booking.stepOne.availableLawyer')}</p>
+              <p className="font-medium">
+                {selectedSlot?.lawyer?.fullName || t('booking.stepThree.toBeAssigned')}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Contact</p>
+              <p className="text-sm text-gray-500">{t('booking.stepThree.contact')}</p>
               <p className="font-medium">
                 {userInfo?.name} ({userInfo?.email})
               </p>
@@ -185,21 +193,21 @@ export const BookingStepThree = ({
 
       {/* Payment Method Selection */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">Payment Method</h2>
+        <h2 className="text-lg font-semibold mb-4">{t('booking.stepThree.paymentMethod')}</h2>
         <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
           <div className="grid gap-3">
             <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
               <RadioGroupItem value="card" id="card" />
               <Label htmlFor="card" className="flex items-center space-x-3 cursor-pointer flex-1">
                 <CreditCard className="w-5 h-5" />
-                <span>Credit/Debit Card</span>
+                <span>{t('booking.stepThree.creditDebitCard')}</span>
               </Label>
             </div>
             <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
               <RadioGroupItem value="wallet" id="wallet" />
               <Label htmlFor="wallet" className="flex items-center space-x-3 cursor-pointer flex-1">
                 <Smartphone className="w-5 h-5" />
-                <span>Digital Wallet</span>
+                <span>{t('booking.stepThree.digitalWallet')}</span>
               </Label>
             </div>
           </div>

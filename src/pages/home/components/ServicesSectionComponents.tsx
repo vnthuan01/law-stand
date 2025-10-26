@@ -105,9 +105,9 @@ export default function ServicesSection() {
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             <span className="text-orange-500">{t('services.title')}</span>{' '}
-            {t('home.services_title')}
+            {t('services.titleHighlight')}
           </h2>
-          <p className="text-gray-600">{t('home.services_subtitle')}</p>
+          <p className="text-gray-600">{t('services.subtitle')}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">

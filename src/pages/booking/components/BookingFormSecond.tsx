@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BookingStepOne } from './BookingStepOne';
 import { BookingStepTwo } from './BookingStepTwo';
@@ -8,6 +9,7 @@ import { appointmentService } from '@/services/appointmentService';
 import { toast } from 'sonner';
 
 export const BookingFormSection = () => {
+  const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const today = new Date();
 
@@ -34,17 +36,17 @@ export const BookingFormSection = () => {
         if (appointmentResponse.data.success) {
           const appointment = appointmentResponse.data.data;
           setCreatedAppointment(appointment);
-          toast.success('Appointment created successfully!');
+          toast.success(t('booking.appointmentCreatedSuccess'));
           setStep(3);
         } else {
-          toast.error('Failed to create appointment');
+          toast.error(t('booking.appointmentCreateFailed'));
         }
       } else {
-        toast.error('Please select a time slot');
+        toast.error(t('booking.pleaseSelectTimeSlot'));
       }
     } catch (error) {
       console.error('Error creating appointment:', error);
-      toast.error('Failed to create appointment');
+      toast.error(t('booking.appointmentCreateFailed'));
     }
   };
 
@@ -56,8 +58,7 @@ export const BookingFormSection = () => {
       paymentData,
     };
     console.log('Complete booking payload:', finalPayload);
-    // Here you would typically send the data to your backend API
-    alert('Booking completed successfully!');
+    alert(t('booking.bookingCompletedSuccess'));
   };
 
   return (

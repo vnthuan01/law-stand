@@ -4,47 +4,42 @@ import { useTranslation } from 'react-i18next';
 type Plan = {
   name: string;
   price: string;
+  // Đảm bảo features luôn là mảng (string[])
   features: string[];
   popular?: boolean;
 };
 
-const plans: Plan[] = [
+const getPlans = (t: (key: string, options?: any) => any): Plan[] => [
   {
-    name: 'Free',
-    price: '0 VNĐ',
-    features: [
-      '5 câu hỏi miễn phí với AI tư vấn luật',
-      'Truy cập cơ bản kho kiến thức pháp lý',
-      'Đặt lịch tư vấn 1 lần/tháng',
-      'Hỗ trợ qua email trong giờ hành chính',
-    ],
+    name: t('home.plans.free.name'),
+    price: t('home.plans.free.price'),
+    // SỬA TRIỆT ĐỂ: Dùng Array.isArray để đảm bảo features luôn là một mảng
+    features: (Array.isArray(t('home.plans.free.features', { returnObjects: true }))
+      ? t('home.plans.free.features', { returnObjects: true })
+      : []) as string[],
   },
   {
-    name: 'Standard',
-    price: '159K VNĐ ',
-    features: [
-      'Tư vấn AI không giới hạn',
-      'Đặt lịch tư vấn với luật sư (tối đa 2 lần/tháng)',
-      'Ưu tiên trả lời nhanh trong 24h',
-      'Truy cập tài liệu mẫu hợp đồng & văn bản pháp luật',
-    ],
+    name: t('home.plans.standard.name'),
+    price: t('home.plans.standard.price'),
+    // SỬA TRIỆT ĐỂ
+    features: (Array.isArray(t('home.plans.standard.features', { returnObjects: true }))
+      ? t('home.plans.standard.features', { returnObjects: true })
+      : []) as string[],
     popular: true,
   },
   {
-    name: 'Professional',
-    price: '249K VNĐ',
-    features: [
-      'Tư vấn AI không giới hạn & chuyên sâu theo lĩnh vực',
-      'Đặt lịch tư vấn không giới hạn với luật sư',
-      'Hỗ trợ ưu tiên 24/7 qua chat hoặc điện thoại',
-      'Kho dữ liệu pháp lý nâng cao & mẫu văn bản doanh nghiệp',
-      'Báo cáo và lưu trữ lịch sử tư vấn theo tài khoản',
-    ],
+    name: t('home.plans.professional.name'),
+    price: t('home.plans.professional.price'),
+    // SỬA TRIỆT ĐỂ
+    features: (Array.isArray(t('home.plans.professional.features', { returnObjects: true }))
+      ? t('home.plans.professional.features', { returnObjects: true })
+      : []) as string[],
   },
 ];
 
 export default function PricingPage() {
   const { t } = useTranslation();
+  const plans = getPlans(t);
   const handleBuyNow = () => {
     console.log('Buy Now');
   };
@@ -71,11 +66,12 @@ export default function PricingPage() {
             <h2 className="text-xl font-semibold text-gray-800 mb-4">{plan.name}</h2>
             <p className="text-3xl font-bold text-gray-900 mb-6">
               {plan.price}
-              <span className="text-base font-medium text-gray-500">/month</span>
+              <span className="text-base font-medium text-gray-500">{t('home.per_month')}</span>
             </p>
 
             <ul className="flex-1 mb-6 space-y-3">
-              {plan.features.map((feature, idx) => (
+              {/* Giữ lại Optional Chaining là lớp bảo vệ cuối cùng */}
+              {plan.features?.map((feature, idx) => (
                 <li key={idx} className="flex items-center text-gray-700">
                   <Check className="w-5 h-5 text-green-500 mr-2" />
                   {feature}
@@ -87,7 +83,7 @@ export default function PricingPage() {
               onClick={handleBuyNow}
               className="mt-auto bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-xl transition"
             >
-              Buy Now
+              {t('home.buy_now')}
             </button>
           </div>
         ))}
