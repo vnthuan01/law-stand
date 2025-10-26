@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import Autoplay from 'embla-carousel-autoplay';
+import { useTranslation } from 'react-i18next';
 import { Calendar, FileText, Users, Briefcase } from 'lucide-react';
 import {
   Carousel,
@@ -13,34 +14,36 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const BlogSection = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
   const articles = [
     {
       id: 1,
-      title: 'Maryland workers get paid time off to vote—a reminder',
-      date: 'October 24, 2024',
+      titleKey: 'home.blog_article_1_title',
+      dateKey: 'home.blog_article_1_date',
+      categoryKey: 'home.blog_article_1_category',
       image:
         'https://images.pexels.com/photos/1550337/pexels-photo-1550337.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
       icon: <Users className="w-5 h-5 text-red-500" />,
-      category: 'Employment Rights',
     },
     {
       id: 2,
-      title: "Don't ignore your noncompete—yet",
-      date: 'October 15, 2024',
+      titleKey: 'home.blog_article_2_title',
+      dateKey: 'home.blog_article_2_date',
+      categoryKey: 'home.blog_article_2_category',
       image:
         'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
       icon: <FileText className="w-5 h-5 text-red-500" />,
-      category: 'Legal Advice',
     },
     {
       id: 3,
-      title: 'Do I have to report my criminal record on a job application?',
-      date: 'October 8, 2024',
+      titleKey: 'home.blog_article_3_title',
+      dateKey: 'home.blog_article_3_date',
+      categoryKey: 'home.blog_article_3_category',
       image:
         'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
       icon: <Briefcase className="w-5 h-5 text-red-500" />,
-      category: 'Employment',
     },
   ];
 
@@ -56,12 +59,10 @@ const BlogSection = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">Blog</span> Articles
+            <span className="text-orange-500">{t('home.blog_title_highlight')}</span>{' '}
+            {t('home.blog_title')}
           </h2>
-          <p className="text-gray-600">
-            Explore our latest blog articles and stay updated with the latest legal news and
-            insights.
-          </p>
+          <p className="text-gray-600">{t('home.blog_description')}</p>
         </motion.div>
 
         {/* Carousel */}
@@ -84,7 +85,7 @@ const BlogSection = () => {
                     <div className="relative overflow-hidden">
                       <img
                         src={article.image}
-                        alt={article.title}
+                        alt={t(article.titleKey)}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-4 left-4">
@@ -99,17 +100,17 @@ const BlogSection = () => {
                       <div>
                         <div className="flex items-center gap-2 mb-3">
                           <Calendar className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-500">{article.date}</span>
+                          <span className="text-sm text-gray-500">{t(article.dateKey)}</span>
                         </div>
 
                         <h3 className="text-lg font-medium text-gray-900 leading-tight mb-3 group-hover:text-red-500 transition-colors duration-200 line-clamp-2">
-                          {article.title}
+                          {t(article.titleKey)}
                         </h3>
                       </div>
 
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-400 uppercase tracking-wider">
-                          {article.category}
+                          {t(article.categoryKey)}
                         </span>
                         <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-red-50 transition-colors duration-200">
                           <div className="w-2 h-2 bg-gray-400 rounded-full group-hover:bg-red-500 transition-colors duration-200"></div>
@@ -134,7 +135,7 @@ const BlogSection = () => {
             'mt-10 mx-auto flex justify-center items-center cursor-pointer px-8 py-3 bg-white border border-gray-200 text-gray-700 font-medium rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm',
           )}
         >
-          View More
+          {t('home.view_more')}
         </button>
       </div>
     </section>

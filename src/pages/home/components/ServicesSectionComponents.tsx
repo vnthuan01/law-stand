@@ -138,7 +138,7 @@ export default function ServicesSection() {
                 <div className="aspect-[4/3] w-full mt-4">
                   <img
                     src={service.image}
-                    alt="Service Image"
+                    alt={service.title}
                     className="w-full h-full object-cover rounded-lg"
                   />
                 </div>

@@ -1,63 +1,65 @@
 import React from 'react';
 import TeamCard from './TeamCardComponents';
 import { motion } from 'framer-motion';
-
-const TEAM_MEMBERS = [
-  {
-    name: 'Joseph Gibson',
-    role: 'Executive Director & General Counsel',
-    photo:
-      'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1200&auto=format&fit=crop',
-    linkedin: '#',
-    email: 'joseph@example.com',
-    leader: true,
-    bio: 'Joseph leads our team with over 15 years of experience in corporate law.',
-  },
-  {
-    name: 'Bethany Carlson',
-    role: 'Attorney',
-    photo:
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop',
-    linkedin: '#',
-    email: 'bethany@example.com',
-    bio: 'Passionate about client advocacy and dispute resolution.',
-  },
-
-  {
-    name: 'William Chavez',
-    role: 'Senior Attorney',
-    photo:
-      'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=1200&auto=format&fit=crop',
-    linkedin: '#',
-    email: 'william@example.com',
-  },
-  {
-    name: 'Lauren Thomas',
-    role: 'Attorney',
-    photo:
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    linkedin: '#',
-    email: 'lauren@example.com',
-  },
-  {
-    name: 'Michael Brown',
-    role: 'Paralegal',
-    photo:
-      'https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=1200&auto=format&fit=crop',
-    linkedin: '#',
-    email: 'michael@example.com',
-  },
-  {
-    name: 'Sophia Nguyen',
-    role: 'Client Success Manager',
-    photo:
-      'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=1200&auto=format&fit=crop',
-    linkedin: '#',
-    email: 'sophia@example.com',
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 const TeamSection: React.FC = () => {
+  const { t } = useTranslation();
+
+  const TEAM_MEMBERS = [
+    {
+      name: 'Joseph Gibson',
+      role: t('about.team_role_1'),
+      photo:
+        'https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1200&auto=format&fit=crop',
+      linkedin: '#',
+      email: 'joseph@example.com',
+      leader: true,
+      bio: t('about.team_bio_1'),
+    },
+    {
+      name: 'Bethany Carlson',
+      role: t('about.team_role_2'),
+      photo:
+        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop',
+      linkedin: '#',
+      email: 'bethany@example.com',
+      bio: t('about.team_bio_2'),
+    },
+    {
+      name: 'William Chavez',
+      role: t('about.team_role_3'),
+      photo:
+        'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?q=80&w=1200&auto=format&fit=crop',
+      linkedin: '#',
+      email: 'william@example.com',
+    },
+    {
+      name: 'Lauren Thomas',
+      role: t('about.team_role_2'),
+      photo:
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+      linkedin: '#',
+      email: 'lauren@example.com',
+    },
+    {
+      name: 'Michael Brown',
+      role: t('about.team_role_4'),
+      photo:
+        'https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=1200&auto=format&fit=crop',
+      linkedin: '#',
+      email: 'michael@example.com',
+    },
+    {
+      name: 'Sophia Nguyen',
+      role: t('about.team_role_5'),
+      photo:
+        'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=1200&auto=format&fit=crop',
+      linkedin: '#',
+      email: 'sophia@example.com',
+    },
+  ];
+
   return (
     <section className="w-full bg-white">
       <div className="container mx-auto max-w-7xl px-4 py-16 md:py-24">
@@ -70,9 +72,10 @@ const TeamSection: React.FC = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">Meet</span> The Team.
+            <span className="text-orange-500">{t('about.team_title_1')}</span>{' '}
+            {t('about.team_title_2')}
           </h2>
-          <p className="text-gray-600">Experienced, empathetic, and focused on outcomes</p>
+          <p className="text-gray-600">{t('about.team_subtitle')}</p>
         </motion.div>
 
         {/* Grid */}

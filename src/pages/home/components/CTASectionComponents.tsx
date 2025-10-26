@@ -43,7 +43,11 @@ export default function CTASection() {
                 viewport={{ once: true }}
                 className="text-orange-600 text-8xl"
               >
-                <img src={CTAImage} alt="CTA Image" className="w-full h-full object-cover" />
+                <img
+                  src={CTAImage}
+                  alt={t('home.cta_image_alt')}
+                  className="w-full h-full object-cover"
+                />
               </motion.div>
             </div>
           </div>

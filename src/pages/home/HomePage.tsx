@@ -1,12 +1,12 @@
 import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import HeroSection from '@/components/layout/Section';
+import HeroSection from './components/HeroSectionComponents';
 import ServicesSection from './components/ServicesSectionComponents';
 import TestimonialsSection from './components/TestimonialsSectionComponents';
 import CTASection from './components/CTASectionComponents';
 import TeamSectionComponents from './components/TeamSectionComponents';
 import BlogSection from './components/BlogSectionComponents';
-import PricingPage from '../package/PremuimPage';
+import PricingSection from './components/PricingSectionComponents';
 import FAQSection from './components/FAQSectionComponents';
 
 const HomePage: React.FC = () => {
@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
       <HeroSection />
       <main>
         <ServicesSection />
-        <PricingPage />
+        <PricingSection />
         <TestimonialsSection />
         <TeamSectionComponents />
         <FAQSection />

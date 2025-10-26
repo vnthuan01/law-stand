@@ -8,14 +8,14 @@ export default function TestimonialsSection() {
   const { t } = useTranslation();
   const testimonials = [
     {
-      name: 'Anthony Williams',
+      nameKey: 'home.testimonial_1_name',
       initial: 'A',
-      text: `"After using Lawstand's services, clients consistently highlight the speed, clarity, and confidence..."`,
+      textKey: 'home.testimonial_1_text',
     },
     {
-      name: 'John Shea',
+      nameKey: 'home.testimonial_2_name',
       initial: 'J',
-      text: `"Beyond solving immediate issues, Lawstand clients often mention how the platform gives them peace of mind..."`,
+      textKey: 'home.testimonial_2_text',
     },
   ];
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export default function TestimonialsSection() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {testimonials.map((t, i) => (
+          {testimonials.map((testimonial, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 40 }}
@@ -49,11 +49,11 @@ export default function TestimonialsSection() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                    {t.initial}
+                    {testimonial.initial}
                   </div>
-                  <h4 className="font-semibold text-gray-900">{t.name}</h4>
+                  <h4 className="font-semibold text-gray-900">{t(testimonial.nameKey)}</h4>
                 </div>
-                <p className="text-gray-700 leading-relaxed">{t.text}</p>
+                <p className="text-gray-700 leading-relaxed">{t(testimonial.textKey)}</p>
               </div>
             </motion.div>
           ))}

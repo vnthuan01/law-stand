@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { getDateKey } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export interface CalendarProps {
   value?: Date;
@@ -27,11 +28,11 @@ function addMonths(date: Date, months: number): Date {
 }
 
 export default function Calendar(props: CalendarProps) {
+  const { t } = useTranslation();
   const { value, minDate, maxDate, onChange, onMonthChange, className, markedDates = [] } = props;
   const today = useMemo(() => new Date(), []);
   const [viewDate, setViewDate] = useState<Date>(value ?? today);
 
-  // toggle state để hiển thị month picker
   const [showMonthPicker, setShowMonthPicker] = useState(false);
 
   const startOfMonth = useMemo(
@@ -46,7 +47,6 @@ export default function Calendar(props: CalendarProps) {
   const startWeekday = startOfMonth.getDay();
   const totalDays = endOfMonth.getDate();
 
-  // gọi onMonthChange khi viewDate đổi
   useEffect(() => {
     onMonthChange?.(startOfMonth);
   }, [viewDate]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -83,31 +83,40 @@ export default function Calendar(props: CalendarProps) {
   };
 
   const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    t('months.january'),
+    t('months.february'),
+    t('months.march'),
+    t('months.april'),
+    t('months.may'),
+    t('months.june'),
+    t('months.july'),
+    t('months.august'),
+    t('months.september'),
+    t('months.october'),
+    t('months.november'),
+    t('months.december'),
+  ];
+
+  const weekdays = [
+    t('weekdays.sun'),
+    t('weekdays.mon'),
+    t('weekdays.tue'),
+    t('weekdays.wed'),
+    t('weekdays.thu'),
+    t('weekdays.fri'),
+    t('weekdays.sat'),
   ];
 
   return (
     <div
       className={`w-full max-w-md rounded-2xl border border-gray-200 bg-white p-4 shadow-md ${className ?? ''}`}
-      aria-label="Calendar"
+      aria-label={t('calendar.aria.calendar')}
     >
-      {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <button
           type="button"
           className="rounded-full p-2 text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Previous month"
+          aria-label={t('calendar.aria.previousMonth')}
           onClick={() => setViewDate((prev) => addMonths(prev, -1))}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -122,7 +131,7 @@ export default function Calendar(props: CalendarProps) {
         <button
           type="button"
           className="rounded-full p-2 text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Next month"
+          aria-label={t('calendar.aria.nextMonth')}
           onClick={() => setViewDate((prev) => addMonths(prev, 1))}
         >
           <ChevronRight className="h-5 w-5" />
@@ -149,16 +158,14 @@ export default function Calendar(props: CalendarProps) {
         </div>
       ) : (
         <>
-          {/* Weekdays */}
           <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
+            {weekdays.map((d) => (
               <div key={d} className="py-2">
                 {d}
               </div>
             ))}
           </div>
 
-          {/* Days */}
           <div className="mt-1 grid grid-cols-7 gap-1">
             {weeks.flat().map(({ date, inMonth }) => {
               const isToday = isSameDay(date, today);
