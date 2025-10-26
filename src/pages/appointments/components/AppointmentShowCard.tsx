@@ -2,7 +2,8 @@ import { cn } from '@/lib/utils';
 import { type MyAppointment } from '@/services/appointmentService';
 import { User, Clock, MapPin, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
+import type { User as UserType } from '@/services/authService';
 
 interface AppointmentShowCardProps {
   date: Date;
@@ -22,12 +23,14 @@ const getStatusStyle = (status: MyAppointment['status']) => {
       return 'bg-red-50 border-red-300 text-red-800';
     case 'Completed':
       return 'bg-blue-50 border-blue-300 text-blue-800';
+    // case 'Rescheduled':
+    // return 'bg-purple-50 border-purple-300 text-purple-800';
     default:
       return 'bg-gray-50 border-gray-300 text-gray-700';
   }
 };
 
-const GetAppointmentDetails = (appointment: MyAppointment, t: any) => {
+const getAppointmentDetails = (appointment: MyAppointment, user: UserType | null) => {
   const startTime = new Date(`${appointment.date} ${appointment.startTime}`);
   const endTime = new Date(`${appointment.date} ${appointment.endTime}`);
   const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
@@ -35,8 +38,8 @@ const GetAppointmentDetails = (appointment: MyAppointment, t: any) => {
   return {
     lawyerName: appointment.lawyerName,
     customerName: appointment.userName,
-    customerEmail: appointment.userEmail,
-    customerPhone: appointment.userPhone,
+    customerEmail: user?.email,
+    customerPhone: user?.phoneNumber,
     serviceName: appointment.serviceName,
     servicePrice: appointment.servicePrice,
     startTime: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -47,13 +50,13 @@ const GetAppointmentDetails = (appointment: MyAppointment, t: any) => {
       month: 'long',
       day: 'numeric',
     }),
-    duration:
-      duration > 0 ? `${duration} ${t('appointments.minutes')}` : t('appointments.notAvailable'),
+    duration: duration > 0 ? `${duration} minutes` : 'N/A',
   };
 };
 
 export default function AppointmentShowCard(props: AppointmentShowCardProps) {
-  const { t } = useTranslation();
+  const { user } = useAuth();
+
   const { date, appointments, onClick, onDelete, className } = props;
 
   return (
@@ -68,11 +71,11 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
         </div>
         <div className="p-3 space-y-3">
           {appointments.length === 0 && (
-            <p className="text-xs text-gray-500">{t('appointments.noMorningAppointments')}</p>
+            <p className="text-xs text-gray-500">No morning appointments</p>
           )}
 
           {appointments.map((a) => {
-            const details = GetAppointmentDetails(a, t);
+            const details = getAppointmentDetails(a, user);
 
             return (
               <Tooltip key={a.id}>
@@ -84,6 +87,7 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
                     )}
                     onClick={() => onClick?.(a)}
                   >
+                    {/* Delete button for cancelled appointments */}
                     {a.status === 'Cancelled' && onDelete && (
                       <button
                         type="button"
@@ -92,15 +96,17 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
                           e.stopPropagation();
                           onDelete(a);
                         }}
-                        title={t('appointments.deleteAppointment')}
+                        title="Delete appointment permanently"
                       >
                         <X className="h-3 w-3" />
                       </button>
                     )}
 
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="font-medium">{details.startTime}</span>
-                      <span className="text-xs text-muted-foreground">- {a.serviceName}</span>
+                    <div className="mb-1 flex flex-col items-center gap-2">
+                      <span className="font-medium text-sm">{details.startTime}</span>
+                      <span className="text-xs text-muted-foreground text-center">
+                        {a.serviceName}
+                      </span>
                     </div>
                   </div>
                 </TooltipTrigger>
@@ -115,7 +121,7 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
                       </div>
                       <div>
                         <p className="font-semibold text-sm text-gray-900">{details.lawyerName}</p>
-                        <p className="text-xs text-gray-500">{t('appointments.lawyer')}</p>
+                        <p className="text-xs text-gray-500">Lawyer</p>
                       </div>
                     </div>
 
@@ -135,13 +141,9 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
                         <MapPin className="h-4 w-4 text-red-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-gray-800">
-                          {t('appointments.service')}
-                        </p>
+                        <p className="font-medium text-sm text-gray-800">Service</p>
                         <p className="text-xs text-gray-600">{details.serviceName}</p>
-                        <p className="text-xs text-gray-500">
-                          {t('appointments.price')}: ${details.servicePrice}
-                        </p>
+                        <p className="text-xs text-gray-500">Price: ${details.servicePrice}</p>
                       </div>
                     </div>
 
@@ -150,17 +152,25 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
                         <Clock className="h-4 w-4 text-purple-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm text-gray-800">
-                          {t('appointments.time')}
-                        </p>
+                        <p className="font-medium text-sm text-gray-800">Time</p>
                         <p className="text-xs text-gray-600">
                           {details.startTime} - {details.endTime}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {t('appointments.duration')}: {details.duration}
-                        </p>
+                        <p className="text-xs text-gray-500">Duration: {details.duration}</p>
                       </div>
                     </div>
+
+                    {/* {a.notes && (
+                      <div className="flex items-start gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 mt-0.5">
+                          <FileText className="h-4 w-4 text-orange-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm text-gray-800">Notes</p>
+                          <p className="text-xs text-gray-600">{a.notes}</p>
+                        </div>
+                      </div>
+                    )} */}
 
                     <div className="pt-2 border-t border-gray-100">
                       <p className="text-xs text-gray-400 text-center">{details.date}</p>

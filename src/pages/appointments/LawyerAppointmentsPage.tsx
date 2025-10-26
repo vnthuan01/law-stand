@@ -21,6 +21,7 @@ import {
   useAppointmentDetail,
 } from '@/hooks/useAppointment';
 import AppointmentDialog from './components/AppointmentShowDetail';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppointmentView, getGridColsClass } from '@/hooks/useAppointmentView';
@@ -32,6 +33,21 @@ export default function LawyerAppointmentsPage() {
   const [dialogAction, setDialogAction] = useState<'cancel' | 'approve' | 'complete' | null>(null);
   const [appointmentToAction, setAppointmentToAction] = useState<MyAppointment | null>(null);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    variant: 'default' | 'destructive' | 'info' | 'warning' | 'success' | 'error';
+    confirmText: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: () => {},
+    variant: 'success',
+    confirmText: 'Confirm',
+  });
 
   // Use lawyer ID from authenticated user
   const lawyerId = user?.id || '';
@@ -44,61 +60,68 @@ export default function LawyerAppointmentsPage() {
 
   const { cancel, updateStatus } = useAppointments();
 
-  const openDialog = (apt: MyAppointment, action: 'cancel' | 'approve' | 'complete') => {
-    setAppointmentToAction(apt);
-    setDialogAction(action);
-    setIsDialogOpen(true);
+  // Actions
+  const handleCancel = async (apt: MyAppointment) => {
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.cancel_title'),
+      description: t('appointments.cancel_delete'),
+      variant: 'destructive',
+      confirmText: t('common.delete'),
+      onConfirm: async () => {
+        try {
+          await cancel(apt.id);
+          await refetch();
+          toast.success(t('appointments.appointment_cancelled'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
+        }
+      },
+    });
   };
 
-  const handleDialogConfirm = async () => {
-    if (!appointmentToAction || !dialogAction) return;
-
-    try {
-      switch (dialogAction) {
-        case 'cancel':
-          await cancel(appointmentToAction.id);
-          toast.success(t('appointments.appointment_cancelled'));
-          break;
-        case 'approve':
+  const handleApprove = async (apt: MyAppointment) => {
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.approve_title'),
+      description: t('appointments.approve_confirm'),
+      variant: 'default',
+      confirmText: t('common.confirm'),
+      onConfirm: async () => {
+        try {
           await updateStatus({
-            appointmentId: appointmentToAction.id,
+            appointmentId: apt.id,
             data: { status: 'Confirmed' },
           });
+          await refetch();
           toast.success(t('appointments.appointment_approved'));
-          break;
-        case 'complete':
-          await updateStatus({
-            appointmentId: appointmentToAction.id,
-            data: { status: 'Completed' },
-          });
-          toast.success(t('appointments.appointment_completed'));
-          break;
-      }
-    } catch (e: unknown) {
-      const errorMessageMap = {
-        cancel: 'appointments.cancel_failed',
-        approve: 'appointments.approve_failed',
-        complete: 'appointments.complete_failed',
-      };
-      toast.error(e instanceof Error ? e.message : t(errorMessageMap[dialogAction]));
-    } finally {
-      await refetch();
-      setIsDialogOpen(false);
-      setAppointmentToAction(null);
-      setDialogAction(null);
-    }
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.approve_failed'));
+        }
+      },
+    });
   };
 
-  const dialogContent = {
-    cancel: { title: t('appointments.cancel_appointment'), desc: t('appointments.cancel_confirm') },
-    approve: {
-      title: t('appointments.approve_appointment'),
-      desc: t('appointments.approve_confirm'),
-    },
-    complete: {
-      title: t('appointments.complete_appointment'),
-      desc: t('appointments.complete_confirm'),
-    },
+  const handleComplete = async (apt: MyAppointment) => {
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.complete_title'),
+      description: t('appointments.complete_confirm'),
+      variant: 'success',
+      confirmText: t('common.confirm'),
+      onConfirm: async () => {
+        try {
+          await updateStatus({
+            appointmentId: apt.id,
+            data: { status: 'Completed' },
+          });
+          await refetch();
+          toast.success(t('appointments.appointment_completed'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.complete_failed'));
+        }
+      },
+    });
   };
 
   const {
@@ -178,23 +201,17 @@ export default function LawyerAppointmentsPage() {
         }}
       />
 
-      {/* Confirmation Dialog */}
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{dialogAction && dialogContent[dialogAction].title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {dialogAction && dialogContent[dialogAction].desc}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDialogConfirm}>
-              {t('common.confirm')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Confirm dialog */}
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        confirmText={confirmDialog.confirmText}
+        cancelText={t('common.cancel')}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
+      />
     </Layout>
   );
 }

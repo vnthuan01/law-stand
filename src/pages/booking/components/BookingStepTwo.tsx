@@ -1,329 +1,219 @@
-import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import { UserForm } from '@/hooks/useInformationForm';
-import { ArrowLeft } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+
+interface BookingStepTwoProps {
+  selectedSlot: any;
+  userInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    country: string;
+  };
+  setUserInfo: (info: any) => void;
+  onBack: () => void;
+  onConfirm: () => void;
+}
 
 export const BookingStepTwo = ({
-  serviceId,
-  selectedDate,
-  selectedTimeSlot,
-  duration,
-  selectedLocation,
+  selectedSlot,
   userInfo,
   setUserInfo,
-  agree,
-  setAgree,
   onBack,
   onConfirm,
-}: any) => {
-  const { t } = useTranslation();
-  const [hostQuery, setHostQuery] = useState('');
-  const [selectedHost, setSelectedHost] = useState<any | null>(null);
-  const [hostDetail, setHostDetail] = useState<any | null>(null);
-  const [isHostDialogOpen, setIsHostDialogOpen] = useState(false);
-  const [isHostPickerOpen, setIsHostPickerOpen] = useState(false);
-
-  // MOCK DATA: In a real application, this data should be fetched from a backend and internationalized.
-  const allHosts = useMemo(
-    () => [
-      {
-        id: 'h1',
-        name: 'Nguyen Van An',
-        title: 'Senior Immigration Lawyer',
-        rating: 4.9,
-        services: ['01', '03'],
-        bio: '15+ years in immigration and family law, trusted by 500+ clients.',
-        certificates: ['LL.M. (Harvard)', 'Vietnam Bar Certificate', 'Immigration Law Cert.'],
-        experienceYears: 15,
-        age: 42,
-        traits: ['Empathetic', 'Detail-oriented', 'Bilingual (EN/VN)'],
-        hobbies: ['Running', 'Travel', 'Mentoring juniors'],
-        gender: 'male',
-      },
-      {
-        id: 'h2',
-        name: 'Tran Thi Binh',
-        title: 'Business & Tax Attorney',
-        rating: 4.8,
-        services: ['04'],
-        bio: 'Expert in property rights and inheritance dispute resolution.',
-        certificates: ['LL.B. (HCMC Law University)', 'Notary Certification'],
-        experienceYears: 12,
-        age: 38,
-        traits: ['Calm', 'Analytical', 'Practical'],
-        hobbies: ['Gardening', 'Classical music'],
-        gender: 'female',
-      },
-      // ... more mock data
-    ],
-    [],
-  );
-
-  const hostOptions = useMemo(() => {
-    const byService = serviceId
-      ? allHosts.filter((h) => h.services.includes(String(serviceId)))
-      : allHosts;
-    if (!hostQuery) return byService;
-    const q = hostQuery.toLowerCase();
-    return byService.filter((h) => h.name.toLowerCase().includes(q));
-  }, [allHosts, hostQuery, serviceId]);
-
-  const handleConfirm = () => {
-    onConfirm?.({
-      serviceId,
-      selectedDate,
-      selectedTimeSlot,
-      duration,
-      selectedLocation,
-      hostId: selectedHost?.id ?? null,
-      hostName: selectedHost?.name ?? null,
-      selectedHost,
-      userInfo,
+}: BookingStepTwoProps) => {
+  const formatTime = (timeString: string) => {
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
     });
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setUserInfo((prev: any) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   return (
-    <div className="flex flex-col gap-6">
-      {/* Booking Summary */}
-      <h2 className="font-bold text-lg">{t('booking.stepTwo.bookingSummary')}</h2>
-      <Card className="bg-slate-50">
-        <CardContent className="p-6 text-sm grid md:grid-cols-2 divide-x divide-gray-200 gap-6">
-          {/* Left Column */}
-          <div className="space-y-3">
-            <div>
-              <p className="text-gray-500 text-sm">{t('booking.stepTwo.appointment')}</p>
-              <p className="font-semibold">{selectedDate?.toLocaleDateString('en-GB')}</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">{t('booking.stepTwo.date')}</p>
-              <p className="font-semibold">
-                {selectedDate?.toLocaleDateString('en-EN', {
-                  weekday: 'long',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                })}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">{t('booking.stepTwo.time')}</p>
-              <p className="font-semibold">{selectedTimeSlot}</p>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-3 ">
-            <div>
-              <p className="text-gray-500 text-sm">{t('booking.stepTwo.host')}</p>
-              <Popover open={isHostPickerOpen} onOpenChange={setIsHostPickerOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full h-12 justify-between"
-                    aria-label="Open host selector"
-                  >
-                    {selectedHost ? (
-                      <span className="truncate text-left">
-                        {selectedHost.name}
-                        <span className="block text-xs text-gray-500">{selectedHost.title}</span>
-                      </span>
-                    ) : (
-                      <span className="text-gray-500">{t('booking.stepTwo.selectAHost')}</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 w-[320px]">
-                  <Command>
-                    <CommandInput
-                      placeholder={t('booking.stepTwo.searchHost')}
-                      value={hostQuery}
-                      onValueChange={setHostQuery}
-                    />
-                    <CommandList>
-                      <CommandEmpty>{t('booking.stepTwo.noHostsFound')}</CommandEmpty>
-                      <CommandGroup heading={t('booking.stepTwo.suggested')}>
-                        {hostOptions.map((h) => (
-                          <CommandItem
-                            key={h.id}
-                            value={`${h.name} ${h.title}`}
-                            onSelect={() => {
-                              setSelectedHost(h);
-                              setIsHostPickerOpen(false);
-                            }}
-                            className="flex items-center justify-between gap-2"
-                          >
-                            <div>
-                              <p className="text-sm font-medium">{h.name}</p>
-                              <p className="text-xs text-gray-500">
-                                {h.title} • ⭐ {h.rating}
-                              </p>
-                            </div>
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setHostDetail(h);
-                                setIsHostDialogOpen(true);
-                              }}
-                            >
-                              {t('booking.stepTwo.detail')}
-                            </Button>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="grid md:grid-cols-2">
-              <div>
-                <p className="text-gray-500 text-sm">{t('booking.stepTwo.duration')}</p>
-                <p className="font-semibold">
-                  {duration ? `${duration} ${t('booking.stepTwo.minutes')}` : '-'}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-500 text-sm">{t('booking.stepTwo.location')}</p>
-                <p className="font-semibold">{selectedLocation}</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* User Info */}
-      <h2 className="font-bold text-lg">{t('booking.stepTwo.yourInformation')}</h2>
-      <UserForm userInfo={userInfo} setUserInfo={setUserInfo} />
-
-      {/* Agree */}
-      <div className="flex items-start gap-2 text-sm text-gray-600">
-        <input
-          type="checkbox"
-          checked={agree}
-          onChange={(e) => setAgree(e.target.checked)}
-          className="mt-1"
-        />
-        <span>{t('booking.stepTwo.agreeMessage')}</span>
+    <div className="w-full space-y-6">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900">Personal Information</h2>
+        <p className="text-gray-600 mt-2">Please review and update your contact details</p>
       </div>
 
-      {/* Buttons */}
-      <div className="flex justify-between gap-2 mt-4">
-        <Button variant="outline" onClick={onBack}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Appointment Summary */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              Appointment Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <Clock className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="font-semibold text-blue-800">
+                    {formatDate(selectedSlot.date)} at {formatTime(selectedSlot.startTime)} -{' '}
+                    {formatTime(selectedSlot.endTime)}
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    {selectedSlot.service?.name || 'Legal Consultation'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <User className="w-5 h-5 text-blue-600" />
+                <div>
+                  <p className="font-medium text-blue-800">
+                    {selectedSlot.lawyer?.fullName || 'Available Lawyer'}
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    {selectedSlot.lawyer?.email || 'lawyer@example.com'}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-blue-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-blue-700">Consultation Fee</span>
+                  <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                    {selectedSlot.service?.price
+                      ? `${selectedSlot.service.price.toLocaleString('vi-VN')} VND`
+                      : 'Free'}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Personal Information Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="w-5 h-5 text-green-600" />
+              Your Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name" className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Full Name *
+                </Label>
+                <Input
+                  id="name"
+                  value={userInfo.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  placeholder="Enter your full name"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email" className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Email Address *
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={userInfo.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="Enter your email"
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="phone" className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  Phone Number *
+                </Label>
+                <Input
+                  id="phone"
+                  value={userInfo.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  placeholder="Enter your phone number"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="country" className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Country *
+                </Label>
+                <Input
+                  id="country"
+                  value={userInfo.country}
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                  placeholder="Enter your country"
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="address" className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                Address
+              </Label>
+              <Textarea
+                id="address"
+                value={userInfo.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                placeholder="Enter your full address"
+                className="mt-1"
+                rows={3}
+              />
+            </div>
+
+            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+              <p className="text-sm text-yellow-800">
+                <strong>Note:</strong> Please ensure all information is accurate as it will be used
+                for your appointment confirmation and communication.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
           <ArrowLeft className="w-4 h-4" />
-          {t('common.back')}
+          Back to Time Selection
         </Button>
         <Button
-          className="bg-blue-600 text-white hover:bg-blue-700"
-          disabled={!agree}
-          onClick={handleConfirm}
+          onClick={onConfirm}
+          disabled={!userInfo.name || !userInfo.email || !userInfo.phone}
+          className="px-8 py-3 text-lg"
         >
-          {t('booking.stepTwo.confirmBooking')}
+          Continue to Payment
         </Button>
       </div>
-      <Dialog open={isHostDialogOpen} onOpenChange={setIsHostDialogOpen}>
-        <DialogContent aria-describedby={undefined}>
-          <DialogHeader>
-            <DialogTitle>{hostDetail?.name ?? t('booking.stepTwo.hostDetail')}</DialogTitle>
-            {hostDetail?.title ? <DialogDescription>{hostDetail.title}</DialogDescription> : null}
-          </DialogHeader>
-          <div className="space-y-3 text-sm">
-            {hostDetail?.rating ? (
-              <p>
-                {t('booking.stepTwo.rating')}: ⭐ {hostDetail.rating}
-              </p>
-            ) : null}
-            {hostDetail?.bio ? <p className="text-gray-600">{hostDetail.bio}</p> : null}
-            {hostDetail?.experienceYears ? (
-              <p>
-                {t('booking.stepTwo.experience')}: {hostDetail.experienceYears}{' '}
-                {t('booking.stepTwo.years')}
-              </p>
-            ) : null}
-            {hostDetail?.age ? (
-              <p>
-                {t('booking.stepTwo.age')}: {hostDetail.age}
-              </p>
-            ) : null}
-            {hostDetail?.gender ? (
-              <p>
-                {t('booking.stepTwo.gender')}: {hostDetail.gender}
-              </p>
-            ) : null}
-            {Array.isArray(hostDetail?.certificates) && hostDetail.certificates.length > 0 ? (
-              <div>
-                <p className="font-medium">{t('booking.stepTwo.certificates')}</p>
-                <ul className="list-disc list-inside text-gray-700">
-                  {hostDetail.certificates.map((c: string) => (
-                    <li key={c}>{c}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            {Array.isArray(hostDetail?.traits) && hostDetail.traits.length > 0 ? (
-              <div>
-                <p className="font-medium">{t('booking.stepTwo.traits')}</p>
-                <div className="flex flex-wrap gap-2">
-                  {hostDetail.traits.map((t: string) => (
-                    <span key={t} className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {Array.isArray(hostDetail?.hobbies) && hostDetail.hobbies.length > 0 ? (
-              <div>
-                <p className="font-medium">{t('booking.stepTwo.hobbies')}</p>
-                <div className="flex flex-wrap gap-2">
-                  {hostDetail.hobbies.map((h: string) => (
-                    <span key={h} className="px-2 py-0.5 rounded-full bg-orange-50 text-orange-700">
-                      {h}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              onClick={() => {
-                if (hostDetail) setSelectedHost(hostDetail);
-                setIsHostDialogOpen(false);
-              }}
-            >
-              {t('booking.stepTwo.chooseThisHost')}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => setIsHostDialogOpen(false)}>
-              {t('common.close')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

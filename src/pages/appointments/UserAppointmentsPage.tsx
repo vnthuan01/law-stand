@@ -17,6 +17,7 @@ import Layout from '@/components/layout/UserLayout';
 import AppointmentShowCard from '@/pages/appointments/components/AppointmentShowCard';
 import { useMyAppointments, useAppointments, useAppointmentDetail } from '@/hooks/useAppointment';
 import AppointmentDialog from './components/AppointmentShowDetail';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import { useAppointmentView, getGridColsClass } from '@/hooks/useAppointmentView';
 
@@ -25,6 +26,21 @@ export default function UserAppointmentsPage() {
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [appointmentToCancel, setAppointmentToCancel] = useState<MyAppointment | null>(null);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    variant: 'default' | 'destructive';
+    confirmText: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: () => {},
+    variant: 'default',
+    confirmText: 'Confirm',
+  });
 
   // Fetch my appointments
   const { data: appointments, isLoading, error, refetch } = useMyAppointments();
@@ -34,22 +50,24 @@ export default function UserAppointmentsPage() {
 
   const { cancel } = useAppointments();
 
-  const openCancelDialog = (apt: MyAppointment) => {
-    setAppointmentToCancel(apt);
-    setIsCancelDialogOpen(true);
-  };
-
-  const confirmCancel = async () => {
-    if (!appointmentToCancel) return;
-    try {
-      await cancel(appointmentToCancel.id);
-      await refetch();
-      setIsCancelDialogOpen(false);
-      setAppointmentToCancel(null);
-      toast.success(t('appointments.appointment_cancelled'));
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
-    }
+  // Actions
+  const handleCancel = async (apt: MyAppointment) => {
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.cancel_title'),
+      description: t('appointments.cancel_confirm'),
+      variant: 'destructive',
+      confirmText: t('common.delete'),
+      onConfirm: async () => {
+        try {
+          await cancel(apt.id);
+          await refetch();
+          toast.success(t('appointments.appointment_cancelled'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
+        }
+      },
+    });
   };
 
   const {
@@ -121,21 +139,17 @@ export default function UserAppointmentsPage() {
         }}
       />
 
-      {/* Cancel confirmation dialog */}
-      <AlertDialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('appointments.cancel_appointment')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('appointments.cancel_confirm')}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setAppointmentToCancel(null)}>
-              {t('common.cancel')}
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmCancel}>{t('common.confirm')}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Confirm dialog */}
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        confirmText={confirmDialog.confirmText}
+        cancelText={t('common.cancel')}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
+      />
     </Layout>
   );
 }

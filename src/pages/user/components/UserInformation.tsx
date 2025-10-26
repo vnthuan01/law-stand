@@ -1,278 +1,176 @@
-'use client';
-
-import { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import Select from 'react-select';
-import countryList from 'react-select-country-list';
-
-// Custom option hiển thị flag
-const CountryOption = (props: any) => {
-  const { innerProps, innerRef, data } = props;
-  return (
-    <div ref={innerRef} {...innerProps} className="flex items-center gap-2 p-1 hover:bg-gray-100">
-      <img
-        src={`https://flagcdn.com/16x12/${data.value.toLowerCase()}.png`}
-        alt={data.label}
-        className="w-4 h-3"
-      />
-      <span>{data.label}</span>
-    </div>
-  );
-};
+import { Badge } from '@/components/ui/badge';
+import { Edit, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface UserInfoCardsProps {
   name: string;
   role?: string;
+  gender?: string;
   email: string;
   phone?: string;
-  country?: string;
+  province?: string;
   city?: string;
-  street?: string;
+  address?: string;
+  bio?: string;
+  dateOfBirth?: string;
+  postalCode?: string;
   avatarUrl?: string;
-  onAvatarChange?: (file: File) => void;
-  onUpdateInfo?: (data: {
-    name: string;
-    email: string;
-    phone?: string;
-    country: string;
-    city: string;
-    street: string;
-  }) => void;
+  onEdit?: () => void;
 }
 
 export function UserInfoCards({
   name,
   role,
+  gender,
   email,
   phone,
-  country,
+  province,
   city,
-  street,
+  address,
+  bio,
+  dateOfBirth,
+  postalCode,
   avatarUrl,
-  onAvatarChange,
-  onUpdateInfo,
+  onEdit,
 }: UserInfoCardsProps) {
+  const getRoleBadgeVariant = (role: string | number | undefined) => {
+    if (typeof role === 'number') {
+      switch (role) {
+        case 1:
+          return 'destructive';
+        case 2:
+          return 'secondary';
+        case 3:
+          return 'outline';
+        case 4:
+          return 'outline';
+        default:
+          return 'outline';
+      }
+    }
+    return 'outline';
+  };
   const { t } = useTranslation();
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleAvatarClick = () => fileInputRef.current?.click();
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && onAvatarChange) onAvatarChange(file);
-  };
-
-  const countries: { label: string; value: string }[] = countryList().getData();
-
-  const [formData, setFormData] = useState({
-    name,
-    role: role || '',
-    email,
-    phone: phone || '',
-    country: country || '',
-    city: city || '',
-    street: street || '',
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleCountryChange = (option: { label: string; value: string } | null) => {
-    if (!option) return;
-    setFormData((prev) => ({ ...prev, country: option.value }));
-  };
-
-  const handleSubmit = () => {
-    if (onUpdateInfo) onUpdateInfo(formData);
-  };
-
   return (
-    <div className="relative w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        {/* Avatar Card */}
-        <Card className="flex flex-col items-center justify-center p-6">
-          <div className="relative cursor-pointer group" onClick={handleAvatarClick}>
-            <Avatar className="w-32 h-32 mb-4 ring-2 ring-muted-foreground/20 group-hover:ring-primary transition">
-              <AvatarImage src={avatarUrl || '/avatar.png'} alt={name} />
-              <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+    <div className="space-y-6">
+      {/* User Profile Header */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-6">
+            <Avatar className="h-20 w-20">
+              <AvatarImage src={avatarUrl} />
+              <AvatarFallback>
+                <User className="h-8 w-8" />
+              </AvatarFallback>
             </Avatar>
-            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-white bg-black/60 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-              {t('common.change')}
-            </span>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold">{name}</h2>
+              <div className="flex items-center space-x-2 mt-2">
+                <Badge variant={getRoleBadgeVariant(role)}>{t(`user_info.roles.${role}`)}</Badge>
+              </div>
+              <p className="text-gray-500 mt-1">{email}</p>
+            </div>
+            {onEdit && (
+              <Button onClick={onEdit} className="flex items-center space-x-2">
+                <Edit className="h-4 w-4" />
+                <span>{t('user_info.edit')}</span>
+              </Button>
+            )}
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-          />
-          <h2 className="text-2xl font-bold">{formData.name}</h2>
-          <p className="text-muted-foreground mt-1">
-            {t('profile.role')}: {formData.role}
-          </p>
+        </CardContent>
+      </Card>
+
+      {/* Personal Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('user_info.profile_title')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label className="text-sm font-medium text-gray-500">{t('user_info.name')}</Label>
+              <p className="text-lg">{name || t('user_info.unknown')}</p>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-500">{t('user_info.gender')}</Label>
+              <p className="text-lg">
+                {gender === 'male'
+                  ? t('user_info.male')
+                  : gender === 'female'
+                    ? t('user_info.female')
+                    : t('user_info.other')}
+              </p>
+            </div>
+            {dateOfBirth && (
+              <div>
+                <Label className="text-sm font-medium text-gray-500">
+                  {t('user_info.date_of_birth')}
+                </Label>
+                <p className="text-lg">{dateOfBirth}</p>
+              </div>
+            )}
+            {phone && (
+              <div>
+                <Label className="text-sm font-medium text-gray-500">{t('user_info.phone')}</Label>
+                <p className="text-lg">{phone}</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Address Information */}
+      {(province || city || address) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('user_info.address_title')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {province && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">
+                    {t('user_info.province')}
+                  </Label>
+                  <p className="text-lg">{province}</p>
+                </div>
+              )}
+              {city && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">{t('user_info.city')}</Label>
+                  <p className="text-lg">{city}</p>
+                </div>
+              )}
+              {address && (
+                <div className="md:col-span-2">
+                  <Label className="text-sm font-medium text-gray-500">
+                    {t('user_info.address')}
+                  </Label>
+                  <p className="text-lg">{address}</p>
+                </div>
+              )}
+            </div>
+            {postalCode && (
+              <div>
+                <Label className="text-sm font-medium text-gray-500">
+                  {t('user_info.postal_code')}
+                </Label>
+                <p className="text-lg">{postalCode}</p>
+              </div>
+            )}
+            {bio && (
+              <div>
+                <Label className="text-sm font-medium text-gray-500">{t('user_info.bio')}</Label>
+                <p className="text-lg">{bio}</p>
+              </div>
+            )}
+          </CardContent>
         </Card>
-
-        {/* Right column */}
-        <div className="flex flex-col gap-6">
-          {/* Personal + Address Info */}
-          <Card>
-            <CardHeader className="flex justify-between items-center">
-              <CardTitle>{t('profile.personal_info')}</CardTitle>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="sm" variant="outline">
-                    {t('common.edit')}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  className="sm:max-w-[425px]"
-                  aria-describedby="full-info-description"
-                >
-                  <DialogHeader>
-                    <DialogTitle>{t('profile.edit_info')}</DialogTitle>
-                    <DialogDescription id="full-info-description">
-                      {t('profile.update_hint')}
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div className="space-y-4 mt-2">
-                    {/* Name */}
-                    <div>
-                      <Label htmlFor="name">{t('profile.full_name')}</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-
-                    {/* Role (disabled) */}
-                    <div>
-                      <Label>{t('profile.role')}</Label>
-                      <Input value={formData.role} disabled />
-                    </div>
-
-                    {/* Email */}
-                    <div>
-                      <Label htmlFor="email">{t('profile.email')}</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-
-                    {/* Country */}
-                    <div>
-                      <Label htmlFor="country">{t('profile.country')}</Label>
-                      <Select
-                        options={countries}
-                        value={countries.find((c) => c.value === formData.country)}
-                        onChange={handleCountryChange}
-                        components={{ Option: CountryOption }}
-                      />
-                    </div>
-
-                    {/* Phone */}
-                    <div>
-                      <Label htmlFor="phone">{t('profile.phone')}</Label>
-                      <PhoneInput
-                        country={formData.country.toLowerCase() as any}
-                        value={formData.phone}
-                        onChange={(phone, data?: any) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            phone: phone.replace(/\D/g, ''),
-                            country: data?.countryCode
-                              ? data.countryCode.toUpperCase()
-                              : prev.country,
-                          }))
-                        }
-                        containerClass="w-full"
-                        inputClass="w-full"
-                        buttonClass="!h-full"
-                      />
-                    </div>
-
-                    {/* City */}
-                    <div>
-                      <Label htmlFor="city">{t('profile.city')}</Label>
-                      <Input
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-
-                    {/* Street */}
-                    <div>
-                      <Label htmlFor="street">{t('profile.street')}</Label>
-                      <Input
-                        id="street"
-                        name="street"
-                        value={formData.street}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-
-                    <Button className="mt-2 w-full" onClick={handleSubmit}>
-                      {t('common.save')}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </CardHeader>
-
-            <CardContent className="space-y-2">
-              <p>
-                {t('profile.email')}: {formData.email}
-              </p>
-              {formData.phone && (
-                <p>
-                  {t('profile.phone')}: {formData.phone}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="space-y-2">
-              <p>
-                {t('profile.country')}: {formData.country}
-              </p>
-              {formData.city && (
-                <p>
-                  {t('profile.city')}: {formData.city}
-                </p>
-              )}
-              {formData.street && (
-                <p>
-                  {t('profile.street')}: {formData.street}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
