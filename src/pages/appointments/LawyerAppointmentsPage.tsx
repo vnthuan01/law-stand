@@ -11,6 +11,7 @@ import {
   useAppointmentDetail,
 } from '@/hooks/useAppointment';
 import AppointmentDialog from './components/AppointmentShowDetail';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -54,6 +55,21 @@ export default function LawyerAppointmentsPage() {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    variant: 'default' | 'destructive' | 'info' | 'warning' | 'success' | 'error';
+    confirmText: string;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: () => {},
+    variant: 'success',
+    confirmText: 'Confirm',
+  });
 
   // Use lawyer ID from authenticated user
   const lawyerId = user?.id || '';
@@ -68,42 +84,66 @@ export default function LawyerAppointmentsPage() {
 
   // Actions
   const handleCancel = async (apt: MyAppointment) => {
-    if (!confirm(t('appointments.cancel_confirm'))) return;
-    try {
-      await cancel(apt.id);
-      await refetch();
-      toast.success(t('appointments.appointment_cancelled'));
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
-    }
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.cancel_title'),
+      description: t('appointments.cancel_delete'),
+      variant: 'destructive',
+      confirmText: t('common.delete'),
+      onConfirm: async () => {
+        try {
+          await cancel(apt.id);
+          await refetch();
+          toast.success(t('appointments.appointment_cancelled'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.cancel_failed'));
+        }
+      },
+    });
   };
 
   const handleApprove = async (apt: MyAppointment) => {
-    if (!confirm(t('appointments.approve_confirm'))) return;
-    try {
-      await updateStatus({
-        appointmentId: apt.id,
-        data: { status: 'Confirmed' },
-      });
-      await refetch();
-      toast.success(t('appointments.appointment_approved'));
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : t('appointments.approve_failed'));
-    }
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.approve_title'),
+      description: t('appointments.approve_confirm'),
+      variant: 'default',
+      confirmText: t('common.confirm'),
+      onConfirm: async () => {
+        try {
+          await updateStatus({
+            appointmentId: apt.id,
+            data: { status: 'Confirmed' },
+          });
+          await refetch();
+          toast.success(t('appointments.appointment_approved'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.approve_failed'));
+        }
+      },
+    });
   };
 
   const handleComplete = async (apt: MyAppointment) => {
-    if (!confirm(t('appointments.complete_confirm'))) return;
-    try {
-      await updateStatus({
-        appointmentId: apt.id,
-        data: { status: 'Completed' },
-      });
-      await refetch();
-      toast.success(t('appointments.appointment_completed'));
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : t('appointments.complete_failed'));
-    }
+    setConfirmDialog({
+      open: true,
+      title: t('appointments.complete_title'),
+      description: t('appointments.complete_confirm'),
+      variant: 'success',
+      confirmText: t('common.confirm'),
+      onConfirm: async () => {
+        try {
+          await updateStatus({
+            appointmentId: apt.id,
+            data: { status: 'Completed' },
+          });
+          await refetch();
+          toast.success(t('appointments.appointment_completed'));
+        } catch (e: unknown) {
+          toast.error(e instanceof Error ? e.message : t('appointments.complete_failed'));
+        }
+      },
+    });
   };
 
   // Filter appointments by selected month
@@ -217,6 +257,18 @@ export default function LawyerAppointmentsPage() {
           await handleComplete(apt as unknown as MyAppointment);
           setSelectedAppointmentId(null);
         }}
+      />
+
+      {/* Confirm dialog */}
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        confirmText={confirmDialog.confirmText}
+        cancelText={t('common.cancel')}
+        onConfirm={confirmDialog.onConfirm}
+        variant={confirmDialog.variant}
       />
     </Layout>
   );

@@ -35,7 +35,9 @@
     "price": "Price",
     "change": "Change",
     "saving": "Saving...",
-    "unknown_error": "Unknown error"
+    "unknown_error": "Unknown error",
+    "view_all": "View all",
+    "clear": "Clear"
   },
   "nav": {
     "home": "Home",
@@ -44,9 +46,10 @@
     "contact": "Contact",
     "my_account": "My Account",
     "appointments": "Appointments",
-    "chat_with_ai": "Chat with AI",
+    "chat_with_ai": "Chat with AI Pro",
     "profile": "Profile",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "consultation": "Consultation"
   },
   "auth": {
     "login_title": "Login",
@@ -165,7 +168,32 @@
     "slot_updated": "Slot updated successfully",
     "slot_deleted": "Slot deleted successfully",
     "delete_slot_failed": "Failed to delete slot",
-    "operation_failed": "Operation failed"
+    "operation_failed": "Operation failed",
+    "plan_management": "Plan Management",
+    "plan_management_desc": "Manage subscription plans and pricing",
+    "add_plan": "Add Plan",
+    "create_plan": "Create Plan",
+    "edit_plan": "Edit Plan",
+    "delete_plan": "Delete Plan",
+    "delete_plan_confirm": "Are you sure you want to delete this plan? This action cannot be undone.",
+    "plan_name": "Plan Name",
+    "plan_name_placeholder": "Enter plan name",
+    "plan_price": "Price ($)",
+    "plan_duration": "Duration (days)",
+    "plan_description": "Description",
+    "plan_description_placeholder": "Enter plan description",
+    "plan_features": "Features",
+    "feature_placeholder": "Enter feature",
+    "add_feature": "Add Feature",
+    "mark_popular": "Mark as Popular",
+    "search_plans": "Search plans...",
+    "active": "Active",
+    "inactive": "Inactive",
+    "popular": "Popular",
+    "features": "Features",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "no_plans": "No plans available"
   },
   "appointments": {
     "my_appointments": "My Appointments",
@@ -192,7 +220,11 @@
     "approve_appointment": "Approve Appointment",
     "complete_appointment": "Complete Appointment",
     "cancel_confirm": "Are you sure you want to cancel this appointment?",
+    "cancel_delete": "Are you sure you want to delete this appointment?",
+    "cancel_title": "Cancel Appointment",
+    "approve_title": "Approve Appointment",
     "approve_confirm": "Approve this appointment?",
+    "complete_title": "Complete Appointment",
     "complete_confirm": "Mark this appointment as completed?",
     "appointment_cancelled": "Appointment cancelled successfully",
     "appointment_approved": "Appointment approved",
@@ -229,13 +261,50 @@
     "cta_title_1": "You don't have to",
     "cta_title_2": "fight alone.",
     "cta_subtitle": "Book a consultation with one of our lawyers today.",
-    "testimonials_title": "Response From guests like you.",
+    "testimonials_title": "Response",
+    "testimonials_titleHighlight": "From guests like you.",
     "testimonials_subtitle": "Real experiences from our clients",
-    "faq_title": "Frequently Asked Questions",
-    "faq_subtitle": "Find answers about LawStand — your trusted AI Legal Consultation & Lawyer Booking platform."
+    "faq_title": "Frequently Asked",
+    "faq_titleHighlight": "Questions",
+    "faq_subtitle": "Find answers about LawStand — your trusted AI Legal Consultation & Lawyer Booking platform.",
+    "per_month": "/month",
+    "buy_now": "Buy Now",
+    "cancel_subscription": "Cancel Subscription",
+    "upgrade_subscription": "Upgrade Subscription",
+    "downgrade_subscription": "Downgrade Subscription",
+    "change_subscription": "Change Subscription",
+    "change_subscription_plan": "Change Subscription Plan",
+    "change_subscription_plan_desc": "Change your subscription plan to the one that suits you best.",
+    "change_subscription_plan_button": "Change Subscription Plan",
+    "change_subscription_plan_button_desc": "Change your subscription plan to the one that suits you best.",
+    "team": {
+      "title": "Meet",
+      "titleHighlight": "The Team",
+      "description": "Experienced, empathetic, and focused on outcomes",
+      "meetTheTeam": "Meet the Team",
+      "yearsOfExperience": "Years of Experience",
+      "successfulCases": "Successful Cases",
+      "trustedClients": "Trusted Clients",
+      "expertLawyers": "Expert Lawyers",
+      "businessLaw": "Business Law",
+      "businessLawDesc": "Help businesses grow with legal confidence.",
+      "familyLaw": "Family Law",
+      "familyLawDesc": "Protect relationships, resolve disputes with care.",
+      "civilLitigation": "Civil Litigation",
+      "civilLitigationDesc": "Protect your interests in important matters.",
+      "intellectualProperty": "Intellectual Property",
+      "intellectualPropertyDesc": "Protect your ideas and innovations."
+    },
+    "blog_title": "Blog",
+    "blog_titleHighlight": "Articles",
+    "blog_subtitle": "Explore our latest blog articles and stay updated with the latest legal news and insights.",
+    "my_subscription_plans": "My Subscription Plans",
+    "current_plan": "Current Plan"
   },
   "services": {
-    "title": "Legal Services",
+    "title": "Legal",
+    "titleHighlight": "Main Services",
+    "subtitle": "Complete legal solutions for your needs",
     "immigration": "Immigration & Work Permits",
     "immigration_desc": "Expert guidance through visa and work permit processes",
     "property": "Property & Inheritance Law",
@@ -249,15 +318,7 @@
     "dispute": "Dispute Resolution & Investment Consulting",
     "dispute_desc": "Legal dispute resolution and investment advice"
   },
-  "about": {
-    "title": "About Us.",
-    "subtitle": "Complete legal solutions for your needs",
-    "description_1": "Lawstand is a digital platform that makes legal guidance simple and accessible for everyone, including foreigners living in Vietnam. It offers bilingual legal search (Vietnamese–English), AI-powered summaries that turn lengthy regulations into under-100-word highlights with real-world examples, and a 24/7 legal chatbot that instantly answers common questions.",
-    "description_2": "Need expert help? Easily browse transparent lawyer profiles, view credentials and reviews, and book consultations online. Designed for speed and scale, Lawstand handles thousands of users simultaneously on both mobile apps and web, helping you understand and navigate the law with confidence.",
-    "our_story": "Our Story",
-    "our_mission": "Our Mission",
-    "our_team": "Our Team"
-  },
+
   "contact": {
     "title": "Contact Us",
     "get_in_touch": "Get in Touch",
@@ -294,7 +355,10 @@
     "something_went_wrong": "Something went wrong",
     "page_not_found": "Page not found",
     "unauthorized": "Unauthorized",
-    "server_error": "Server error"
+    "server_error": "Server error",
+    "page_not_found_title": "OOPS! NOTHING WAS FOUND",
+    "page_not_found_description": "The page you are looking for might have been removed had its name changed or is temporarily unavailable.",
+    "return_to_homepage": "Return to homepage"
   },
   "messages": {
     "success_update": "Updated successfully",
@@ -453,6 +517,149 @@
       "Lawyer": "Lawyer",
       "Staff": "Staff",
       "User": "Customer"
+    }
+  },
+  "booking": {
+    "appointmentCreatedSuccess": "Appointment created successfully!",
+    "appointmentCreateFailed": "Failed to create appointment",
+    "pleaseSelectTimeSlot": "Please select a time slot",
+    "bookingCompletedSuccess": "Booking completed successfully!",
+    "stepOne": {
+      "title": "Select Your Appointment Time",
+      "description": "Choose a service and available time slots for the next 7 days",
+      "selectService": "Select Service",
+      "chooseService": "Choose a legal service",
+      "selectServicePlaceholder": "Select a service...",
+      "selected": "Selected",
+      "selectDate": "Select Date",
+      "pleaseSelectDate": "Please select a date",
+      "availableTimeSlots": "Available Time Slots",
+      "availableSlots": "available slots",
+      "filteredBy": "Filtered by",
+      "noAvailableSlots": "No available slots for the selected service",
+      "tryDifferentService": "Please try selecting a different service or date",
+      "legalConsultation": "Legal Consultation",
+      "availableLawyer": "Available Lawyer",
+      "selectedAppointment": "Selected Appointment",
+      "with": "with",
+      "continueToPersonalInfo": "Continue to Personal Information"
+    },
+    "stepTwo": {
+      "personalInformation": "Personal Information",
+      "reviewContactDetails": "Please review and update your contact details",
+      "appointmentSummary": "Appointment Summary",
+      "consultationFee": "Consultation Fee",
+      "yourInformation": "Your Information",
+      "enterFullName": "Enter your full name",
+      "enterEmail": "Enter your email",
+      "enterPhone": "Enter your phone number",
+      "country": "Country",
+      "enterCountry": "Enter your country",
+      "address": "Address",
+      "enterAddress": "Enter your full address",
+      "note": "Note:",
+      "noteMessage": "Please ensure all information is accurate as it will be used for your appointment confirmation and communication.",
+      "termsAgreement": "I understand and agree that this appointment booking follows our terms and conditions.",
+      "confirmBooking": "Confirm Booking",
+      "backToTimeSelection": "Back to Time Selection"
+    },
+    "stepThree": {
+      "bookingSummary": "Booking Summary",
+      "service": "Service",
+      "dateTime": "Date & Time",
+      "duration": "Duration",
+      "toBeAssigned": "To be assigned",
+      "contact": "Contact",
+      "paymentMethod": "Payment Method",
+      "creditDebitCard": "Credit/Debit Card",
+      "digitalWallet": "Digital Wallet"
+    }
+  },
+  "chatbot": {
+    "title": "LawStand Chatbot",
+    "welcomeMessage": "Hello! I'm LawStand Chatbot, your AI legal assistant. I can help you with legal questions and provide information based on Vietnamese law.",
+    "inputPlaceholder": "Ask me anything about Vietnamese law...",
+    "thinking": "Thinking...",
+    "errorMessage": "Sorry, I encountered an error. Please try again.",
+    "tryAsking": "Try asking:",
+    "sampleQuestions": {
+      "trafficLaw": "What are the penalties for running a red light for cars and motorcycles?",
+      "laborLaw": "What does labor law say about annual leave time?",
+      "marriageLaw": "What does marriage and family law say about property division in divorce?",
+      "civilLaw": "What does civil law say about loan contracts?"
+    },
+    "initialMessage": "Hello! I am your AI assistant. You can type, send images, or record voice messages below.",
+    "fileReceivedResponse": "I received the file(s) you sent. (Demo: here you would see the real AI API response.)",
+    "textResponse": "You just said: \"{{text}}\"\n\n(This is a demo response. Replace with actual API.)",
+    "empty": "(empty)",
+    "voiceRecording": "Voice Recording",
+    "sending": "Sending...",
+    "failedToSend": "Failed to send",
+    "attachments": "Attachments",
+    "clearAll": "Clear All",
+    "record": "Record",
+    "stopRecording": "Stop Recording",
+    "messagePlaceholder": "Type a message... (Enter to send, Shift+Enter for new line)"
+  },
+  "password": {
+    "atLeast8Chars": "At least 8 characters",
+    "atLeast1Uppercase": "At least 1 uppercase letter",
+    "atLeast1Lowercase": "At least 1 lowercase letter",
+    "atLeast1Number": "At least 1 number",
+    "atLeast1Special": "At least 1 special character"
+  },
+  "footer": {
+    "description": "Providing legal consultation with accountability & transparency.",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "faqs": "FAQs"
+  },
+  "topbar": {
+    "working_hours": "Monday - Friday, 8:00AM - 5:00PM",
+    "booking_online": "24/7 Booking Online"
+  },
+  "about": {
+    "title": "About ",
+    "titileHighlight": "Us",
+    "subtitle": "Your trusted legal partner",
+    "description_1": "We are committed to providing comprehensive legal services with integrity, expertise, and personalized attention to each client's unique needs.",
+    "description_2": "Our team of experienced attorneys combines deep legal knowledge with modern technology to deliver efficient and effective solutions.",
+    "story": {
+      "title": "Our",
+      "titleHighlight": "Story & Missions",
+      "subtitle": "Complete legal solutions for your needs",
+      "description1": "Founded to bring clarity to complex legal processes, we combine expert counsel with thoughtful product design. Our platform highlights what really matters so you can act with confidence.",
+      "description2": "Our mission is to make trustworthy legal help available to everyone: clear information, transparent pricing, and access to professionals who care about outcomes—not just paperwork.",
+      "feature1": "Expert attorneys across multiple practice areas",
+      "feature2": "Transparent fees — no surprises",
+      "feature3": "Secure, privacy-first platform"
+    },
+    "team": {
+      "meet": "Meet",
+      "theTeam": "The Team",
+      "subtitle": "Experienced, empathetic, and focused on outcomes"
+    }
+  },
+  "resources": {
+    "hero": {
+      "subtitle": "Resource",
+      "title": "Information is empowering.",
+      "description": "Find the laws and updates you need.",
+      "searchPlaceholder": "Searching law needed",
+      "searchButton": "Search"
+    },
+    "popular_laws": "Popular Laws",
+    "law_titles": {
+      "pl1": "Traffic Law",
+      "pl2": "Marriage and Family Law",
+      "pl3": "Labor Code",
+      "pl4": "Land Law",
+      "pl5": "Enterprise Law"
+    },
+    "latest_updates": "Latest legal updates",
+
+    "blog": {
+      "featured_articles": "Featured articles"
     }
   }
 }

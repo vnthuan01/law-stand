@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { User, Scale } from 'lucide-react';
 
 interface AuthLayoutProps {
@@ -7,26 +8,26 @@ interface AuthLayoutProps {
   imageSrc?: string;
 }
 
-const messages = [
+const getMessages = (t: (key: string) => string) => [
   {
     icon: <Scale className="w-4 h-4 inline mr-1" />,
-    text: 'AI: Hello! What do you want to know about Labor Law in Vietnam?',
+    text: t('auth.demo.ai1'),
   },
   {
     icon: <User className="w-4 h-4 inline mr-1" />,
-    text: 'User: I want to know about the probation period in labor contracts.',
+    text: t('auth.demo.user1'),
   },
   {
     icon: <Scale className="w-4 h-4 inline mr-1" />,
-    text: 'AI: According to Labor Code 2019, probation is:\n- Up to 180 days for managers\n- Up to 60 days for technical jobs\n- Up to 30 days for others',
+    text: t('auth.demo.ai2'),
   },
   {
     icon: <User className="w-4 h-4 inline mr-1" />,
-    text: 'User: What happens if the company doesn’t sign a contract after probation?',
+    text: t('auth.demo.user2'),
   },
   {
     icon: <Scale className="w-4 h-4 inline mr-1" />,
-    text: 'AI: If you keep working after probation without a contract, an official labor contract is automatically established.',
+    text: t('auth.demo.ai3'),
   },
 ];
 
@@ -36,6 +37,9 @@ const fade = 1.2; // fade in/out time
 const visibleTime = 6; // how long each bubble stays fully visible
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, imageSrc }) => {
+  const { t } = useTranslation();
+  const messages = getMessages(t);
+
   return (
     <div className="flex w-full min-h-screen">
       {/* Left side */}

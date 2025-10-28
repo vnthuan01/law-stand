@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
 import { Briefcase, Users, Scale, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const ProfessionalSection = () => {
+  const { t } = useTranslation();
   const teamMembers = [
     {
       id: 1,
@@ -27,28 +29,32 @@ const ProfessionalSection = () => {
   ];
 
   const stats = [
-    { label: 'Years of Experience', value: '15+' },
-    { label: 'Successful Cases', value: '1200+' },
-    { label: 'Trusted Clients', value: '900+' },
-    { label: 'Expert Lawyers', value: '20+' },
+    { label: t('home.team.yearsOfExperience'), value: '15+' },
+    { label: t('home.team.successfulCases'), value: '1200+' },
+    { label: t('home.team.trustedClients'), value: '900+' },
+    { label: t('home.team.expertLawyers'), value: '20+' },
   ];
 
   const practiceAreas = [
     {
       icon: Briefcase,
-      title: 'Business Law',
-      desc: 'Helping businesses grow with legal confidence.',
+      title: t('home.team.businessLaw'),
+      desc: t('home.team.businessLawDesc'),
     },
     {
       icon: Users,
-      title: 'Family Law',
-      desc: 'Protecting relationships, resolving disputes with care.',
+      title: t('home.team.familyLaw'),
+      desc: t('home.team.familyLawDesc'),
     },
-    { icon: Scale, title: 'Civil Litigation', desc: 'Defending your rights in critical matters.' },
+    {
+      icon: Scale,
+      title: t('home.team.civilLitigation'),
+      desc: t('home.team.civilLitigationDesc'),
+    },
     {
       icon: Shield,
-      title: 'Intellectual Property',
-      desc: 'Safeguarding your ideas and innovations.',
+      title: t('home.team.intellectualProperty'),
+      desc: t('home.team.intellectualPropertyDesc'),
     },
   ];
 
@@ -77,14 +83,11 @@ const ProfessionalSection = () => {
             className="space-y-8"
           >
             <h1 className="text-5xl lg:text-6xl font-extrabold text-white leading-tight">
-              Proudly <span className="text-blue-400">unconventional.</span>
+              {t('home.team.title')}{' '}
+              <span className="text-blue-400">{t('home.team.titleHighlight')}</span>
             </h1>
 
-            <p className="text-lg text-gray-200 max-w-lg">
-              At <span className="font-semibold text-white">Lawstand</span>, we redefine legal
-              practice by combining deep expertise with innovative strategies to deliver clarity,
-              confidence, and justice.
-            </p>
+            <p className="text-lg text-gray-200 max-w-lg">{t('home.team.description')}</p>
 
             {/* Team Avatars */}
             <div className="space-y-5">
@@ -112,7 +115,7 @@ const ProfessionalSection = () => {
                 whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center px-6 py-3 bg-transparent border border-white/30 text-white font-medium rounded-full shadow-md hover:border-white hover:shadow-lg transition"
               >
-                Meet the Team
+                {t('home.team.meetTheTeam')}
               </motion.button>
             </div>
           </motion.div>

@@ -21,7 +21,8 @@ export default function FAQSection() {
           className="text-center mb-10"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-            {t('home.faq_title')}
+            {t('home.faq_title')}{' '}
+            <span className="text-orange-500">{t('home.faq_titleHighlight')}</span>
           </h2>
           <p className="text-gray-600">{t('home.faq_subtitle')}</p>
         </motion.div>

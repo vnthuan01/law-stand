@@ -1,6 +1,7 @@
 import React from 'react';
 import TeamCard from './TeamCardComponents';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const TEAM_MEMBERS = [
   {
@@ -58,6 +59,7 @@ const TEAM_MEMBERS = [
 ];
 
 const TeamSection: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <section className="w-full bg-white">
       <div className="container mx-auto max-w-7xl px-4 py-16 md:py-24">
@@ -70,9 +72,10 @@ const TeamSection: React.FC = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">Meet</span> The Team.
+            <span className="text-orange-500">{t('about.team.meet')}</span>{' '}
+            {t('about.team.theTeam')}
           </h2>
-          <p className="text-gray-600">Experienced, empathetic, and focused on outcomes</p>
+          <p className="text-gray-600">{t('about.team.subtitle')}</p>
         </motion.div>
 
         {/* Grid */}

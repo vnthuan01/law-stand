@@ -7,6 +7,7 @@ import {
   type ReactNode,
   type MouseEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MessageCircle, X, Send, Loader2, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
@@ -69,6 +70,7 @@ function bodyWithCitations(body: string, sources: string[]) {
 }
 
 export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>(
     ChatbotService.getInitialChatHistory(),
@@ -100,10 +102,10 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
   }, [chatHistory]);
 
   const sampleQuestions = [
-    'Luật giao thông đường bộ xử phạt vượt đèn đỏ như thế nào đối với oto và xe máy?',
-    'Luật lao động quy định về thời gian nghỉ phép năm?',
-    'Luật hôn nhân và gia đình quy định về chia tài sản khi ly hôn?',
-    'Luật dân sự quy định về hợp đồng vay tài sản?',
+    t('chatbot.sampleQuestions.trafficLaw'),
+    t('chatbot.sampleQuestions.laborLaw'),
+    t('chatbot.sampleQuestions.marriageLaw'),
+    t('chatbot.sampleQuestions.civilLaw'),
   ];
 
   const handleSampleClick = (q: string) => setInputValue(q);
@@ -117,21 +119,21 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
     setChatHistory((prev) => [...prev, newUserMsg]);
     setInputValue('');
     setIsLoading(true);
-    setChatHistory((prev) => [...prev, { role: 'model', text: 'Thinking...' }]);
+    setChatHistory((prev) => [...prev, { role: 'model', text: t('chatbot.thinking') }]);
 
     try {
       const updatedHistory = [...chatHistory, newUserMsg];
       const botResponse = await ChatbotService.generateBotResponse(updatedHistory);
       setChatHistory((prev) => [
-        ...prev.filter((m) => m.text !== 'Thinking...'),
+        ...prev.filter((m) => m.text !== t('chatbot.thinking')),
         { role: 'model', text: botResponse },
       ]);
     } catch (err) {
       setChatHistory((prev) => [
-        ...prev.filter((m) => m.text !== 'Thinking...'),
+        ...prev.filter((m) => m.text !== t('chatbot.thinking')),
         {
           role: 'model',
-          text: err instanceof Error ? err.message : 'Something went wrong. Please try again.',
+          text: err instanceof Error ? err.message : t('chatbot.errorMessage'),
           isError: true,
         },
       ]);
@@ -232,7 +234,7 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
                 >
                   <div className="flex items-center gap-2">
                     <ChatbotIcon />
-                    <span className="font-semibold">LawStand Chatbot</span>
+                    <span className="font-semibold">{t('chatbot.title')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
@@ -253,18 +255,14 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
                   <div className="flex items-start gap-2">
                     <ChatbotIcon />
                     <div className="bg-white border border-gray-200 rounded-lg p-3 max-w-[85%] shadow-sm">
-                      <p className="text-sm text-gray-700">
-                        Xin chào 👋 <b>LawStand Chatbot</b> có thể hỗ trợ bạn về{' '}
-                        <b>thông tin pháp luật</b> được trích xuất từ nguồn uy tín. Câu trả lời chỉ
-                        mang tính <b>tham khảo</b>.
-                      </p>
+                      <p className="text-sm text-gray-700">{t('chatbot.welcomeMessage')}</p>
                     </div>
                   </div>
 
                   {/* Gợi ý */}
                   {chatHistory.length <= 1 && (
                     <div className="mt-3 space-y-2">
-                      <p className="text-xs text-gray-500 ml-1">Hãy thử hỏi:</p>
+                      <p className="text-xs text-gray-500 ml-1">{t('chatbot.tryAsking')}</p>
                       <div className="flex flex-wrap gap-2">
                         {sampleQuestions.map((q, i) => (
                           <button
@@ -376,7 +374,7 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
                       type="text"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
-                      placeholder="Nhập câu hỏi của bạn..."
+                      placeholder={t('chatbot.inputPlaceholder')}
                       className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                       disabled={isLoading}
                     />

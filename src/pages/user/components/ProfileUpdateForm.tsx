@@ -196,6 +196,7 @@ export function ProfileUpdateForm({ user, onSuccess }: ProfileUpdateFormProps) {
                 </PopoverTrigger>
                 <PopoverContent align="start" className="p-0">
                   <CustomCalendar
+                    disabledDays={{ before: new Date() }}
                     value={date}
                     onChange={(newDate) => {
                       setDate(newDate);

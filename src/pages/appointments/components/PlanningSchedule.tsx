@@ -6,11 +6,16 @@ interface PlanningScheduleProps {
 }
 
 const getTimelineItem = (appointment: AppointmentDetail) => {
-  const startTime = new Date(appointment.slot.startTime);
-  const endTime = new Date(appointment.slot.endTime);
-  const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
+  const startTime = appointment.slot.startTime;
+  const endTime = appointment.slot.endTime;
+  const today = new Date().toDateString();
 
-  // Mock data for lawyer
+  const startTimeDate = new Date(`${today} ${startTime}`);
+  const endTimeDate = new Date(`${today} ${endTime}`);
+
+  const diffInMilliseconds = endTimeDate.getTime() - startTimeDate.getTime();
+
+  const duration = Math.round(diffInMilliseconds / (1000 * 60));
   const lawyer = appointment.slot.lawyer;
 
   const timelineItems = [
@@ -19,7 +24,7 @@ const getTimelineItem = (appointment: AppointmentDetail) => {
       icon: <CheckCircle className="h-5 w-5 text-green-600" />,
       title: 'System sent confirmation email',
       time: startTime.toLocaleString(),
-      status: 'completed',
+      status: 'Completed',
       description: 'Confirmation email sent to customer and lawyer',
     },
     {
@@ -33,7 +38,7 @@ const getTimelineItem = (appointment: AppointmentDetail) => {
           <AlertCircle className="h-5 w-5 text-yellow-600" />
         ),
       title: `Meeting with ${lawyer.fullName}`,
-      time: `${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`,
+      time: `${startTime} - ${endTime}`,
       status: appointment.status,
       description: `Duration: ${duration} minutes`,
     },
@@ -91,11 +96,11 @@ export const PlanningSchedule = ({ appointment }: PlanningScheduleProps) => {
                   <div className="flex items-center gap-2">
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        item.status === 'completed'
+                        item.status === 'Completed'
                           ? 'bg-green-500'
-                          : item.status === 'upcoming'
-                            ? 'bg-blue-500'
-                            : item.status === 'cancelled'
+                          : item.status === 'Confirmed'
+                            ? 'bg-green-500'
+                            : item.status === 'Cancelled'
                               ? 'bg-red-500'
                               : 'bg-yellow-500'
                       }`}

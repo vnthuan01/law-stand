@@ -2,6 +2,8 @@ import { cn } from '@/lib/utils';
 import { type MyAppointment } from '@/services/appointmentService';
 import { User, Clock, MapPin, X } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useAuth } from '@/hooks/useAuth';
+import type { User as UserType } from '@/services/authService';
 
 interface AppointmentShowCardProps {
   date: Date;
@@ -28,7 +30,7 @@ const getStatusStyle = (status: MyAppointment['status']) => {
   }
 };
 
-const getAppointmentDetails = (appointment: MyAppointment) => {
+const getAppointmentDetails = (appointment: MyAppointment, user: UserType | null) => {
   const startTime = new Date(`${appointment.date} ${appointment.startTime}`);
   const endTime = new Date(`${appointment.date} ${appointment.endTime}`);
   const duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
@@ -36,8 +38,8 @@ const getAppointmentDetails = (appointment: MyAppointment) => {
   return {
     lawyerName: appointment.lawyerName,
     customerName: appointment.userName,
-    customerEmail: appointment.userEmail,
-    customerPhone: appointment.userPhone,
+    customerEmail: user?.email,
+    customerPhone: user?.phoneNumber,
     serviceName: appointment.serviceName,
     servicePrice: appointment.servicePrice,
     startTime: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -53,6 +55,8 @@ const getAppointmentDetails = (appointment: MyAppointment) => {
 };
 
 export default function AppointmentShowCard(props: AppointmentShowCardProps) {
+  const { user } = useAuth();
+
   const { date, appointments, onClick, onDelete, className } = props;
 
   return (
@@ -71,7 +75,7 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
           )}
 
           {appointments.map((a) => {
-            const details = getAppointmentDetails(a);
+            const details = getAppointmentDetails(a, user);
 
             return (
               <Tooltip key={a.id}>
@@ -98,9 +102,11 @@ export default function AppointmentShowCard(props: AppointmentShowCardProps) {
                       </button>
                     )}
 
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="font-medium">{details.startTime}</span>
-                      <span className="text-xs text-muted-foreground">- {a.serviceName}</span>
+                    <div className="mb-1 flex flex-col items-center gap-2">
+                      <span className="font-medium text-sm">{details.startTime}</span>
+                      <span className="text-xs text-muted-foreground text-center">
+                        {a.serviceName}
+                      </span>
                     </div>
                   </div>
                 </TooltipTrigger>

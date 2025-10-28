@@ -59,7 +59,7 @@ export default function UserManagement() {
     isActive: statusFilter && statusFilter !== 'all' ? statusFilter === 'active' : undefined,
     sortBy,
     sortDescending: true,
-    page: currentPage,
+    pageNumber: currentPage,
     pageSize,
   });
 
@@ -155,7 +155,7 @@ export default function UserManagement() {
       case 2:
         return 'info';
       case 3:
-        return 'outline';
+        return 'destructive';
       default:
         return 'outline';
     }
@@ -163,7 +163,7 @@ export default function UserManagement() {
 
   const getLastLoginStatus = (lastLoginAt: string | null) => {
     if (!lastLoginAt) {
-      return { text: t('user_management.never_logged_in'), variant: 'outline' as const };
+      return { text: t('user_management.never_logged_in'), variant: 'destructive' as const };
     }
 
     const loginDate = new Date(lastLoginAt);
@@ -171,12 +171,12 @@ export default function UserManagement() {
     const diffInHours = (now.getTime() - loginDate.getTime()) / (1000 * 60 * 60);
 
     if (diffInHours < 24) {
-      return { text: t('user_management.recent_login'), variant: 'outline' as const };
+      return { text: t('user_management.recent_login'), variant: 'success' as const };
     } else if (diffInHours < 168) {
       // 7 days
       return { text: t('user_management.old_login'), variant: 'warning' as const };
     } else {
-      return { text: t('user_management.old_login'), variant: 'outline' as const };
+      return { text: t('user_management.old_login'), variant: 'destructive' as const };
     }
   };
 
