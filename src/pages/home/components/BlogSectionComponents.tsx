@@ -43,10 +43,28 @@ const BlogSection = () => {
       icon: <Briefcase className="w-5 h-5 text-red-500" />,
       category: 'Employment',
     },
+    {
+      id: 4,
+      title: 'Do I have to report my criminal record on a job application?',
+      date: 'October 8, 2024',
+      image:
+        'https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
+      icon: <Briefcase className="w-5 h-5 text-red-500" />,
+      category: 'Employment',
+    },
+    {
+      id: 5,
+      title: "Don't ignore your noncompete—yet",
+      date: 'October 15, 2024',
+      image:
+        'https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop',
+      icon: <FileText className="w-5 h-5 text-red-500" />,
+      category: 'Legal Advice',
+    },
   ];
   const { t } = useTranslation();
   return (
-    <section className="min-h-screen bg-gray-50 py-16 lg:py-24">
+    <section className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black py-16 lg:py-24">
       <div className="container mx-auto px-6 max-w-6xl">
         {/* Header */}
         <motion.div
@@ -56,11 +74,11 @@ const BlogSection = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            <span className="text-orange-500">{t('home.blog_title')}</span>{' '}
+          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+            <span className="text-blue-500">{t('home.blog_title')}</span>{' '}
             {t('home.blog_titleHighlight')}
           </h2>
-          <p className="text-gray-600">{t('home.blog_subtitle')}</p>
+          <p className="text-white">{t('home.blog_subtitle')}</p>
         </motion.div>
 
         {/* Carousel */}
