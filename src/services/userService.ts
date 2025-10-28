@@ -30,7 +30,7 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginationInfo {
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalCount: number;
   totalPages: number;
@@ -71,7 +71,7 @@ export interface GetUsersParams {
   searchTerm?: string;
   sortBy?: string;
   sortDescending?: boolean;
-  page?: number;
+  pageNumber?: number;
   pageSize?: number;
 }
 
@@ -100,7 +100,7 @@ export const userService = {
     if (params?.sortBy) queryParams.append('SortBy', params.sortBy);
     if (params?.sortDescending !== undefined)
       queryParams.append('SortDescending', params.sortDescending.toString());
-    if (params?.page !== undefined) queryParams.append('Page', params.page.toString());
+    if (params?.pageNumber !== undefined) queryParams.append('Page', params.pageNumber.toString());
     if (params?.pageSize !== undefined) queryParams.append('PageSize', params.pageSize.toString());
 
     const queryString = queryParams.toString();

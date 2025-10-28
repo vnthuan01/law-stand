@@ -1,48 +1,69 @@
-import { Check } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-type Plan = {
-  name: string;
-  price: string;
-  // Đảm bảo features luôn là mảng (string[])
-  features: string[];
-  popular?: boolean;
-};
-
-const getPlans = (t: (key: string, options?: any) => any): Plan[] => [
-  {
-    name: t('home.plans.free.name'),
-    price: t('home.plans.free.price'),
-    // SỬA TRIỆT ĐỂ: Dùng Array.isArray để đảm bảo features luôn là một mảng
-    features: (Array.isArray(t('home.plans.free.features', { returnObjects: true }))
-      ? t('home.plans.free.features', { returnObjects: true })
-      : []) as string[],
-  },
-  {
-    name: t('home.plans.standard.name'),
-    price: t('home.plans.standard.price'),
-    // SỬA TRIỆT ĐỂ
-    features: (Array.isArray(t('home.plans.standard.features', { returnObjects: true }))
-      ? t('home.plans.standard.features', { returnObjects: true })
-      : []) as string[],
-    popular: true,
-  },
-  {
-    name: t('home.plans.professional.name'),
-    price: t('home.plans.professional.price'),
-    // SỬA TRIỆT ĐỂ
-    features: (Array.isArray(t('home.plans.professional.features', { returnObjects: true }))
-      ? t('home.plans.professional.features', { returnObjects: true })
-      : []) as string[],
-  },
-];
+import { useActivePlans, usePurchasePlan } from '@/hooks/usePlan';
+import { planService, type Plan } from '@/services/planService';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function PricingPage() {
   const { t } = useTranslation();
-  const plans = getPlans(t);
-  const handleBuyNow = () => {
-    console.log('Buy Now');
+  const [purchasingPlanId, setPurchasingPlanId] = useState<string | null>(null);
+
+  // Fetch active plans from API
+  const { data: plans, isLoading, error } = useActivePlans();
+  const purchasePlanMutation = usePurchasePlan();
+
+  const handleBuyNow = async (plan: Plan) => {
+    try {
+      setPurchasingPlanId(plan.id);
+
+      const { canPurchase, reason } = await planService.canPurchase(plan.id);
+      if (!canPurchase) {
+        toast.error(reason || 'You cannot purchase this plan');
+        return;
+      }
+
+      // Purchase the plan
+      await purchasePlanMutation.mutateAsync({
+        planId: plan.id,
+        paymentMethod: 'credit_card',
+        startDate: Date.now().toString(),
+      });
+
+      toast.success(`Successfully purchased ${plan.name} plan!`);
+    } catch (error: any) {
+      console.error('Purchase error:', error);
+      toast.error(error.response?.data?.message || 'Failed to purchase plan');
+    } finally {
+      setPurchasingPlanId(null);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 px-4">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500 mb-4" />
+        <p className="text-gray-600">{t('common.loading')}</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 px-4">
+        <p className="text-red-600 mb-4">{t('common.error')}</p>
+        <p className="text-gray-600">{error.message}</p>
+      </div>
+    );
+  }
+
+  if (!plans || plans.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 px-4">
+        <p className="text-gray-600">{t('admin.no_plans')}</p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
@@ -56,34 +77,54 @@ export default function PricingPage() {
       </p>
 
       <div className="grid md:grid-cols-3 gap-8 w-full max-w-5xl">
-        {plans.map((plan) => (
+        {plans.map((plan: Plan) => (
           <div
-            key={plan.name}
-            className={`rounded-2xl shadow-md bg-white p-6 flex flex-col border transition-transform duration-200 hover:scale-105 hover:shadow-xl ${
-              plan.popular ? 'border-orange-500' : 'border-gray-200'
+            key={plan.id}
+            className={`relative rounded-2xl shadow-md bg-white p-6 flex flex-col border transition-transform duration-200 hover:scale-105 hover:shadow-xl ${
+              plan.isPopular ? 'border-orange-500' : 'border-gray-200'
             }`}
           >
+            {plan.isPopular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="bg-gradient-to-r from-orange-500 to-amber-400 text-white text-xs font-semibold px-4 py-1 rounded-full shadow-lg">
+                  {t('admin.popular')}
+                </div>
+
+                {/* Hiệu ứng phủ ánh sáng nhẹ phía dưới badge */}
+                <div className="absolute top-full left-0 w-full h-3 bg-gradient-to-b from-orange-300/40 to-transparent rounded-b-full blur-sm"></div>
+              </div>
+            )}
+
             <h2 className="text-xl font-semibold text-gray-800 mb-4">{plan.name}</h2>
+            {plan.description && <p className="text-sm text-gray-600 mb-4">{plan.description}</p>}
+
             <p className="text-3xl font-bold text-gray-900 mb-6">
-              {plan.price}
-              <span className="text-base font-medium text-gray-500">{t('home.per_month')}</span>
+              {plan.price.toLocaleString()}đ
+              <span className="text-base font-medium text-gray-500">/{plan.durationDays} days</span>
             </p>
 
             <ul className="flex-1 mb-6 space-y-3">
-              {/* Giữ lại Optional Chaining là lớp bảo vệ cuối cùng */}
-              {plan.features?.map((feature, idx) => (
+              {plan.features.map((feature, idx) => (
                 <li key={idx} className="flex items-center text-gray-700">
-                  <Check className="w-5 h-5 text-green-500 mr-2" />
-                  {feature}
+                  <Check className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" />
+                  <span className="text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
 
             <button
-              onClick={handleBuyNow}
-              className="mt-auto bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-xl transition"
+              onClick={() => handleBuyNow(plan)}
+              disabled={purchasingPlanId === plan.id || purchasePlanMutation.isPending}
+              className="mt-auto bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-xl transition flex items-center justify-center"
             >
-              {t('home.buy_now')}
+              {purchasingPlanId === plan.id ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t('common.loading')}
+                </>
+              ) : (
+                t('home.buy_now')
+              )}
             </button>
           </div>
         ))}

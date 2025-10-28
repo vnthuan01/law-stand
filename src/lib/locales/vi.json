@@ -38,7 +38,8 @@
     "saving": "Đang lưu...",
     "unknown_error": "Lỗi không xác định",
     "view_all": "Xem tất cả",
-    "app_name": "Law Stand"
+    "app_name": "Law Stand",
+    "clear": "Dọn sạch"
   },
   "nav": {
     "home": "Trang chủ",
@@ -181,7 +182,32 @@
     "slot_updated": "Lịch hẹn đã được cập nhật thành công",
     "slot_deleted": "Lịch hẹn đã được xóa thành công",
     "delete_slot_failed": "Không thể xóa lịch hẹn",
-    "operation_failed": "Thao tác thất bại"
+    "operation_failed": "Thao tác thất bại",
+    "plan_management": "Quản lý gói",
+    "plan_management_desc": "Quản lý các gói đăng ký và giá cả",
+    "add_plan": "Thêm gói",
+    "create_plan": "Tạo gói",
+    "edit_plan": "Chỉnh sửa gói",
+    "delete_plan": "Xóa gói",
+    "delete_plan_confirm": "Bạn có chắc chắn muốn xóa gói này không? Hành động này không thể hoàn tác.",
+    "plan_name": "Tên gói",
+    "plan_name_placeholder": "Nhập tên gói",
+    "plan_price": "Giá ($)",
+    "plan_duration": "Thời hạn (ngày)",
+    "plan_description": "Mô tả",
+    "plan_description_placeholder": "Nhập mô tả gói",
+    "plan_features": "Tính năng",
+    "feature_placeholder": "Nhập tính năng",
+    "add_feature": "Thêm tính năng",
+    "mark_popular": "Đánh dấu phổ biến",
+    "search_plans": "Tìm kiếm gói...",
+    "active": "Hoạt động",
+    "inactive": "Không hoạt động",
+    "popular": "Phổ biến",
+    "features": "Tính năng",
+    "activate": "Kích hoạt",
+    "deactivate": "Vô hiệu hóa",
+    "no_plans": "Không có gói nào"
   },
   "appointments": {
     "my_appointments": "Lịch hẹn của tôi",
@@ -356,7 +382,9 @@
     "blog_title": "Chủ đề",
     "blog_titleHighlight": "Pháp lý",
     "blog_subtitle": "Khám phá bài viết blog mới nhất và cập nhật thông tin pháp lý mới nhất.",
-    "view_more": "Xem thêm"
+    "view_more": "Xem thêm",
+    "my_subscription_plans": "Các gói đăng kí của tôi",
+    "current_plan": "Gói đăng kí hiện tại"
   },
   "services": {
     "title": "Dịch vụ",

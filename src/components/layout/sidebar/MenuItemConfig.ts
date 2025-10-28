@@ -13,6 +13,7 @@ import {
   Package,
   Users,
   Bot,
+  CreditCard,
 } from 'lucide-react';
 
 export interface MenuItem {
@@ -40,12 +41,11 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
       path: '/admin/user-management',
       icon: Users,
     },
-    // {
-    //   label: 'Payments',
-    //   path: '/payments',
-    //   icon: CreditCard,
-    //   children: [{ label: 'History', path: '/payments/history', icon: ReceiptText }],
-    // },
+    {
+      label: 'Plan Management',
+      path: '/admin/plan-management',
+      icon: CreditCard,
+    },
   ],
 
   User: [
@@ -56,7 +56,7 @@ export const menuConfig: Record<UserRole, MenuItem[]> = {
       children: [{ label: 'History', path: '/customer/appointments/', icon: History }],
     },
     { label: 'Saved Services', path: '/saved-services', icon: Bookmark },
-    { label: 'Package Type', path: '/package-type', icon: Package },
+    { label: 'Packages', path: '/package-type', icon: Package },
     { label: 'Chat With AI', path: '/chat-with-ai-supported', icon: Bot },
   ],
 

@@ -21,6 +21,8 @@ import LawyerAppointmentsPage from '@/pages/appointments/LawyerAppointmentsPage'
 import ChatGPTLikePage from '@/pages/chatbot/ChatBotPage';
 import PricingPage from '@/pages/package/PremuimPage';
 import UserManagement from '@/pages/user/admin/UserManagement';
+import PlanManagement from '@/pages/user/admin/PlanManagement';
+import MyPackagesPage from '@/pages/user/MyPackagesPage';
 
 export const routes = [
   //Public routes
@@ -80,12 +82,6 @@ export const routes = [
     isProtected: true,
     roles: [UserRole.Admin, UserRole.User, UserRole.Lawyer],
   },
-  {
-    path: '/chat-with-ai-supported',
-    element: <ChatGPTLikePage />,
-    isProtected: true,
-    roles: [UserRole.User],
-  },
 
   //Appointments Routes
   {
@@ -125,6 +121,12 @@ export const routes = [
     isProtected: true,
     roles: [UserRole.Admin],
   },
+  {
+    path: '/admin/plan-management',
+    element: <PlanManagement />,
+    isProtected: true,
+    roles: [UserRole.Admin],
+  },
   //Staff
   {
     path: '/staff/add-service',
@@ -144,6 +146,18 @@ export const routes = [
   {
     path: '/customer',
     element: <CustomerPage />,
+    isProtected: true,
+    roles: [UserRole.User],
+  },
+  {
+    path: '/chat-with-ai-supported',
+    element: <ChatGPTLikePage />,
+    isProtected: true,
+    roles: [UserRole.User],
+  },
+  {
+    path: '/package-type',
+    element: <MyPackagesPage />,
     isProtected: true,
     roles: [UserRole.User],
   },

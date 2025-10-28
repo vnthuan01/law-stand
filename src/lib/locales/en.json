@@ -36,7 +36,8 @@
     "change": "Change",
     "saving": "Saving...",
     "unknown_error": "Unknown error",
-    "view_all": "View all"
+    "view_all": "View all",
+    "clear": "Clear"
   },
   "nav": {
     "home": "Home",
@@ -167,7 +168,32 @@
     "slot_updated": "Slot updated successfully",
     "slot_deleted": "Slot deleted successfully",
     "delete_slot_failed": "Failed to delete slot",
-    "operation_failed": "Operation failed"
+    "operation_failed": "Operation failed",
+    "plan_management": "Plan Management",
+    "plan_management_desc": "Manage subscription plans and pricing",
+    "add_plan": "Add Plan",
+    "create_plan": "Create Plan",
+    "edit_plan": "Edit Plan",
+    "delete_plan": "Delete Plan",
+    "delete_plan_confirm": "Are you sure you want to delete this plan? This action cannot be undone.",
+    "plan_name": "Plan Name",
+    "plan_name_placeholder": "Enter plan name",
+    "plan_price": "Price ($)",
+    "plan_duration": "Duration (days)",
+    "plan_description": "Description",
+    "plan_description_placeholder": "Enter plan description",
+    "plan_features": "Features",
+    "feature_placeholder": "Enter feature",
+    "add_feature": "Add Feature",
+    "mark_popular": "Mark as Popular",
+    "search_plans": "Search plans...",
+    "active": "Active",
+    "inactive": "Inactive",
+    "popular": "Popular",
+    "features": "Features",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "no_plans": "No plans available"
   },
   "appointments": {
     "my_appointments": "My Appointments",
@@ -241,41 +267,6 @@
     "faq_title": "Frequently Asked",
     "faq_titleHighlight": "Questions",
     "faq_subtitle": "Find answers about LawStand — your trusted AI Legal Consultation & Lawyer Booking platform.",
-    "plans": {
-      "free": {
-        "name": "Free",
-        "price": "0",
-        "features": [
-          "5 free questions with AI legal consultation",
-          "Limited lawyer booking (max 0 times/month)",
-          "Priority response within 24 hours",
-          "Support via chatbot low quality."
-        ]
-      },
-      "standard": {
-        "name": "Standard",
-        "price": "159.000 VND",
-        "features": [
-          "Unlimited AI legal consultation",
-          "Limited lawyer booking (max 3 times/month)",
-          "Priority response within 24 hours",
-          "Support via chatbot medium quality "
-        ]
-      },
-      "professional": {
-        "name": "Professional",
-        "price": "249.000 VND",
-        "features": [
-          "Unlimited AI legal consultation & deep field specialization",
-          "Limited lawyer booking (max 5 times/month)",
-          "Priority support 24/7 via chat or phone",
-          "Advanced legal data & business document templates",
-          "Consultation history tracking by account",
-          "Support via chatbot max quality ",
-          "Access to all resources and tools"
-        ]
-      }
-    },
     "per_month": "/month",
     "buy_now": "Buy Now",
     "cancel_subscription": "Cancel Subscription",
@@ -306,7 +297,9 @@
     },
     "blog_title": "Blog",
     "blog_titleHighlight": "Articles",
-    "blog_subtitle": "Explore our latest blog articles and stay updated with the latest legal news and insights."
+    "blog_subtitle": "Explore our latest blog articles and stay updated with the latest legal news and insights.",
+    "my_subscription_plans": "My Subscription Plans",
+    "current_plan": "Current Plan"
   },
   "services": {
     "title": "Legal",
