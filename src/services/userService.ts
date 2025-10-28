@@ -100,7 +100,8 @@ export const userService = {
     if (params?.sortBy) queryParams.append('SortBy', params.sortBy);
     if (params?.sortDescending !== undefined)
       queryParams.append('SortDescending', params.sortDescending.toString());
-    if (params?.pageNumber !== undefined) queryParams.append('Page', params.pageNumber.toString());
+    if (params?.pageNumber !== undefined)
+      queryParams.append('PageNumber', params.pageNumber.toString());
     if (params?.pageSize !== undefined) queryParams.append('PageSize', params.pageSize.toString());
 
     const queryString = queryParams.toString();
