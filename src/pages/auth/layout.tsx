@@ -11,23 +11,23 @@ interface AuthLayoutProps {
 const getMessages = (t: (key: string) => string) => [
   {
     icon: <Scale className="w-4 h-4 inline mr-1" />,
-    text: t('auth.demo.ai1'),
+    text: t('auth.chat.ai_greeting'),
   },
   {
     icon: <User className="w-4 h-4 inline mr-1" />,
-    text: t('auth.demo.user1'),
+    text: t('auth.chat.user_question_probation'),
   },
   {
     icon: <Scale className="w-4 h-4 inline mr-1" />,
-    text: t('auth.demo.ai2'),
+    text: t('auth.chat.ai_answer_probation'),
   },
   {
     icon: <User className="w-4 h-4 inline mr-1" />,
-    text: t('auth.demo.user2'),
+    text: t('auth.chat.user_question_after_probation'),
   },
   {
     icon: <Scale className="w-4 h-4 inline mr-1" />,
-    text: t('auth.demo.ai3'),
+    text: t('auth.chat.ai_answer_after_probation'),
   },
 ];
 
@@ -79,7 +79,9 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, imageSrc }) => {
                   repeatDelay: (messages.length - 1) * gap, // chờ trước khi vòng lặp mới
                 }}
                 className={`rounded-2xl px-4 py-2 shadow-lg max-w-sm ${
-                  msg.text.startsWith('User') ? 'bg-blue-500/80 text-white self-end' : 'bg-white/80'
+                  msg.text.startsWith('User') || msg.text.startsWith('Người dùng')
+                    ? 'bg-blue-500/80 text-white self-end'
+                    : 'bg-white/80'
                 }`}
               >
                 <div>
