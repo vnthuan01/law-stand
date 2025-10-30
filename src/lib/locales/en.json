@@ -37,7 +37,8 @@
     "saving": "Saving...",
     "unknown_error": "Unknown error",
     "view_all": "View all",
-    "clear": "Clear"
+    "clear": "Clear",
+    "app_name": "Law Stand"
   },
   "nav": {
     "home": "Home",
@@ -95,7 +96,14 @@
     "create_account": "Create Account",
     "invalid_username_or_password": "Invalid username or password",
     "login_failed": "Login failed",
-    "login_success": "Login successful"
+    "login_success": "Login successful",
+    "chat": {
+      "ai_greeting": "AI: Hello! What would you like to know about Vietnamese Labor Law?",
+      "user_question_probation": "User: I want to know about the probation period in a labor contract.",
+      "ai_answer_probation": "AI: According to the 2019 Labor Code, the probation period is:\n- Up to 180 days for managerial positions\n- Up to 60 days for technical jobs\n- Up to 30 days for other types of work",
+      "user_question_after_probation": "User: What happens if the company doesn't sign a contract after the probation period?",
+      "ai_answer_after_probation": "AI: If you continue working after the probation period without a signed contract, an official labor contract will automatically be established."
+    }
   },
   "profile": {
     "title": "Profile",
