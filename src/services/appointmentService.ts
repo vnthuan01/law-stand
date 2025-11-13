@@ -1,8 +1,6 @@
 import { apiClient } from '@/lib/apiClients';
 import type { AuthResponse } from './authService';
 
-// ========== TYPES ==========
-
 export type AppointmentStatus = 'Pending' | 'Confirmed' | 'Cancelled' | 'Completed';
 
 // User object trong appointment
@@ -74,8 +72,6 @@ export interface MyAppointment {
   userPhone: string;
 }
 
-// ========== PAYLOADS ==========
-
 export interface CreateAppointmentPayload {
   slotId: string;
 }
@@ -96,8 +92,6 @@ export interface MyAppointmentsResponse {
   message: string;
   data: MyAppointment[];
 }
-
-// ========== SERVICE ==========
 
 export const appointmentService = {
   // 1. Create appointment
@@ -125,5 +119,4 @@ export const appointmentService = {
     apiClient.patch<AuthResponse<boolean>>(`/Appointments/${appointmentId}/cancel`),
 };
 
-// Export types for use in other files
 export type { AppointmentDetail as Appointment };

@@ -19,7 +19,6 @@ export function useAuth() {
     data: profile,
     isLoading,
     isFetching,
-    isSuccess,
   } = useQuery<User>({
     queryKey: ['users', 'profile'],
     queryFn: async () => {
@@ -32,7 +31,9 @@ export function useAuth() {
     gcTime: 10 * 60 * 1000,
   });
 
-  const isAuthLoading = !!token && (!profile || isLoading || isFetching || !isSuccess);
+  // FIX: Logic isAuthLoading đơn giản hơn
+  // Nếu có token và đang fetch profile → đang loading
+  const isAuthLoading = !!token && (isLoading || isFetching);
 
   // Login
   const loginMutation = useMutation<
@@ -83,7 +84,7 @@ export function useAuth() {
   return {
     user: profile || null,
     role: profile?.role || null,
-    isAuthenticated: !!profile && !!token,
+    isAuthenticated: !!profile,
     isLoading: isAuthLoading,
     login: loginMutation.mutateAsync,
     register: registerMutation.mutateAsync,
