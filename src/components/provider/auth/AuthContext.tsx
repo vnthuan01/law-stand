@@ -2,35 +2,40 @@ import { useState, useEffect, type ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import type { LoginPayload, User } from '@/services/authService';
 import { AuthContext } from './AuthContextType';
-import { useNavigate } from 'react-router-dom';
 
 type AuthProviderProps = { children: ReactNode };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { user, login: loginMutate, logout: logoutMutate } = useAuth();
-  const [currentUser, setCurrentUser] = useState<User | null>(user);
-  const navigate = useNavigate();
-  //When user have role will navigate base on user's role
-  useEffect(() => {
-    setCurrentUser(user);
+  const {
+    user: profileUser,
+    isLoading: authLoading,
+    login: loginMutate,
+    logout: logoutMutate,
+  } = useAuth();
 
-    if (user) {
-      navigate('/');
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading) {
+      setUser(profileUser); // có thể null nếu chưa login
+      setLoading(false);
     }
-  }, [user]);
+  }, [profileUser, authLoading]);
 
   const login = (data: LoginPayload) => loginMutate(data);
 
   const logout = () => {
     logoutMutate();
-    setCurrentUser(null);
+    setUser(null);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user: currentUser,
-        isAuthenticated: !!currentUser,
+        user,
+        isAuthenticated: user != null,
+        isLoading: loading,
         login,
         logout,
       }}

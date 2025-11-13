@@ -1,11 +1,32 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Image as ImageIcon, Mic, Send, StopCircle, Trash2, X, Loader2 } from 'lucide-react';
+import {
+  Image as ImageIcon,
+  Mic,
+  Send,
+  StopCircle,
+  Trash2,
+  X,
+  Loader2,
+  AlertTriangle,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import Layout from '@/components/layout/UserLayout';
+import { useConversation } from '@/hooks/useConversation';
+import { Badge } from '@/components/ui/badge';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
+import { Alert } from '@/components/ui/alert';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Role = 'user' | 'assistant';
 
@@ -55,10 +76,18 @@ export default function ChatGPTLikePage() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [userQuestion, setUserQuestion] = useState<string | null>(null); // track latest sent user question
+  // Xoá retryQ vì không dùng
+  // const [retryQ, setRetryQ] = useState<string | null>(null);
+
   const chunksRef = useRef<BlobPart[]>([]);
   const timerRef = useRef<number | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  // useConversation chỉ gọi khi userQuestion có giá trị
+  const { answerQuery, similarQuestionsQuery, validateResponseMutation, questionContextQuery } =
+    useConversation({ question: userQuestion || '', limit: 5 });
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -179,60 +208,68 @@ export default function ChatGPTLikePage() {
     }
   };
 
-  const sendMessage = async () => {
-    if (!input.trim() && pendingAttachments.length === 0) return;
-
-    setIsSending(true);
-
-    // Create user message locally
-    const userMsg: ChatMessage = {
-      id: uid(),
-      role: 'user',
-      text: input.trim() || undefined,
-      attachments: pendingAttachments,
-      createdAt: Date.now(),
-      status: 'sending',
-    };
-    setMessages((prev) => [...prev, userMsg]);
-
-    // Reset input & attachments
-    setInput('');
-    setPendingAttachments([]);
-
-    try {
-      // Simulate assistant response
-      await new Promise((r) => setTimeout(r, 900));
-      const assistantMsg: ChatMessage = {
+  const sendMessage = useCallback(
+    async (customInput?: string) => {
+      const value = (customInput !== undefined ? customInput : input).trim();
+      if (!value && pendingAttachments.length === 0) return;
+      setIsSending(true);
+      // User message bubble
+      const userMsg: ChatMessage = {
         id: uid(),
-        role: 'assistant',
-        text:
-          userMsg.attachments && userMsg.attachments.length > 0
-            ? t('chatbot.fileReceivedResponse')
-            : t('chatbot.textResponse', { text: userMsg.text ?? t('chatbot.empty') }),
+        role: 'user',
+        text: value || undefined,
+        attachments: pendingAttachments,
         createdAt: Date.now(),
         status: 'sent',
       };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput('');
+      setPendingAttachments([]);
+      setUserQuestion(value);
+      // Xoá retryQ vì không dùng
+      // setRetryQ(null); // clear lỗi cũ nếu có
+    },
+    [input, pendingAttachments],
+  );
 
-      // Mark user message as sent and add assistant message
-      setMessages((prev) => {
-        const updated: ChatMessage[] = prev.map(
-          (m): ChatMessage => (m.id === userMsg.id ? { ...m, status: 'sent' as const } : m),
-        );
-        return [...updated, assistantMsg];
-      });
-    } catch (e) {
-      console.error(e);
-      setMessages((prev) => prev.map((m) => (m.id === userMsg.id ? { ...m, status: 'error' } : m)));
-    } finally {
-      setIsSending(false);
+  // Khi có lỗi, add bubble assistant error ngay sau tin nhắn user cuối cùng
+  useEffect(() => {
+    if (
+      userQuestion &&
+      answerQuery.isError &&
+      messages[messages.length - 1]?.text === userQuestion
+    ) {
+      // Chưa có bubble lỗi assistant cho userQuestion này ?
+      const lastAssistantError = messages
+        .slice()
+        .reverse()
+        .find((m) => m.role === 'assistant' && m.status === 'error');
+      if (!lastAssistantError || lastAssistantError.text !== userQuestion) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: uid(),
+            role: 'assistant',
+            text: userQuestion,
+            createdAt: Date.now(),
+            status: 'error',
+          } as ChatMessage,
+        ]);
+        // Xoá retryQ vì không dùng
+        // setRetryQ(userQuestion); // gợi ý retry đúng câu này
+      }
     }
-  };
+    // Nếu answer thành công và từng có bubble lỗi thì xóa đi
+    if (answerQuery.isSuccess && messages[messages.length - 1]?.status === 'error') {
+      setMessages((prev) => prev.filter((m) => m.status !== 'error'));
+    }
+  }, [answerQuery.isError, answerQuery.isSuccess, userQuestion, messages]);
 
-  const removePendingAttachment = (id: string) => {
+  const removePendingAttachment = useCallback((id: string) => {
     setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
-  };
+  }, []);
 
-  const clearPendingAttachments = () => setPendingAttachments([]);
+  const clearPendingAttachments = useCallback(() => setPendingAttachments([]), []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -240,6 +277,33 @@ export default function ChatGPTLikePage() {
       sendMessage();
     }
   };
+
+  // Hàm reset/khởi tạo cuộc trò chuyện mới
+  const resetConversation = useCallback(() => {
+    setMessages([
+      {
+        id: uid(),
+        role: 'assistant',
+        text: t('chatbot.initialMessage'),
+        createdAt: Date.now(),
+        status: 'sent',
+      },
+    ]);
+    setUserQuestion(null);
+    setInput('');
+    setPendingAttachments([]);
+    toast.info('Đã bắt đầu cuộc trò chuyện mới.');
+  }, [t]);
+
+  const handleSuggestionClick = useCallback((question: string) => {
+    setInput(question);
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        const composer = document.getElementById('chatbot-composer-textarea');
+        composer?.focus();
+      }, 20);
+    }
+  }, []);
 
   return (
     <Layout>
@@ -253,7 +317,14 @@ export default function ChatGPTLikePage() {
             </CardHeader>
             <CardContent className="p-0 flex flex-col h-full mt-2">
               {/* Messages list */}
-              <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 sm:px-6 pb-4 space-y-4">
+              <div
+                ref={scrollRef}
+                className="flex-1 overflow-y-auto px-3 sm:px-6 pb-4 space-y-4"
+                role="log"
+                aria-live="polite"
+                aria-relevant="additions text"
+                aria-label="Lịch sử hội thoại chatbot"
+              >
                 <AnimatePresence initial={false}>
                   {messages.map((m) => (
                     <motion.div
@@ -263,20 +334,64 @@ export default function ChatGPTLikePage() {
                       exit={{ opacity: 0, translateY: -8 }}
                       transition={{ duration: 0.18 }}
                       className={`flex items-start gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}
+                      aria-label={
+                        m.role === 'user'
+                          ? 'Tin nhắn người dùng'
+                          : m.status === 'error'
+                            ? 'Lỗi AI'
+                            : 'Trả lời từ AI'
+                      }
+                      tabIndex={-1}
                     >
                       {/* Avatar */}
                       <div
-                        className={`size-8 shrink-0 rounded-xl grid place-items-center font-bold text-white ${m.role === 'user' ? 'bg-blue-600' : 'bg-zinc-900'}`}
+                        className={`size-8 shrink-0 rounded-xl grid place-items-center font-bold text-white ${m.role === 'user' ? 'bg-blue-600' : m.status === 'error' ? 'bg-red-500' : 'bg-zinc-900'}`}
                       >
-                        {m.role === 'user' ? 'U' : 'AI'}
+                        {m.role === 'user' ? (
+                          'U'
+                        ) : m.status === 'error' ? (
+                          <AlertTriangle className="size-5" />
+                        ) : (
+                          'AI'
+                        )}
                       </div>
 
                       {/* Bubble */}
                       <div
-                        className={`max-w-[80%] sm:max-w-[70%] rounded-2xl p-3 text-sm shadow ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}`}
+                        className={`max-w-[80%] sm:max-w-[70%] rounded-2xl p-3 text-sm shadow ${m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : m.status === 'error' ? 'bg-red-50 border border-red-200 text-red-700 rounded-tl-none' : 'bg-white border rounded-tl-none'}`}
+                        aria-label={
+                          m.role === 'user'
+                            ? 'Nội dung người dùng'
+                            : m.status === 'error'
+                              ? 'Nội dung lỗi AI'
+                              : 'Nội dung trả lời AI'
+                        }
+                        tabIndex={0}
                       >
-                        {m.text && (
-                          <div className="whitespace-pre-wrap leading-relaxed">{m.text}</div>
+                        {m.status === 'error' ? (
+                          <div className="flex gap-2 items-center">
+                            <AlertTriangle
+                              className="size-4 text-red-500 mr-1"
+                              aria-hidden="true"
+                            />
+                            <span className="flex-1">
+                              Xin lỗi, hệ thống không thể trả lời do lỗi máy chủ. Hãy thử lại sau
+                              hoặc bấm “Thử lại”.
+                            </span>
+                            <Button
+                              aria-label="Thử lại câu hỏi này"
+                              size="sm"
+                              variant="outline"
+                              className="ml-2 focus-visible:ring-red-500 focus:outline-none"
+                              onClick={() => sendMessage(m.text!)}
+                            >
+                              Thử lại
+                            </Button>
+                          </div>
+                        ) : (
+                          m.text && (
+                            <div className="whitespace-pre-wrap leading-relaxed">{m.text}</div>
+                          )
                         )}
 
                         {/* Attachments */}
@@ -334,7 +449,7 @@ export default function ChatGPTLikePage() {
               </div>
 
               {/* Composer */}
-              <div ref={dropRef} className="">
+              <div ref={dropRef} className="" aria-label="Vùng nhập tin nhắn">
                 {/* Pending attachments preview */}
                 {pendingAttachments.length > 0 && (
                   <div className="mb-2">
@@ -423,19 +538,25 @@ export default function ChatGPTLikePage() {
 
                   {/* Composer input */}
                   <Textarea
+                    id="chatbot-composer-textarea"
+                    aria-label="Nhập tin nhắn cho chatbot"
+                    aria-describedby="message-helper"
+                    aria-autocomplete="both"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder={t('chatbot.messagePlaceholder')}
-                    className="flex-1 rounded-2xl resize-none min-h-[44px] max-h-[180px] border px-4 py-3"
+                    className="flex-1 rounded-2xl resize-none min-h-[44px] max-h-[180px] border px-4 py-3 focus:outline-none focus-visible:ring-2 ring-primary"
                     rows={1}
                   />
 
                   {/* Send */}
                   <Button
-                    onClick={sendMessage}
+                    onClick={() => sendMessage()}
                     disabled={isSending || (!input.trim() && pendingAttachments.length === 0)}
-                    className="h-11 rounded-2xl px-4"
+                    className="h-11 rounded-2xl px-4 focus:outline-none focus-visible:ring-2 ring-primary"
+                    aria-label="Gửi tin nhắn"
+                    type="submit"
                   >
                     {isSending ? (
                       <Loader2 className="size-5 animate-spin" />
@@ -456,6 +577,176 @@ export default function ChatGPTLikePage() {
           </Card>
         </div>
       </main>
+      {messages.length > 1 &&
+        messages[messages.length - 1].role === 'assistant' &&
+        userQuestion && (
+          <div className="pt-2 pb-2 px-6">
+            {/* Answer loading/error */}
+            {answerQuery.isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="flex items-start gap-3"
+              >
+                <div className="size-8 shrink-0 rounded-xl grid place-items-center font-bold text-white bg-zinc-900">
+                  AI
+                </div>
+                <div
+                  className="bg-zinc-100 rounded-2xl h-14 w-60 sm:w-80 mb-2 animate-pulse shimmer-bubble"
+                  aria-busy
+                  aria-live="polite"
+                />
+              </motion.div>
+            )}
+            {answerQuery.isError && (
+              <Alert
+                variant="destructive"
+                appearance="light"
+                className="mb-2"
+                aria-live="assertive"
+              >
+                {answerQuery.error?.message || 'Có lỗi khi lấy câu trả lời.'}
+              </Alert>
+            )}
+            {answerQuery.isError && (
+              <div className="pb-6 px-6">
+                <Alert
+                  variant="destructive"
+                  appearance="solid"
+                  className="mb-2"
+                  aria-live="assertive"
+                >
+                  Đã xảy ra lỗi server khi lấy kết quả. Vui lòng thử lại hoặc bắt đầu cuộc trò
+                  chuyện mới.
+                </Alert>
+                <Button
+                  variant="primary"
+                  aria-label="Tạo cuộc trò chuyện mới"
+                  onClick={resetConversation}
+                  className="mt-1"
+                >
+                  Tạo cuộc trò chuyện mới
+                </Button>
+              </div>
+            )}
+            {/* Answer result */}
+            {answerQuery.isSuccess && answerQuery.data && (
+              <div className="space-y-1">
+                <div className="flex gap-2 items-center">
+                  <Badge
+                    variant="success"
+                    size="sm"
+                    aria-label={`Độ tin cậy: ${answerQuery.data.confidence.toFixed(2)}`}
+                  >{`Độ tin cậy: ${answerQuery.data.confidence.toFixed(2)}`}</Badge>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" aria-label="Nguồn tham chiếu">
+                        Nguồn
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <div className="max-h-48 overflow-y-auto">
+                        <div className="font-medium mb-2">Nguồn tham chiếu:</div>
+                        <ul className="pl-4 text-xs">
+                          {answerQuery.data.sources?.length ? (
+                            answerQuery.data.sources.map((src, i) => <li key={i}>{src}</li>)
+                          ) : (
+                            <li>Không tìm thấy nguồn rõ ràng.</li>
+                          )}
+                        </ul>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="sm" aria-label="Ngữ cảnh">
+                        Ngữ cảnh
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom">
+                      <pre className="text-xs whitespace-pre-wrap max-w-xs max-h-60 overflow-x-auto">
+                        {JSON.stringify(questionContextQuery.data, null, 2)}
+                      </pre>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="prose prose-sm leading-relaxed bg-zinc-50/60 rounded-lg px-3 py-2 mt-2 border">
+                  {answerQuery.data.answer}
+                </div>
+              </div>
+            )}
+            {/* Similar Questions */}
+            <div className="pt-2">
+              {similarQuestionsQuery.isLoading ? (
+                <Skeleton className="w-full h-16 animate-pulse" aria-busy aria-live="polite" />
+              ) : similarQuestionsQuery.isError ? (
+                <Alert variant="warning" appearance="light" size="sm" aria-live="assertive">
+                  Không lấy được gợi ý câu hỏi tương tự.
+                </Alert>
+              ) : similarQuestionsQuery.data &&
+                similarQuestionsQuery.data.similar_questions.length > 0 ? (
+                <Accordion type="single" collapsible className="mb-0 border-none">
+                  <AccordionItem value="related-questions">
+                    <AccordionTrigger>Câu hỏi liên quan</AccordionTrigger>
+                    <AccordionContent>
+                      <ul className="grid gap-2 py-1">
+                        {similarQuestionsQuery.data.similar_questions.map((q) => (
+                          <li key={q.question} className="flex items-center justify-between gap-2">
+                            <span className="flex-1 text-xs text-muted-foreground">
+                              {q.question}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              aria-label={`Đặt câu hỏi: ${q.question}`}
+                              tabIndex={0}
+                              className="focus:outline-none focus-visible:ring-2 ring-primary"
+                              onClick={() => handleSuggestionClick(q.question)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSuggestionClick(q.question);
+                              }}
+                            >
+                              Đặt câu này
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              ) : null}
+            </div>
+            {/* Answer Validation (trigger sau khi có answer) */}
+            <div className="pt-1">
+              {answerQuery.isSuccess && validateResponseMutation.status !== 'pending' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      const data = await validateResponseMutation.mutateAsync({
+                        question: userQuestion,
+                        response: answerQuery.data!.answer,
+                      });
+                      if (data.is_valid) toast.success('Trả lời tin cậy, nội dung được xác thực!');
+                      else toast.warning(`AI nghi ngờ: ${data.suggestions?.join('; ')}`);
+                    } catch (e: any) {
+                      toast.error('Không xác thực được độ hợp lệ trả lời.');
+                      console.log(e.data.message);
+                    }
+                  }}
+                >
+                  Kiểm tra độ hợp lệ
+                </Button>
+              )}
+              {validateResponseMutation.status === 'pending' && (
+                <span className="text-xs ml-2">Đang kiểm tra...</span>
+              )}
+            </div>
+          </div>
+        )}
     </Layout>
   );
 }

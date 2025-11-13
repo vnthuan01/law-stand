@@ -1,22 +1,89 @@
 import axios, { type AxiosRequestHeaders, type InternalAxiosRequestConfig } from 'axios';
-import { getAuthToken } from './cookies';
+import Cookies from 'js-cookie';
+import { getAuthToken, setAuthToken } from './cookies';
+
+const BASE_URL = import.meta.env.VITE_BASE_API_URI || 'http://localhost:8080/api';
 
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_BASE_API_URI || 'http://localhost:8080/api',
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
 });
 
-// interceptor để tự động gắn token
+// Flag để tránh loop vô hạn
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (value?: unknown) => void;
+  reject: (error: any) => void;
+}[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) reject(error);
+    else resolve(token);
+  });
+  failedQueue = [];
+};
+
+// Request interceptor: tự động gắn access token
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAuthToken();
   if (token) {
-    // ép headers về đúng type AxiosRequestHeaders
     const headers = (config.headers || {}) as AxiosRequestHeaders;
     headers['Authorization'] = `Bearer ${token}`;
     config.headers = headers;
   }
   return config;
 });
+
+// Response interceptor: check 401 → refresh token
+apiClient.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Nếu đang refresh, queue lại request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then((token) => {
+          if (!originalRequest.headers) originalRequest.headers = {};
+          originalRequest.headers['Authorization'] = `Bearer ${token}`;
+          return axios(originalRequest);
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = Cookies.get('refresh-token');
+        if (!refreshToken) throw new Error('No refresh token');
+
+        // Gọi server lấy access token mới
+        const { data } = await axios.post(
+          `${BASE_URL}/auth/refresh`,
+          { refreshToken }, // gửi refresh token trong body
+          { headers: { 'Content-Type': 'application/json' } },
+        );
+
+        const newAccessToken = data.data.accessToken;
+        setAuthToken(newAccessToken);
+
+        processQueue(null, newAccessToken);
+
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        return axios(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);

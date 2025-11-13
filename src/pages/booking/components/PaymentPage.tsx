@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, Smartphone, Shield, CheckCircle, Clock } from 'lucide-react';
+import { CreditCard, Shield, CheckCircle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { usePayment } from '@/hooks/usePayment'; // hook payment mới
 
 interface PaymentPageProps {
   appointmentId: string;
@@ -32,6 +33,7 @@ interface PaymentPageProps {
       };
     };
   };
+  // payment: any;
   onPaymentSuccess: (paymentData: any) => void;
   onPaymentFailure: () => void;
 }
@@ -39,84 +41,26 @@ interface PaymentPageProps {
 export const PaymentPage: React.FC<PaymentPageProps> = ({
   appointmentId,
   appointment,
+  // payment,
   onPaymentSuccess,
   onPaymentFailure,
 }) => {
+  const { createPayment } = usePayment();
   const [paymentMethod, setPaymentMethod] = useState<'payos' | 'card' | 'wallet'>('payos');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePayOSPayment = async () => {
     setIsProcessing(true);
     try {
-      // Simulate PayOS payment integration
-      // In real implementation, you would call your backend API
-      // which would then integrate with PayOS
-
-      const paymentData = {
+      const res = await createPayment({
         appointmentId,
-        amount: appointment.slot.service.price,
-        currency: 'VND',
-        paymentMethod: 'payos',
-        status: 'pending',
-      };
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+        returnUrl: `${window.location.origin}/payment/success`,
+        cancelUrl: `${window.location.origin}/payment/cancel`,
+      });
       toast.success('Payment initiated successfully!');
-      onPaymentSuccess(paymentData);
-    } catch (error) {
-      console.error('PayOS payment error:', error);
-      toast.error('Payment failed. Please try again.');
-      onPaymentFailure();
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleCardPayment = async () => {
-    setIsProcessing(true);
-    try {
-      // Simulate card payment processing
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const paymentData = {
-        appointmentId,
-        amount: appointment.slot.service.price,
-        currency: 'VND',
-        paymentMethod: 'card',
-        status: 'completed',
-      };
-
-      toast.success('Payment completed successfully!');
-      onPaymentSuccess(paymentData);
-    } catch (error) {
-      console.error('Card payment error:', error);
-      toast.error('Payment failed. Please try again.');
-      onPaymentFailure();
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleWalletPayment = async () => {
-    setIsProcessing(true);
-    try {
-      // Simulate wallet payment processing
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const paymentData = {
-        appointmentId,
-        amount: appointment.slot.service.price,
-        currency: 'VND',
-        paymentMethod: 'wallet',
-        status: 'completed',
-      };
-
-      toast.success('Payment completed successfully!');
-      onPaymentSuccess(paymentData);
-    } catch (error) {
-      console.error('Wallet payment error:', error);
+      onPaymentSuccess(res);
+    } catch (err) {
+      console.error(err);
       toast.error('Payment failed. Please try again.');
       onPaymentFailure();
     } finally {
@@ -130,32 +74,30 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
         handlePayOSPayment();
         break;
       case 'card':
-        handleCardPayment();
+        toast.error('Card payment is not implemented yet.');
         break;
       case 'wallet':
-        handleWalletPayment();
+        toast.error('Wallet payment is not implemented yet.');
         break;
       default:
         toast.error('Please select a payment method');
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('en-GB', {
       weekday: 'long',
       day: '2-digit',
       month: 'short',
       year: 'numeric',
     });
-  };
 
-  const formatTime = (timeString: string) => {
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
+  const formatTime = (timeString: string) =>
+    new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true,
     });
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -187,7 +129,6 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
                 <span className="text-sm text-gray-500">Service</span>
                 <p className="font-medium">{appointment.slot.service.name}</p>
               </div>
-
               <div>
                 <span className="text-sm text-gray-500">Date & Time</span>
                 <p className="font-medium">
@@ -195,13 +136,10 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
                   {formatTime(appointment.slot.endTime)}
                 </p>
               </div>
-
               <div>
                 <span className="text-sm text-gray-500">Lawyer</span>
                 <p className="font-medium">{appointment.slot.lawyer.fullName}</p>
-                <p className="text-sm text-gray-500">{appointment.slot.lawyer.email}</p>
               </div>
-
               <div>
                 <span className="text-sm text-gray-500">Client</span>
                 <p className="font-medium">{appointment.user.fullName}</p>
@@ -217,7 +155,6 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
             <CardTitle>Payment Method</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Payment Method Selection */}
             <div className="space-y-3">
               <div
                 className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -228,60 +165,8 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
                 onClick={() => setPaymentMethod('payos')}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded-full border-2 flex items-center justify-center">
-                    {paymentMethod === 'payos' && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    )}
-                  </div>
                   <CreditCard className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">PayOS Payment</p>
-                    <p className="text-sm text-gray-500">Recommended payment method</p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                  paymentMethod === 'card'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-                onClick={() => setPaymentMethod('card')}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded-full border-2 flex items-center justify-center">
-                    {paymentMethod === 'card' && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    )}
-                  </div>
-                  <CreditCard className="w-5 h-5 text-gray-600" />
-                  <div>
-                    <p className="font-medium">Credit/Debit Card</p>
-                    <p className="text-sm text-gray-500">Visa, Mastercard, American Express</p>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                  paymentMethod === 'wallet'
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-                onClick={() => setPaymentMethod('wallet')}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded-full border-2 flex items-center justify-center">
-                    {paymentMethod === 'wallet' && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    )}
-                  </div>
-                  <Smartphone className="w-5 h-5 text-gray-600" />
-                  <div>
-                    <p className="font-medium">Digital Wallet</p>
-                    <p className="text-sm text-gray-500">MoMo, ZaloPay, ViettelPay</p>
-                  </div>
+                  <p className="font-medium">PayOS Payment</p>
                 </div>
               </div>
             </div>
@@ -315,8 +200,7 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
               <div>
                 <p className="text-sm font-medium text-green-800">Secure Payment</p>
                 <p className="text-sm text-green-700">
-                  Your payment information is encrypted and secure. We use industry-standard SSL
-                  encryption.
+                  Your payment information is encrypted and secure.
                 </p>
               </div>
             </div>

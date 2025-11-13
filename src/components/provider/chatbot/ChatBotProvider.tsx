@@ -15,6 +15,7 @@ import { ChatbotService, type ChatMessage } from '@/services/chatbotService';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { UserRole } from '@/enums/UserRole';
 
 type ChatbotContextType = { isOpen: boolean; toggleChatbot: () => void };
 const ChatbotContext = createContext<ChatbotContextType | undefined>(undefined);
@@ -85,12 +86,47 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
   const [position, setPosition] = useState({ x: 20, y: 60 });
   const [size, setSize] = useState({ width: 360, height: 480 });
   const [isResizing, setIsResizing] = useState(false);
+  const isUserLoaded = isAuthenticated !== undefined && user !== undefined;
 
   const toggleChatbot = () => setIsOpen((prev) => !prev);
-  const pathname = window.location.pathname;
-  const excludedPaths = ['/login', '/register'];
+  const [pathname, setPathname] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleRouteChange = () => setPathname(window.location.pathname);
+
+    // Listen back/forward
+    window.addEventListener('popstate', handleRouteChange);
+
+    // Override pushState & replaceState để emit event custom
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function (...args) {
+      const result = originalPushState.apply(this, args);
+      window.dispatchEvent(new Event('pushstate'));
+      window.dispatchEvent(new Event('locationchange')); // custom event
+      return result;
+    };
+
+    history.replaceState = function (...args) {
+      const result = originalReplaceState.apply(this, args);
+      window.dispatchEvent(new Event('replacestate'));
+      window.dispatchEvent(new Event('locationchange')); // custom event
+      return result;
+    };
+
+    window.addEventListener('locationchange', handleRouteChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener('locationchange', handleRouteChange);
+    };
+  }, []);
+
+  const excludedPaths = ['/login', '/register', '/chat-with-ai-supported'];
   const isExcluded = excludedPaths.some((path) => pathname.startsWith(path));
-  const canShowChatbot = isAuthenticated && user && user.role === 'User' && !isExcluded;
+  const canShowChatbot =
+    isUserLoaded && isAuthenticated && user && user.role === UserRole.User && !isExcluded;
 
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -101,6 +137,9 @@ export const ChatbotProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [chatHistory]);
 
+  if (!isUserLoaded) {
+    return <>{children}</>;
+  }
   const sampleQuestions = [
     t('chatbot.sampleQuestions.trafficLaw'),
     t('chatbot.sampleQuestions.laborLaw'),
